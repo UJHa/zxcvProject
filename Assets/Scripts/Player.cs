@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Direction direction;
-    public float moveSpeed = 0.03f;
+    private Direction direction;
+    private float moveSpeed = 0.03f;
+    private float prevPositionY;
+
     private Dictionary<Direction, Vector3> rotationMap = new Dictionary<Direction, Vector3>();
     private Dictionary<Direction, Vector3> moveMap = new Dictionary<Direction, Vector3>();
+
+    private Dictionary<eState, State> stateMap = new Dictionary<eState, State>();
+
+    private eState prevState;
+    private eState curState;
+
 
     private Animator animator;
 
@@ -43,55 +51,54 @@ public class Player : MonoBehaviour
 
         //transform.Rotate(0, 90, 0);
         direction = Direction.FRONT;
+
+        stateMap.Add(eState.IDLE, new IdleState(this));
+        stateMap.Add(eState.RUN, new RunState(this));
+
+        curState = eState.IDLE;
+
+        prevPositionY = transform.position.y;
+    }
+
+    private void FixedUpdate()
+    {
     }
 
     // Update is called once per frame
     void Update()
     {
-        // 동시 입력에 대한 처리부터.. 대각 방향에 대한 입력 처리를 우선한다.
-        // 이동
-        if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
+        prevState = curState;
+        stateMap[curState].UpdateState();
+        if(prevState != curState)
         {
-            direction = Direction.LEFT_FRONT;
+            stateMap[prevState].EndState();
+            stateMap[curState].StartState();
         }
-        else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow))
-        {
-            direction = Direction.RIGHT_FRONT;
-        }
-        else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.LeftArrow))
-        {
-            direction = Direction.LEFT_BACK;
-        }
-        else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.RightArrow))
-        {
-            direction = Direction.RIGHT_BACK;
-        }
-        else if(Input.GetKey(KeyCode.DownArrow))
-        {
-            direction = Direction.FRONT;
-        }
-        else if (Input.GetKey(KeyCode.UpArrow))
-        {
-            direction = Direction.BACK;
-        }
-        else if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            direction = Direction.LEFT;
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
-        {
-            direction = Direction.RIGHT;
-        }
+    }
 
-        if (Input.GetKey(KeyCode.UpArrow) || (Input.GetKey(KeyCode.DownArrow)) || (Input.GetKey(KeyCode.LeftArrow)) || (Input.GetKey(KeyCode.RightArrow)))
-        {
-            animator.SetBool(key_isRun, true);
-            transform.position += moveMap[direction] * moveSpeed;
-            transform.eulerAngles = rotationMap[direction];
-        }
-        else
-        {
-            animator.SetBool(key_isRun, false);
-        }
+    public void MovePosition()
+    {
+        transform.position += moveMap[direction] * moveSpeed;
+        transform.eulerAngles = rotationMap[direction];
+    }
+
+    public void SetDirection(Direction direction)
+    {
+        this.direction = direction;
+    }
+
+    public Direction GetDirection()
+    {
+        return direction;
+    }
+
+    public void SetNextState(eState state)
+    {
+        curState = state;
+    }
+
+    public string GetRunParameter()
+    {
+        return key_isRun;
     }
 }
