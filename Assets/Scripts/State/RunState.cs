@@ -9,17 +9,20 @@ public class RunState : State
 
     public override void StartState()
     {
-        animator.SetBool(player.GetRunParameter(), true);
     }
 
     public override void EndState()
     {
-        animator.SetBool(player.GetRunParameter(), false);
     }
 
     public override void UpdateState()
     {
-        if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.Space) && player.IsGround())
+        {
+            player.ChangeState(eState.JUMP);
+            return;
+        }
+        else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
             player.SetDirection(Direction.LEFT_FRONT);
         else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow))
             player.SetDirection(Direction.RIGHT_FRONT);
@@ -38,7 +41,7 @@ public class RunState : State
         else
         {
             //방향 키 입력 없을 때 기본(IDLE) 상태로 변경
-            player.SetNextState(eState.IDLE);
+            player.ChangeState(eState.IDLE);
             return;
         }
         

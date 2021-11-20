@@ -14,23 +14,15 @@ public class Player : MonoBehaviour
     private Dictionary<eState, State> stateMap = new Dictionary<eState, State>();
 
     private eState prevState;
-    private eState curState;
+    public eState curState;
 
+    public bool isGround = false;
 
-    private Animator animator;
-
-    private const string key_isRun = "IsRun";
-    private const string key_isAttack01 = "IsAttack01";
-    private const string key_isAttack02 = "IsAttack02";
-    private const string key_isJump = "IsJump";
-    private const string key_isDamage = "IsDamage";
-    private const string key_isDead = "IsDead";
+    private float footPosY;
 
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
-
         rotationMap.Add(Direction.FRONT, new Vector3(0, 0, 0));
         rotationMap.Add(Direction.BACK, new Vector3(0, 180, 0));
         rotationMap.Add(Direction.LEFT, new Vector3(0, 90, 0));
@@ -54,14 +46,43 @@ public class Player : MonoBehaviour
 
         stateMap.Add(eState.IDLE, new IdleState(this));
         stateMap.Add(eState.RUN, new RunState(this));
+        stateMap.Add(eState.JUMP, new JumpState(this));
 
         curState = eState.IDLE;
 
         prevPositionY = transform.position.y;
+
+        //footPosY = transform.position.y - GetComponent<CapsuleCollider>().height / 2.0f;
     }
 
     private void FixedUpdate()
     {
+        Vector3 curPos = transform.position;
+        curPos.y = transform.position.y - GetComponent<CapsuleCollider>().height / 2.0f; ;
+        // Bit shift the index of the layer (8) to get a bit mask
+        int layerMask = 1 << 8;
+
+        // This would cast rays only against colliders in layer 8.
+        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
+        layerMask = ~layerMask;
+
+
+        RaycastHit hit;
+        if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
+        {
+            Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.yellow);
+            Debug.Log("Did Hit");
+            Debug.Log(hit.distance);
+            isGround = false;
+            if (hit.distance <= 2.384186E-07)
+                isGround = true;
+        }
+        else
+        {
+            Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
+            Debug.Log("Did not Hit");
+            isGround = true;
+        }
     }
 
     // Update is called once per frame
@@ -92,13 +113,18 @@ public class Player : MonoBehaviour
         return direction;
     }
 
-    public void SetNextState(eState state)
+    public void ChangeState(eState state)
     {
         curState = state;
     }
 
-    public string GetRunParameter()
+    public void StartJump()
     {
-        return key_isRun;
+        isGround = false;
+    }
+
+    public bool IsGround()
+    {
+        return isGround;
     }
 }

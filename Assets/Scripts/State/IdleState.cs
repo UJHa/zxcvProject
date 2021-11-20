@@ -21,11 +21,11 @@ public class IdleState : State
     {
         if (Input.GetKey(KeyCode.UpArrow) || (Input.GetKey(KeyCode.DownArrow)) || (Input.GetKey(KeyCode.LeftArrow)) || (Input.GetKey(KeyCode.RightArrow)))
         {
-            player.SetNextState(eState.RUN);
+            player.ChangeState(eState.RUN);
         }
-        else if(Input.GetKey(KeyCode.Space))
+        else if(Input.GetKeyDown(KeyCode.Space) && player.IsGround())
         {
-            player.SetNextState(eState.JUMP);
+            player.ChangeState(eState.JUMP);
         }
     }
 }
