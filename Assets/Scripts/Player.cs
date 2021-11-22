@@ -74,7 +74,8 @@ public class Player : MonoBehaviour
             Debug.Log("Did Hit");
             Debug.Log(hit.distance);
             isGround = false;
-            if (hit.distance <= 2.384186E-07)
+            // todo : 바닥에서 밀어낸 반발력으로 인한 공중에 뜬 공백의 최솟값을 상수로 관리할 필요 있음
+            if (hit.distance <= 3.3E-06)
                 isGround = true;
         }
         else
