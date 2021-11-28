@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 public class RunState : State
@@ -9,10 +9,13 @@ public class RunState : State
 
     public override void StartState()
     {
+        player.SetRunSpeed();
+        animator.SetBool("Run", true);
     }
 
     public override void EndState()
     {
+        animator.SetBool("Run", false);
     }
 
     public override void UpdateState()
@@ -22,30 +25,35 @@ public class RunState : State
             player.ChangeState(eState.JUMP);
             return;
         }
-        else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.LeftArrow))
-            player.SetDirection(Direction.LEFT_FRONT);
-        else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKey(KeyCode.RightArrow))
-            player.SetDirection(Direction.RIGHT_FRONT);
-        else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.LeftArrow))
-            player.SetDirection(Direction.LEFT_BACK);
-        else if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.RightArrow))
-            player.SetDirection(Direction.RIGHT_BACK);
-        else if (Input.GetKey(KeyCode.DownArrow))
-            player.SetDirection(Direction.FRONT);
-        else if (Input.GetKey(KeyCode.UpArrow))
-            player.SetDirection(Direction.BACK);
-        else if (Input.GetKey(KeyCode.LeftArrow))
-            player.SetDirection(Direction.LEFT);
-        else if (Input.GetKey(KeyCode.RightArrow))
-            player.SetDirection(Direction.RIGHT);
+
+        bool isInput = false;
+        foreach (Direction direction in player.GetDirections())
+        {
+            if (player.GetKeysDirection(direction))
+            {
+                player.SetDirection(direction);
+
+                isInput = true;
+            }
+        }
+
+        foreach (Direction direction in player.GetDirections())
+        {
+            if (player.GetKeysDownDirection(direction))
+            {
+                player.SetDirection(direction);
+
+                isInput = true;
+            }
+        }
+
+        if (isInput == false)
+        {
+            player.ChangeState(eState.IDLE);
+        }
         else
         {
-            //방향 키 입력 없을 때 기본(IDLE) 상태로 변경
-            player.ChangeState(eState.IDLE);
-            return;
+            player.MovePosition();
         }
-        
-
-        player.MovePosition();
     }
 }

@@ -4,53 +4,82 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Direction direction;
-    private float moveSpeed = 0.03f;
-    private float prevPositionY;
+    private Direction _direction;
+    private float _walkSpeed = 0.005f;
+    private float _runSpeed = 0.015f;
+    private float _moveSpeed = 0.0f;
+    private float _prevPositionY;
 
-    private Dictionary<Direction, Vector3> rotationMap = new Dictionary<Direction, Vector3>();
-    private Dictionary<Direction, Vector3> moveMap = new Dictionary<Direction, Vector3>();
+    private Dictionary<Direction, Vector3> _rotationMap = new Dictionary<Direction, Vector3>();
+    private Dictionary<Direction, Vector3> _moveMap = new Dictionary<Direction, Vector3>();
+    private Dictionary<Direction, KeyCode[]> _inputMap = new Dictionary<Direction, KeyCode[]>();
+    private List<Direction> _directionList = new List<Direction>();
 
     private Dictionary<eState, State> stateMap = new Dictionary<eState, State>();
 
-    private eState prevState;
-    public eState curState;
+    private eState _prevState;
+    public eState _curState;
 
-    public bool isGround = false;
+    private KeyCode _prevKeyCode = KeyCode.None;
 
-    private float footPosY;
+    public bool _isGround = false;
+
+    private float _footPosY;
 
     // Start is called before the first frame update
     void Start()
     {
-        rotationMap.Add(Direction.FRONT, new Vector3(0, 0, 0));
-        rotationMap.Add(Direction.BACK, new Vector3(0, 180, 0));
-        rotationMap.Add(Direction.LEFT, new Vector3(0, 90, 0));
-        rotationMap.Add(Direction.RIGHT, new Vector3(0, -90, 0));
-        rotationMap.Add(Direction.LEFT_FRONT, new Vector3(0, 45, 0));
-        rotationMap.Add(Direction.RIGHT_FRONT, new Vector3(0, -45, 0));
-        rotationMap.Add(Direction.LEFT_BACK, new Vector3(0, 135, 0));
-        rotationMap.Add(Direction.RIGHT_BACK, new Vector3(0, -135, 0));
+        _rotationMap.Add(Direction.FRONT, new Vector3(0, 0, 0));
+        _rotationMap.Add(Direction.BACK, new Vector3(0, 180, 0));
+        _rotationMap.Add(Direction.LEFT, new Vector3(0, 90, 0));
+        _rotationMap.Add(Direction.RIGHT, new Vector3(0, -90, 0));
+        _rotationMap.Add(Direction.LEFT_FRONT, new Vector3(0, 45, 0));
+        _rotationMap.Add(Direction.RIGHT_FRONT, new Vector3(0, -45, 0));
+        _rotationMap.Add(Direction.LEFT_BACK, new Vector3(0, 135, 0));
+        _rotationMap.Add(Direction.RIGHT_BACK, new Vector3(0, -135, 0));
 
-        moveMap.Add(Direction.FRONT, new Vector3(0, 0, 1));
-        moveMap.Add(Direction.BACK, new Vector3(0, 0, -1));
-        moveMap.Add(Direction.LEFT, new Vector3(1, 0, 0));
-        moveMap.Add(Direction.RIGHT, new Vector3(-1, 0, 0));
-        moveMap.Add(Direction.LEFT_FRONT, new Vector3(1, 0, 1));
-        moveMap.Add(Direction.RIGHT_FRONT, new Vector3(-1, 0, 1));
-        moveMap.Add(Direction.LEFT_BACK, new Vector3(1, 0, -1));
-        moveMap.Add(Direction.RIGHT_BACK, new Vector3(-1, 0, -1));
+        float diagonal = Mathf.Sqrt(2f) / 2f;
+
+        _moveMap.Add(Direction.FRONT, new Vector3(0, 0, 1));
+        _moveMap.Add(Direction.BACK, new Vector3(0, 0, -1));
+        _moveMap.Add(Direction.LEFT, new Vector3(1, 0, 0));
+        _moveMap.Add(Direction.RIGHT, new Vector3(-1, 0, 0));
+        _moveMap.Add(Direction.LEFT_FRONT, new Vector3(diagonal, 0, diagonal));
+        _moveMap.Add(Direction.RIGHT_FRONT, new Vector3(-diagonal, 0, diagonal));
+        _moveMap.Add(Direction.LEFT_BACK, new Vector3(diagonal, 0, -diagonal));
+        _moveMap.Add(Direction.RIGHT_BACK, new Vector3(-diagonal, 0, -diagonal));
+
+        _inputMap.Add(Direction.FRONT, new KeyCode[] { KeyCode.DownArrow });
+        _inputMap.Add(Direction.BACK, new KeyCode[] { KeyCode.UpArrow });
+        _inputMap.Add(Direction.LEFT, new KeyCode[] { KeyCode.LeftArrow });
+        _inputMap.Add(Direction.RIGHT, new KeyCode[] { KeyCode.RightArrow });
+        _inputMap.Add(Direction.LEFT_FRONT, new KeyCode[] { KeyCode.DownArrow, KeyCode.LeftArrow });
+        _inputMap.Add(Direction.RIGHT_FRONT, new KeyCode[] { KeyCode.DownArrow, KeyCode.RightArrow });
+        _inputMap.Add(Direction.LEFT_BACK, new KeyCode[] { KeyCode.UpArrow, KeyCode.LeftArrow });
+        _inputMap.Add(Direction.RIGHT_BACK, new KeyCode[] { KeyCode.UpArrow, KeyCode.RightArrow });
+
+        _directionList.Add(Direction.FRONT);
+        _directionList.Add(Direction.BACK);
+        _directionList.Add(Direction.LEFT);
+        _directionList.Add(Direction.RIGHT);
+        _directionList.Add(Direction.LEFT_FRONT);
+        _directionList.Add(Direction.RIGHT_FRONT);
+        _directionList.Add(Direction.LEFT_BACK);
+        _directionList.Add(Direction.RIGHT_BACK);
 
         //transform.Rotate(0, 90, 0);
-        direction = Direction.FRONT;
+        _direction = Direction.FRONT;
 
         stateMap.Add(eState.IDLE, new IdleState(this));
+        stateMap.Add(eState.WALK, new WalkState(this));
         stateMap.Add(eState.RUN, new RunState(this));
         stateMap.Add(eState.JUMP, new JumpState(this));
 
-        curState = eState.IDLE;
+        _curState = eState.IDLE;
 
-        prevPositionY = transform.position.y;
+        stateMap[_curState].StartState();
+
+        _prevPositionY = transform.position.y;
 
         //footPosY = transform.position.y - GetComponent<CapsuleCollider>().height / 2.0f;
     }
@@ -70,62 +99,118 @@ public class Player : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
         {
-            Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.yellow);
-            Debug.Log("Did Hit");
-            Debug.Log(hit.distance);
-            isGround = false;
-            // todo : 바닥에서 밀어낸 반발력으로 인한 공중에 뜬 공백의 최솟값을 상수로 관리할 필요 있음
+            // test for jump
+            //Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.yellow);
+            //Debug.Log("Did Hit");
+            //Debug.Log(hit.distance);
+            _isGround = false;
+            // todo : change 3.3e-06 to const value
             if (hit.distance <= 3.3E-06)
-                isGround = true;
+                _isGround = true;
         }
         else
         {
             Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
-            Debug.Log("Did not Hit");
-            isGround = true;
+            //Debug.Log("Did not Hit");
+            _isGround = true;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        prevState = curState;
-        stateMap[curState].UpdateState();
-        if(prevState != curState)
+        _prevState = _curState;
+        stateMap[_curState].UpdateState();
+        if(_prevState != _curState)
         {
-            stateMap[prevState].EndState();
-            stateMap[curState].StartState();
+            stateMap[_prevState].EndState();
+            stateMap[_curState].StartState();
         }
     }
 
     public void MovePosition()
     {
-        transform.position += moveMap[direction] * moveSpeed;
-        transform.eulerAngles = rotationMap[direction];
+        transform.position += _moveMap[_direction] * _moveSpeed;
+        transform.eulerAngles = _rotationMap[_direction];
     }
 
     public void SetDirection(Direction direction)
     {
-        this.direction = direction;
+        this._direction = direction;
     }
 
     public Direction GetDirection()
     {
-        return direction;
+        return _direction;
     }
 
     public void ChangeState(eState state)
     {
-        curState = state;
+        _curState = state;
+    }
+
+    public void setPrevKeyCode(KeyCode key)
+    {
+        _prevKeyCode = key;
+    }
+
+    public KeyCode GetPrevKeyCode()
+    {
+        return _prevKeyCode;
+    }
+
+    public List<Direction> GetDirections()
+    {
+        return _directionList;
+    }
+
+    public void SetWalkSpeed()
+    {
+        _moveSpeed = _walkSpeed;
+    }
+
+    public void SetRunSpeed()
+    {
+        _moveSpeed = _runSpeed;
+    }
+
+    public bool GetKeysDirection(Direction direction)
+    {
+        bool result = true;
+        foreach(KeyCode keyCode in _inputMap[direction])
+        {
+            result = Input.GetKey(keyCode) && result;
+        }
+        return result;
+    }
+
+    public bool GetKeysDownDirection(Direction direction)
+    {
+        bool result = true;
+        foreach (KeyCode keyCode in _inputMap[direction])
+        {
+            result = Input.GetKeyDown(keyCode) && result;
+        }
+        return result;
+    }
+
+    public bool GetKeysUpDirection(Direction direction)
+    {
+        bool result = true;
+        foreach (KeyCode keyCode in _inputMap[direction])
+        {
+            result = Input.GetKeyUp(keyCode) && result;
+        }
+        return result;
     }
 
     public void StartJump()
     {
-        isGround = false;
+        _isGround = false;
     }
 
     public bool IsGround()
     {
-        return isGround;
+        return _isGround;
     }
 }

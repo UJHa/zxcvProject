@@ -1,29 +1,36 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 public class IdleState : State
 {
     public IdleState(Player player) : base(player)
     {
+
     }
 
     public override void StartState()
     {
-        
+
     }
 
     public override void EndState()
     {
-        
+
     }
 
     public override void UpdateState()
     {
-        if (Input.GetKey(KeyCode.UpArrow) || (Input.GetKey(KeyCode.DownArrow)) || (Input.GetKey(KeyCode.LeftArrow)) || (Input.GetKey(KeyCode.RightArrow)))
+        foreach (Direction direction in player.GetDirections())
         {
-            player.ChangeState(eState.RUN);
+            if (player.GetKeysDownDirection(direction))
+            {
+                player.SetDirection(direction);
+
+                player.ChangeState(eState.WALK);
+            }
         }
-        else if(Input.GetKeyDown(KeyCode.Space) && player.IsGround())
+
+        if(Input.GetKeyDown(KeyCode.Space) && player.IsGround())
         {
             player.ChangeState(eState.JUMP);
         }
