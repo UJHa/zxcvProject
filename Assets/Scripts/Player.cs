@@ -20,11 +20,8 @@ public class Player : MonoBehaviour
     private eState _prevState;
     public eState _curState;
 
-    private KeyCode _prevKeyCode = KeyCode.None;
-
     public bool _isGround = false;
-
-    private float _footPosY;
+    private bool _checkGround = true;
 
     // Start is called before the first frame update
     void Start()
@@ -80,39 +77,38 @@ public class Player : MonoBehaviour
         stateMap[_curState].StartState();
 
         _prevPositionY = transform.position.y;
-
-        //footPosY = transform.position.y - GetComponent<CapsuleCollider>().height / 2.0f;
     }
 
     private void FixedUpdate()
     {
-        Vector3 curPos = transform.position;
-        curPos.y = transform.position.y - GetComponent<CapsuleCollider>().height / 2.0f; ;
-        // Bit shift the index of the layer (8) to get a bit mask
-        int layerMask = 1 << 8;
-
-        // This would cast rays only against colliders in layer 8.
-        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
-        layerMask = ~layerMask;
-
-
-        RaycastHit hit;
-        if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
+        if (_checkGround)
         {
-            // test for jump
-            //Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.yellow);
-            //Debug.Log("Did Hit");
-            //Debug.Log(hit.distance);
-            _isGround = false;
-            // todo : change 3.3e-06 to const value
-            if (hit.distance <= 3.3E-06)
+            Vector3 curPos = transform.position;
+            // Bit shift the index of the layer (8) to get a bit mask
+            int layerMask = 1 << 8;
+
+            // This would cast rays only against colliders in layer 8.
+            // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
+            layerMask = ~layerMask;
+
+
+            RaycastHit hit;
+            if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
+            {
+                // test for jump
+                Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
+                _isGround = false;
+                // todo : change 3.3e-06 to const value
+                if (hit.distance <= 3.3E-06)
+                {
+                    _isGround = true;
+                }
+            }
+            else
+            {
+                Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
                 _isGround = true;
-        }
-        else
-        {
-            Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
-            //Debug.Log("Did not Hit");
-            _isGround = true;
+            }
         }
     }
 
@@ -121,7 +117,7 @@ public class Player : MonoBehaviour
     {
         _prevState = _curState;
         stateMap[_curState].UpdateState();
-        if(_prevState != _curState)
+        if (_prevState != _curState)
         {
             stateMap[_prevState].EndState();
             stateMap[_curState].StartState();
@@ -147,16 +143,6 @@ public class Player : MonoBehaviour
     public void ChangeState(eState state)
     {
         _curState = state;
-    }
-
-    public void setPrevKeyCode(KeyCode key)
-    {
-        _prevKeyCode = key;
-    }
-
-    public KeyCode GetPrevKeyCode()
-    {
-        return _prevKeyCode;
     }
 
     public List<Direction> GetDirections()
@@ -207,6 +193,12 @@ public class Player : MonoBehaviour
     public void StartJump()
     {
         _isGround = false;
+        _checkGround = false;
+    }
+
+    public void CheckIsGround()
+    {
+        _checkGround = true;
     }
 
     public bool IsGround()

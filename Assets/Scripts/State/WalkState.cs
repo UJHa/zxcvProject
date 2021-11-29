@@ -7,6 +7,7 @@ public class WalkState : State
     private Stopwatch stopwatch;
     private long delayMillisec = 150;
     private bool isAllKeyUp = false;
+    private bool _isJump = false;
 
     public WalkState(Player player) : base(player)
     {
@@ -15,6 +16,8 @@ public class WalkState : State
 
     public override void StartState()
     {
+        _isJump = false;
+
         UnityEngine.Debug.Log("State Check : Walk Start");
         player.SetWalkSpeed();
         stopwatch.Reset();
@@ -27,13 +30,16 @@ public class WalkState : State
     {
         UnityEngine.Debug.Log("State Check : Walk End");
         stopwatch.Stop();
-        animator.SetBool("Walk", false);
+
+        if (!_isJump)
+            animator.SetBool("Walk", false);
     }
 
     public override void UpdateState()
     {
         if (Input.GetKeyDown(KeyCode.Space) && player.IsGround())
         {
+            _isJump = true;
             player.ChangeState(eState.JUMP);
             return;
         }

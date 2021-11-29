@@ -650,7 +650,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
 --- !u!1 &920758532 stripped
 GameObject:
@@ -669,8 +669,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curState: 0
-  isGround: 0
+  _curState: 0
+  _isGround: 0
 --- !u!136 &920758537
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -699,7 +699,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!1 &963194225
 GameObject:
@@ -992,7 +992,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3899584102289356501, guid: 6dcdba0863c9e6b4daadf9280d277a5c, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3899584102289356501, guid: 6dcdba0863c9e6b4daadf9280d277a5c, type: 3}
       propertyPath: m_LocalPosition.x

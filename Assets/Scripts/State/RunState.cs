@@ -3,25 +3,31 @@ using UnityEditor;
 
 public class RunState : State
 {
+    private bool _isJump = false;
+
     public RunState(Player player) : base(player)
     {
     }
 
     public override void StartState()
     {
+        _isJump = false;
+
         player.SetRunSpeed();
         animator.SetBool("Run", true);
     }
 
     public override void EndState()
     {
-        animator.SetBool("Run", false);
+        if(!_isJump)
+            animator.SetBool("Run", false);
     }
 
     public override void UpdateState()
     {
         if (Input.GetKeyDown(KeyCode.Space) && player.IsGround())
         {
+            _isJump = true;
             player.ChangeState(eState.JUMP);
             return;
         }
