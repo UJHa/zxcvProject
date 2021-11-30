@@ -20,7 +20,7 @@ public class JumpState : State
         stopwatch.Reset();
         stopwatch.Start();
 
-        player.GetComponent<Rigidbody>().AddForce(0.0f, 2000.0f, 0.0f);
+        player.GetComponent<Rigidbody>().AddForce(player.GetJumpForce());
     }
 
     public override void EndState()
@@ -29,6 +29,8 @@ public class JumpState : State
         animator.SetBool("Walk", false);
         animator.SetBool("Run", false);
         stopwatch.Stop();
+
+        player.ResetPrevMoveSpeed();
     }
 
     public override void UpdateState()

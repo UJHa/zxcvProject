@@ -23,6 +23,14 @@ public class Player : MonoBehaviour
     public bool _isGround = false;
     private bool _checkGround = true;
 
+    public float _jumpPowerY = 1000f;
+    public float _jumpPowerXZ = 10000f;
+
+    public Vector3 _prevMoveSpeed = Vector3.zero;
+
+    public float _hitDistance = 0.0f;
+    public double _checkGroundDistance = 0.2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -99,7 +107,7 @@ public class Player : MonoBehaviour
                 Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
                 _isGround = false;
                 // todo : change 3.3e-06 to const value
-                if (hit.distance <= 3.3E-06)
+                if (hit.distance <= _checkGroundDistance)
                 {
                     _isGround = true;
                 }
@@ -128,6 +136,12 @@ public class Player : MonoBehaviour
     {
         transform.position += _moveMap[_direction] * _moveSpeed;
         transform.eulerAngles = _rotationMap[_direction];
+        _prevMoveSpeed = _moveMap[_direction] * _moveSpeed;
+    }
+
+    public void ResetPrevMoveSpeed()
+    {
+        _prevMoveSpeed = Vector3.zero;
     }
 
     public void SetDirection(Direction direction)
@@ -199,6 +213,13 @@ public class Player : MonoBehaviour
     public void CheckIsGround()
     {
         _checkGround = true;
+    }
+
+    public Vector3 GetJumpForce()
+    {
+        Vector3 result = _prevMoveSpeed * _jumpPowerXZ;
+        result.y = _jumpPowerY;
+        return result;
     }
 
     public bool IsGround()
