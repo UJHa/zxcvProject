@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
     private float _walkSpeed = 0.005f;
     private float _runSpeed = 0.015f;
     private float _moveSpeed = 0.0f;
-    private float _prevPositionY;
 
     private Dictionary<Direction, Vector3> _rotationMap = new Dictionary<Direction, Vector3>();
     private Dictionary<Direction, Vector3> _moveMap = new Dictionary<Direction, Vector3>();
@@ -83,8 +82,6 @@ public class Player : MonoBehaviour
         _curState = eState.IDLE;
 
         stateMap[_curState].StartState();
-
-        _prevPositionY = transform.position.y;
     }
 
     private void FixedUpdate()
