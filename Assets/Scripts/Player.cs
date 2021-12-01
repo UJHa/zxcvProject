@@ -22,8 +22,8 @@ public class Player : MonoBehaviour
     public bool _isGround = false;
     private bool _checkGround = true;
 
-    public float _jumpPowerY = 1000f;
-    public float _jumpPowerXZ = 10000f;
+    public float _jumpPowerY = 6f;
+    public float _jumpPowerXZ = 1f;
 
     public Vector3 _prevMoveSpeed = Vector3.zero;
 
@@ -62,14 +62,14 @@ public class Player : MonoBehaviour
         _inputMap.Add(Direction.LEFT_BACK, new KeyCode[] { KeyCode.UpArrow, KeyCode.LeftArrow });
         _inputMap.Add(Direction.RIGHT_BACK, new KeyCode[] { KeyCode.UpArrow, KeyCode.RightArrow });
 
-        _directionList.Add(Direction.FRONT);
-        _directionList.Add(Direction.BACK);
-        _directionList.Add(Direction.LEFT);
-        _directionList.Add(Direction.RIGHT);
         _directionList.Add(Direction.LEFT_FRONT);
         _directionList.Add(Direction.RIGHT_FRONT);
         _directionList.Add(Direction.LEFT_BACK);
         _directionList.Add(Direction.RIGHT_BACK);
+        _directionList.Add(Direction.FRONT);
+        _directionList.Add(Direction.BACK);
+        _directionList.Add(Direction.LEFT);
+        _directionList.Add(Direction.RIGHT);
 
         //transform.Rotate(0, 90, 0);
         _direction = Direction.FRONT;
@@ -132,8 +132,13 @@ public class Player : MonoBehaviour
     public void MovePosition()
     {
         transform.position += _moveMap[_direction] * _moveSpeed;
-        transform.eulerAngles = _rotationMap[_direction];
         _prevMoveSpeed = _moveMap[_direction] * _moveSpeed;
+    }
+
+    public void MoveDirectionPosition(Direction direction)
+    {
+        transform.position += _moveMap[direction] * _moveSpeed;
+        _prevMoveSpeed = _moveMap[direction] * _moveSpeed;
     }
 
     public void ResetPrevMoveSpeed()
@@ -143,7 +148,8 @@ public class Player : MonoBehaviour
 
     public void SetDirection(Direction direction)
     {
-        this._direction = direction;
+        _direction = direction;
+        transform.eulerAngles = _rotationMap[_direction];
     }
 
     public Direction GetDirection()
@@ -217,6 +223,11 @@ public class Player : MonoBehaviour
         Vector3 result = _prevMoveSpeed * _jumpPowerXZ;
         result.y = _jumpPowerY;
         return result;
+    }
+
+    public eState GetPrevState()
+    {
+        return _prevState;
     }
 
     public bool IsGround()

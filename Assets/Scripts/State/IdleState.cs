@@ -30,7 +30,7 @@ public class IdleState : State
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.Space) && player.IsGround())
+        if(Input.GetKeyDown(KeyCode.V) && player.IsGround())
         {
             player.ChangeState(eState.JUMP);
         }

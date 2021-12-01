@@ -37,7 +37,7 @@ public class WalkState : State
 
     public override void UpdateState()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && player.IsGround())
+        if (Input.GetKeyDown(KeyCode.V) && player.IsGround())
         {
             _isJump = true;
             player.ChangeState(eState.JUMP);
@@ -80,6 +80,7 @@ public class WalkState : State
                 player.SetDirection(direction);
 
                 isInput = true;
+                break;
             }
         }
 

@@ -5,7 +5,8 @@ using System.Diagnostics;
 public class JumpState : State
 {
     private Stopwatch stopwatch;
-    private long delayMillisec = 20;
+    private long delayMillisec = 200;
+    private Direction _jumpDirection = Direction.FRONT;
 
     public JumpState(Player player) : base(player)
     {
@@ -14,13 +15,21 @@ public class JumpState : State
 
     public override void StartState()
     {
+        eState prevState = player.GetPrevState();
+        if (prevState == eState.IDLE || prevState == eState.WALK)
+            player.SetWalkSpeed();
+        if (prevState == eState.RUN)
+            player.SetRunSpeed();
+
         animator.SetBool("IsGround", false);
         player.StartJump();
 
         stopwatch.Reset();
         stopwatch.Start();
 
-        player.GetComponent<Rigidbody>().AddForce(player.GetJumpForce());
+        _jumpDirection = player.GetDirection();
+
+        player.GetComponent<Rigidbody>().AddForce(player.GetJumpForce(), ForceMode.VelocityChange);
     }
 
     public override void EndState()
@@ -44,6 +53,17 @@ public class JumpState : State
         if (player.IsGround())
         {
             player.ChangeState(eState.IDLE);
+        }
+        player.MoveDirectionPosition(_jumpDirection);
+
+        bool isInput = false;
+        foreach (Direction direction in player.GetDirections())
+        {
+            if (player.GetKeysDirection(direction))
+            {
+                player.SetDirection(direction);
+                break;
+            }
         }
     }
 }

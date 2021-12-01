@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public Camera camera;
-    public Player player;
+    public GameObject player;
     public Vector3 adjust_pos = new Vector3(0.0f, 0.1f, 4.0f);
 
     void Start()

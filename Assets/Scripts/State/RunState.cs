@@ -25,7 +25,7 @@ public class RunState : State
 
     public override void UpdateState()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && player.IsGround())
+        if (Input.GetKeyDown(KeyCode.V) && player.IsGround())
         {
             _isJump = true;
             player.ChangeState(eState.JUMP);
@@ -40,16 +40,7 @@ public class RunState : State
                 player.SetDirection(direction);
 
                 isInput = true;
-            }
-        }
-
-        foreach (Direction direction in player.GetDirections())
-        {
-            if (player.GetKeysDownDirection(direction))
-            {
-                player.SetDirection(direction);
-
-                isInput = true;
+                break;
             }
         }
 
