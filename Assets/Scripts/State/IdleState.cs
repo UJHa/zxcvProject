@@ -34,5 +34,10 @@ public class IdleState : State
         {
             player.ChangeState(eState.JUMP);
         }
+
+        if (Input.GetKeyDown(KeyCode.C) && player.IsGround())
+        {
+            player.ChangeState(eState.ATTACK);
+        }
     }
 }

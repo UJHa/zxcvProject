@@ -78,6 +78,7 @@ public class Player : MonoBehaviour
         stateMap.Add(eState.WALK, new WalkState(this));
         stateMap.Add(eState.RUN, new RunState(this));
         stateMap.Add(eState.JUMP, new JumpState(this));
+        stateMap.Add(eState.ATTACK, new AttackState(this));
 
         _curState = eState.IDLE;
 

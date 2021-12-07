@@ -6,7 +6,8 @@ public enum eState
     IDLE,
     WALK,
     RUN,
-    JUMP
+    JUMP,
+    ATTACK
 }
 
 public abstract class State
