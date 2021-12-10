@@ -16,7 +16,9 @@ public class JumpState : State
     public override void StartState()
     {
         eState prevState = player.GetPrevState();
-        if (prevState == eState.IDLE || prevState == eState.WALK)
+        if (prevState == eState.IDLE)
+            player.ResetMoveSpeed();
+        if (prevState == eState.WALK)
             player.SetWalkSpeed();
         if (prevState == eState.RUN)
             player.SetRunSpeed();

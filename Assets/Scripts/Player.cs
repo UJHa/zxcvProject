@@ -168,6 +168,11 @@ public class Player : MonoBehaviour
         return _directionList;
     }
 
+    public void ResetMoveSpeed()
+    {
+        _moveSpeed = 0.0f;
+    }
+
     public void SetWalkSpeed()
     {
         _moveSpeed = _walkSpeed;

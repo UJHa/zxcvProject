@@ -3,9 +3,10 @@ using UnityEditor;
 
 public class AttackState : State
 {
+    private GameObject collider;
     public AttackState(Player player) : base(player)
     {
-
+        collider = player.transform.GetChild(2).gameObject;
     }
 
     public override void StartState()
