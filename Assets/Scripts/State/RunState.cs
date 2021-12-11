@@ -5,7 +5,7 @@ public class RunState : State
 {
     private bool _isJump = false;
 
-    public RunState(Player player) : base(player)
+    public RunState(Character character) : base(character)
     {
     }
 
@@ -13,7 +13,7 @@ public class RunState : State
     {
         _isJump = false;
 
-        player.SetRunSpeed();
+        character.SetMoveSpeedToRun();
         animator.SetBool("Run", true);
     }
 
@@ -25,19 +25,19 @@ public class RunState : State
 
     public override void UpdateState()
     {
-        if (Input.GetKeyDown(KeyCode.V) && player.IsGround())
+        if (Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
             _isJump = true;
-            player.ChangeState(eState.JUMP);
+            character.ChangeState(eState.JUMP);
             return;
         }
 
         bool isInput = false;
-        foreach (Direction direction in player.GetDirections())
+        foreach (Direction direction in character.GetDirections())
         {
-            if (player.GetKeysDirection(direction))
+            if (character.GetKeysDirection(direction))
             {
-                player.SetDirection(direction);
+                character.SetDirection(direction);
 
                 isInput = true;
                 break;
@@ -46,11 +46,11 @@ public class RunState : State
 
         if (isInput == false)
         {
-            player.ChangeState(eState.IDLE);
+            character.ChangeState(eState.IDLE);
         }
         else
         {
-            player.MovePosition();
+            character.MovePosition();
         }
     }
 }

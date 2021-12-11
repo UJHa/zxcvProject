@@ -12,13 +12,13 @@ public enum eState
 
 public abstract class State
 {
-    protected Player player;
+    protected Character character;
     protected Animator animator;
 
-    public State(Player player)
+    public State(Character character)
     {
-        this.player = player;
-        this.animator = player.GetComponent<Animator>();
+        this.character = character;
+        this.animator = character.GetComponent<Animator>();
     }
 
     public abstract void StartState();

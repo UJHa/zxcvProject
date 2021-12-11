@@ -9,7 +9,7 @@ public class WalkState : State
     private bool isAllKeyUp = false;
     private bool _isJump = false;
 
-    public WalkState(Player player) : base(player)
+    public WalkState(Character character) : base(character)
     {
         stopwatch = new Stopwatch();
     }
@@ -19,7 +19,7 @@ public class WalkState : State
         _isJump = false;
 
         UnityEngine.Debug.Log("State Check : Walk Start");
-        player.SetWalkSpeed();
+        character.SetMoveSpeedToWalk();
         stopwatch.Reset();
         isAllKeyUp = false;
 
@@ -37,10 +37,10 @@ public class WalkState : State
 
     public override void UpdateState()
     {
-        if (Input.GetKeyDown(KeyCode.V) && player.IsGround())
+        if (Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
             _isJump = true;
-            player.ChangeState(eState.JUMP);
+            character.ChangeState(eState.JUMP);
             return;
         }
 
@@ -48,20 +48,20 @@ public class WalkState : State
         {
             if (delayMillisec <= stopwatch.ElapsedMilliseconds)
             {
-                player.ChangeState(eState.IDLE);
+                character.ChangeState(eState.IDLE);
                 return;
             }
             else
             {
-                foreach (Direction direction in player.GetDirections())
+                foreach (Direction direction in character.GetDirections())
                 {
-                    if (player.GetKeysDownDirection(direction) && player.GetDirection() == direction)
+                    if (character.GetKeysDownDirection(direction) && character.GetDirection() == direction)
                     {
-                        player.ChangeState(eState.RUN);
+                        character.ChangeState(eState.RUN);
                         return;
                     }
 
-                    if (player.GetKeysDownDirection(direction))
+                    if (character.GetKeysDownDirection(direction))
                     {
                         isAllKeyUp = false;
                         stopwatch.Stop();
@@ -73,11 +73,11 @@ public class WalkState : State
 
         bool isInput = false;
 
-        foreach (Direction direction in player.GetDirections())
+        foreach (Direction direction in character.GetDirections())
         {
-            if (player.GetKeysDirection(direction))
+            if (character.GetKeysDirection(direction))
             {
-                player.SetDirection(direction);
+                character.SetDirection(direction);
 
                 isInput = true;
                 break;
@@ -91,7 +91,7 @@ public class WalkState : State
         }
         else
         {
-            player.MovePosition();
+            character.MovePosition();
         }
     }
 }

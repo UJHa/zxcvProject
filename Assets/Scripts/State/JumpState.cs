@@ -8,30 +8,30 @@ public class JumpState : State
     private long delayMillisec = 200;
     private Direction _jumpDirection = Direction.FRONT;
 
-    public JumpState(Player player) : base(player)
+    public JumpState(Character character) : base(character)
     {
         stopwatch = new Stopwatch();
     }
 
     public override void StartState()
     {
-        eState prevState = player.GetPrevState();
+        eState prevState = character.GetPrevState();
         if (prevState == eState.IDLE)
-            player.ResetMoveSpeed();
+            character.ResetMoveSpeed();
         if (prevState == eState.WALK)
-            player.SetWalkSpeed();
+            character.SetMoveSpeedToWalk();
         if (prevState == eState.RUN)
-            player.SetRunSpeed();
+            character.SetMoveSpeedToRun();
 
         animator.SetBool("IsGround", false);
-        player.StartJump();
+        character.StartJump();
 
         stopwatch.Reset();
         stopwatch.Start();
 
-        _jumpDirection = player.GetDirection();
+        _jumpDirection = character.GetDirection();
 
-        player.GetComponent<Rigidbody>().AddForce(player.GetJumpForce(), ForceMode.VelocityChange);
+        character.GetComponent<Rigidbody>().AddForce(character.GetJumpForce(), ForceMode.VelocityChange);
     }
 
     public override void EndState()
@@ -41,29 +41,29 @@ public class JumpState : State
         animator.SetBool("Run", false);
         stopwatch.Stop();
 
-        player.ResetPrevMoveSpeed();
+        character.ResetPrevMoveSpeed();
     }
 
     public override void UpdateState()
     {
         if (delayMillisec <= stopwatch.ElapsedMilliseconds)
         {
-            player.CheckIsGround();
+            character.CheckIsGround();
             stopwatch.Stop();
         }
 
-        if (player.IsGround())
+        if (character.IsGround())
         {
-            player.ChangeState(eState.IDLE);
+            character.ChangeState(eState.IDLE);
         }
-        player.MoveDirectionPosition(_jumpDirection);
+        character.MoveDirectionPosition(_jumpDirection);
 
         bool isInput = false;
-        foreach (Direction direction in player.GetDirections())
+        foreach (Direction direction in character.GetDirections())
         {
-            if (player.GetKeysDirection(direction))
+            if (character.GetKeysDirection(direction))
             {
-                player.SetDirection(direction);
+                character.SetDirection(direction);
                 break;
             }
         }

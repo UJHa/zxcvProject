@@ -4,9 +4,9 @@ using UnityEditor;
 public class AttackState : State
 {
     private GameObject collider;
-    public AttackState(Player player) : base(player)
+    public AttackState(Character character) : base(character)
     {
-        collider = player.transform.GetChild(2).gameObject;
+        collider = character.transform.GetChild(2).gameObject;
     }
 
     public override void StartState()
@@ -25,7 +25,7 @@ public class AttackState : State
         {
             if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
             {
-                player.ChangeState(eState.IDLE);
+                character.ChangeState(eState.IDLE);
             }
         }
     }

@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class IdleState : State
 {
-    public IdleState(Player player) : base(player)
+    public IdleState(Character character) : base(character)
     {
 
     }
@@ -20,24 +20,24 @@ public class IdleState : State
 
     public override void UpdateState()
     {
-        foreach (Direction direction in player.GetDirections())
+        foreach (Direction direction in character.GetDirections())
         {
-            if (player.GetKeysDownDirection(direction))
+            if (character.GetKeysDownDirection(direction))
             {
-                player.SetDirection(direction);
+                character.SetDirection(direction);
 
-                player.ChangeState(eState.WALK);
+                character.ChangeState(eState.WALK);
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.V) && player.IsGround())
+        if(Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
-            player.ChangeState(eState.JUMP);
+            character.ChangeState(eState.JUMP);
         }
 
-        if (Input.GetKeyDown(KeyCode.C) && player.IsGround())
+        if (Input.GetKeyDown(KeyCode.C) && character.IsGround())
         {
-            player.ChangeState(eState.ATTACK);
+            character.ChangeState(eState.ATTACK);
         }
     }
 }
