@@ -3,10 +3,8 @@ using UnityEditor;
 
 public class AttackState : State
 {
-    private GameObject collider;
     public AttackState(Character character) : base(character)
     {
-        collider = character.transform.GetChild(2).gameObject;
     }
 
     public override void StartState()

@@ -4,6 +4,7 @@ using UnityEditor;
 public class NpcRunState : State
 {
     private bool _isJump = false;
+    private float _attackRange = 1.0f;
 
     public NpcRunState(Character character) : base(character)
     {
@@ -28,12 +29,15 @@ public class NpcRunState : State
         if(character.GetTraceTarget() != null)
         {
             character.transform.LookAt(character.GetTraceTarget().transform);
+            Vector3 temp = character.transform.eulerAngles;
+            temp.x = 0.0f;
+            character.transform.eulerAngles = temp;
             character.transform.position += (character.GetTraceTarget().transform.position - character.transform.position).normalized * character.GetMoveSpeed();
-            if (Vector3.Distance(character.GetTraceTarget().transform.position, character.transform.position) <= 1.0f)
+            if (Vector3.Distance(character.GetTraceTarget().transform.position, character.transform.position) <= _attackRange)
             {
                 character.ChangeState(eState.ATTACK);
             }
-            if (Vector3.Distance(character.GetTraceTarget().transform.position, character.transform.position) > 3.0f)
+            if (character.IsInRange())
             {
                 character.SetTarget(null);
                 character.ChangeState(eState.IDLE);

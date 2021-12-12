@@ -208,17 +208,16 @@ public class Character : MonoBehaviour
         Gizmos.color = Color.yellow;
         Vector3 vector3 = transform.position;
         vector3.y += 0.9f;
-        Gizmos.DrawSphere(vector3, 5.0f);
+        Gizmos.DrawSphere(vector3, findRange);
     }
 
     public GameObject FindCollisions()
     {
         Vector3 vector3 = transform.position;
         vector3.y += 0.9f;
-        Collider[] colliders = Physics.OverlapSphere(vector3, 5.0f);
+        Collider[] colliders = Physics.OverlapSphere(vector3, findRange);
         foreach (Collider collider in colliders)
         {
-            Debug.Log("collider : " + collider.name);
             if(collider.name == "Player")
             {
                 return collider.gameObject;
@@ -229,6 +228,7 @@ public class Character : MonoBehaviour
     }
 
     public GameObject traceTarget = null;
+    private float findRange = 5.0f;
     public void SetTarget(GameObject gameObject)
     {
         traceTarget = gameObject;
@@ -237,5 +237,15 @@ public class Character : MonoBehaviour
     public GameObject GetTraceTarget()
     {
         return traceTarget;
+    }
+
+    public bool IsInRange()
+    {
+        return (Vector3.Distance(traceTarget.transform.position, transform.position) > findRange);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(name + " : " + other.name);
     }
 }
