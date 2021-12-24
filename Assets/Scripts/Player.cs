@@ -6,6 +6,8 @@ public class Player : Character
 {
     void Start()
     {
+        SetStartData();
+
         SetWalkSpeed(0.005f);
         SetRunSpeed(0.015f);
 
@@ -55,6 +57,7 @@ public class Player : Character
         stateMap.Add(eState.RUN, new RunState(this));
         stateMap.Add(eState.JUMP, new JumpState(this));
         stateMap.Add(eState.ATTACK, new AttackState(this));
+        stateMap.Add(eState.DEAD, new DeadState(this));
 
         _curState = eState.IDLE;
 

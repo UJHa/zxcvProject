@@ -7,7 +7,8 @@ public enum eState
     WALK,
     RUN,
     JUMP,
-    ATTACK
+    ATTACK,
+    DEAD
 }
 
 public abstract class State

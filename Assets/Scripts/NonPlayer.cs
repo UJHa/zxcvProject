@@ -7,6 +7,8 @@ public class NonPlayer : Character
 {
     void Start()
     {
+        SetStartData();
+
         SetWalkSpeed(0.003f);
         SetRunSpeed(0.012f);
 
@@ -56,6 +58,7 @@ public class NonPlayer : Character
         stateMap.Add(eState.RUN, new NpcRunState(this));
         stateMap.Add(eState.JUMP, new JumpState(this));
         stateMap.Add(eState.ATTACK, new AttackState(this));
+        stateMap.Add(eState.DEAD, new DeadState(this));
 
         _curState = eState.IDLE;
 

@@ -1,10 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 
 public class Character : MonoBehaviour
 {
+    public Slider slider;
+
+    private float _fullHp = 100f;
+    private float _curHp = 0f;
+
+    private float _attackPower = 30f;
+
     private float _walkSpeed = 0.005f;
     private float _runSpeed = 0.015f;
     private float _moveSpeed = 0.0f;
@@ -30,6 +38,11 @@ public class Character : MonoBehaviour
 
     public float _hitDistance = 0.0f;
     public double _checkGroundDistance = 0.2;
+
+    protected void SetStartData()
+    {
+        _curHp = _fullHp;
+    }
 
     private void FixedUpdate()
     {
@@ -62,6 +75,11 @@ public class Character : MonoBehaviour
                 _isGround = true;
             }
         }
+        Vector3 sliderPos = transform.position;
+        sliderPos.y += 1.8f;
+        slider.transform.position = sliderPos;
+        slider.value = _curHp / _fullHp;
+        slider.gameObject.SetActive(true);
     }
 
     // Update is called once per frame
@@ -246,6 +264,32 @@ public class Character : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // 피해 받았을때 진입
+        // other : attacker
+        // name : defender
         Debug.Log(name + " : " + other.name);
+        
+        if (other.name != "AttackCollider")
+            return;
+
+        Character attacker = other.transform.parent.GetComponent<Character>();
+        if (attacker == null)
+        {
+            Debug.Log("Attacker is not character.");
+            return;
+        }
+        
+        _curHp -= attacker.getAttackDamage();
+        if (_curHp <= 0f)
+        {
+            _curHp = 0f;
+            ChangeState(eState.DEAD);
+        }
+            
+    }
+
+    public float getAttackDamage()
+    {
+        return _attackPower;
     }
 }
