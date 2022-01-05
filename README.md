@@ -9,8 +9,8 @@ zxcv 키 사용 게임 제작
 # 구현된 State
     - 기본(Idle)
     - 걷기(Walk)
-    - 뛰기(Run)
-    - 점프(Jump)
+    - 달리기(Run)
+    - 뛰기(Jump)
 
 # 현재 Animator
 ![image](https://user-images.githubusercontent.com/22016754/148173679-bcb94876-6aaa-4cf1-a87d-41dc2872529c.png)
