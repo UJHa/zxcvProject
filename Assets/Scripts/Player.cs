@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : Character
 {
     void Start()
     {
-        SetStartData();
-        slider.gameObject.SetActive(true);
+        StartUI();
 
         SetWalkSpeed(0.005f);
         SetRunSpeed(0.015f);
@@ -63,5 +63,11 @@ public class Player : Character
         _curState = eState.IDLE;
 
         stateMap[_curState].StartState();
+    }
+
+    public override void DeadDisable()
+    {
+        base.DeadDisable();
+        GameManager.Instance.OpenFinishDialog("실패");
     }
 }

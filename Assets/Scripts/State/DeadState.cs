@@ -20,7 +20,6 @@ public class DeadState : State
 
     public override void UpdateState()
     {
-        character.gameObject.SetActive(false);
-        character.slider.gameObject.SetActive(false);
+        character.DeadDisable();
     }
 }
