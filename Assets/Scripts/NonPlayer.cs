@@ -8,6 +8,7 @@ public class NonPlayer : Character
     void Start()
     {
         SetStartData();
+        slider.gameObject.SetActive(true);
 
         SetWalkSpeed(0.003f);
         SetRunSpeed(0.012f);

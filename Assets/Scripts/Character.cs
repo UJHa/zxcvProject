@@ -75,11 +75,6 @@ public class Character : MonoBehaviour
                 _isGround = true;
             }
         }
-        Vector3 sliderPos = transform.position;
-        sliderPos.y += 1.8f;
-        slider.transform.position = sliderPos;
-        slider.value = _curHp / _fullHp;
-        slider.gameObject.SetActive(true);
     }
 
     // Update is called once per frame
@@ -92,6 +87,11 @@ public class Character : MonoBehaviour
             stateMap[_prevState].EndState();
             stateMap[_curState].StartState();
         }
+
+        Vector3 sliderPos = transform.position;
+        sliderPos.y += 1.8f;
+        slider.transform.position = sliderPos;
+        slider.value = _curHp / _fullHp;
     }
 
     public void MovePosition()

@@ -7,6 +7,7 @@ public class Player : Character
     void Start()
     {
         SetStartData();
+        slider.gameObject.SetActive(true);
 
         SetWalkSpeed(0.005f);
         SetRunSpeed(0.015f);
