@@ -7,7 +7,7 @@ public class NonPlayer : Character
 {
     void Start()
     {
-        SetStartData();
+        StartUI();
         slider.gameObject.SetActive(true);
 
         SetWalkSpeed(0.003f);
@@ -64,5 +64,11 @@ public class NonPlayer : Character
         _curState = eState.IDLE;
 
         stateMap[_curState].StartState();
+    }
+
+    public override void DeadDisable()
+    {
+        base.DeadDisable();
+        GameManager.Instance.UpdateEnemyCount();
     }
 }

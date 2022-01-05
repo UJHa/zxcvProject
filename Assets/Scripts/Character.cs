@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class Character : MonoBehaviour
 {
-    public Slider slider;
+    protected Slider slider;
 
     private float _fullHp = 100f;
     private float _curHp = 0f;
@@ -39,9 +39,18 @@ public class Character : MonoBehaviour
     public float _hitDistance = 0.0f;
     public double _checkGroundDistance = 0.2;
 
-    protected void SetStartData()
+    protected void StartUI()
     {
         _curHp = _fullHp;
+        GameObject prefab = Resources.Load("Prefabs/HpSlider") as GameObject;
+        GameObject hpSlider = GameObject.Instantiate(prefab);
+        
+        hpSlider.transform.SetParent(GameManager.Instance.GetCanvas());
+        hpSlider.transform.SetAsFirstSibling();
+        //hpSlider.transform.localScale = Vector3.one;
+        slider = hpSlider.GetComponent<Slider>();
+
+        slider.gameObject.SetActive(true);
     }
 
     private void FixedUpdate()
@@ -89,8 +98,9 @@ public class Character : MonoBehaviour
         }
 
         Vector3 sliderPos = transform.position;
-        sliderPos.y += 1.8f;
-        slider.transform.position = sliderPos;
+        sliderPos.y += 2f;
+        //slider.transform.position = sliderPos;
+        slider.transform.position = Camera.main.WorldToScreenPoint(sliderPos);
         slider.value = _curHp / _fullHp;
     }
 
@@ -223,10 +233,10 @@ public class Character : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         // Draw a yellow sphere at the transform's position
-        Gizmos.color = Color.yellow;
-        Vector3 vector3 = transform.position;
-        vector3.y += 0.9f;
-        Gizmos.DrawSphere(vector3, findRange);
+        //Gizmos.color = Color.yellow;
+        //Vector3 vector3 = transform.position;
+        //vector3.y += 0.9f;
+        //Gizmos.DrawSphere(vector3, findRange);
     }
 
     public GameObject FindCollisions()
@@ -291,5 +301,11 @@ public class Character : MonoBehaviour
     public float getAttackDamage()
     {
         return _attackPower;
+    }
+
+    public virtual void DeadDisable()
+    {
+        gameObject.SetActive(false);
+        slider.gameObject.SetActive(false);
     }
 }
