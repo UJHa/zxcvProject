@@ -18,7 +18,6 @@ public class WalkState : State
     {
         _isJump = false;
 
-        UnityEngine.Debug.Log("State Check : Walk Start");
         character.SetMoveSpeedToWalk();
         stopwatch.Reset();
         isAllKeyUp = false;
@@ -28,7 +27,6 @@ public class WalkState : State
 
     public override void EndState()
     {
-        UnityEngine.Debug.Log("State Check : Walk End");
         stopwatch.Stop();
 
         if (!_isJump)

@@ -38,14 +38,10 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(transform.parent);
-
         foreach(NonPlayer enemy in GameObject.FindObjectsOfType<NonPlayer>())
         {
             enemies.Add(enemy);
         }
-
-        Debug.Log("TEST!!!");
 
         totalCount = enableCount = enemies.Count;
     }
@@ -75,8 +71,6 @@ public class GameManager : MonoBehaviour
 
     public void OpenFinishDialog(string text)
     {
-        Debug.Log("log");
-        Debug.Log(text);
         clearText = text;
         Transform clearObject = canvas.transform.Find("ClearDialog");
         clearObject.gameObject.SetActive(true);
