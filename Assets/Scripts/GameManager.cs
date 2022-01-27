@@ -25,7 +25,11 @@ public class GameManager : MonoBehaviour
 
     public Camera camera;
     public GameObject player;
-    public Vector3 adjust_pos = new Vector3(0.0f, 0.1f, 4.0f);
+
+    // Change value in Unity editor
+    [SerializeField]
+    private Vector3 adjust_pos = new Vector3(0.0f, 12f, 8.0f);
+    
     [SerializeField]
     private Canvas canvas;
 
@@ -47,7 +51,11 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (camera)
-            camera.transform.position = player.transform.position + adjust_pos;
+        {
+            Vector3 cameraCenterPos = player.transform.position;
+            cameraCenterPos.y = 0f;
+            camera.transform.position = cameraCenterPos + adjust_pos;
+        }
     }
 
     public Transform GetCanvas() => canvas.transform;
