@@ -32,7 +32,8 @@ public class NpcRunState : State
             Vector3 temp = character.transform.eulerAngles;
             temp.x = 0.0f;
             character.transform.eulerAngles = temp;
-            character.transform.position += (character.GetTraceTarget().transform.position - character.transform.position).normalized * character.GetMoveSpeed();
+            Vector3 traceDirection = (character.GetTraceTarget().transform.position - character.transform.position).normalized;
+            character.transform.position += traceDirection * character.GetMoveSpeed();
             if (Vector3.Distance(character.GetTraceTarget().transform.position, character.transform.position) <= _attackRange)
             {
                 character.ChangeState(eState.ATTACK);
@@ -41,7 +42,6 @@ public class NpcRunState : State
             {
                 character.SetTarget(null);
                 character.ChangeState(eState.IDLE);
-
             }
         }
         else

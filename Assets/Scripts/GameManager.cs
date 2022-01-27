@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
     private static GameManager instance = null;
     public static GameManager Instance
     {
@@ -19,7 +18,6 @@ public class GameManager : MonoBehaviour
         if (instance)
         {
             Destroy(this.gameObject);
-            return;
         }
 
         instance = this;
@@ -91,4 +89,12 @@ public class GameManager : MonoBehaviour
     {
         Application.Quit();
     }
+
+    Vector3 playerPos = Vector3.zero;
+    public void SetPlayerUIPos(Vector3 pos)
+    {
+        playerPos = pos;
+    }
+
+    public Vector3 GetPlayerUIPos() => playerPos;
 }

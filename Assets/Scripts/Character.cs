@@ -7,6 +7,7 @@ using UnityEditor;
 public class Character : MonoBehaviour
 {
     protected Slider slider;
+    protected float sliderScale = 1.0f;
 
     private float _fullHp = 100f;
     private float _curHp = 0f;
@@ -37,9 +38,9 @@ public class Character : MonoBehaviour
     public Vector3 _prevMoveSpeed = Vector3.zero;
 
     public float _hitDistance = 0.0f;
-    public double _checkGroundDistance = 0.2;
+    public double CHECK_GROUND_DISTANCE = 0.2;
 
-    protected void StartUI()
+    protected virtual void StartUI()
     {
         _curHp = _fullHp;
         GameObject prefab = Resources.Load("Prefabs/HpSlider") as GameObject;
@@ -53,13 +54,27 @@ public class Character : MonoBehaviour
         slider.gameObject.SetActive(true);
     }
 
+    protected virtual void UpdateUI()
+    {
+        Vector3 sliderPos = transform.position;
+        sliderPos.y += 2f;
+        slider.transform.position = Camera.main.WorldToScreenPoint(sliderPos);
+
+        Vector3 playerUIDistance = Camera.main.transform.position - GameManager.Instance.GetPlayerUIPos();
+        Vector3 currentUIDistance = Camera.main.transform.position - sliderPos;
+
+        sliderScale = Vector3.Magnitude(playerUIDistance) / Vector3.Magnitude(currentUIDistance);
+        slider.gameObject.transform.localScale = Vector3.one * sliderScale;
+        slider.value = _curHp / _fullHp;
+    }
+
     private void FixedUpdate()
     {
         if (_checkGround)
         {
             Vector3 curPos = transform.position;
             // Bit shift the index of the layer (8) to get a bit mask
-            int layerMask = 1 << 8;
+            int layerMask = 0;
 
             // This would cast rays only against colliders in layer 8.
             // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
@@ -69,11 +84,9 @@ public class Character : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
             {
-                // test for jump
                 Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
                 _isGround = false;
-                // todo : change 3.3e-06 to const value
-                if (hit.distance <= _checkGroundDistance)
+                if (hit.distance <= CHECK_GROUND_DISTANCE)
                 {
                     _isGround = true;
                 }
@@ -97,17 +110,7 @@ public class Character : MonoBehaviour
             stateMap[_curState].StartState();
         }
 
-        Vector3 sliderPos = transform.position;
-        sliderPos.y += 2f;
-        //slider.transform.position = sliderPos;
-        slider.transform.position = Camera.main.WorldToScreenPoint(sliderPos);
-        slider.value = _curHp / _fullHp;
-    }
-
-    public void MovePosition()
-    {
-        transform.position += _moveMap[_direction] * _moveSpeed;
-        _prevMoveSpeed = _moveMap[_direction] * _moveSpeed;
+        UpdateUI();
     }
 
     public void MoveDirectionPosition(Direction direction)
@@ -277,8 +280,6 @@ public class Character : MonoBehaviour
         // 피해 받았을때 진입
         // other : attacker
         // name : defender
-        Debug.Log(name + " : " + other.name);
-        
         if (other.name != "AttackCollider")
             return;
 
@@ -295,7 +296,6 @@ public class Character : MonoBehaviour
             _curHp = 0f;
             ChangeState(eState.DEAD);
         }
-            
     }
 
     public float getAttackDamage()

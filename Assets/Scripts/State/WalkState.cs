@@ -53,7 +53,8 @@ public class WalkState : State
             {
                 foreach (Direction direction in character.GetDirections())
                 {
-                    if (character.GetKeysDownDirection(direction) && character.GetDirection() == direction)
+                    if (character.GetKeysDownDirection(direction) 
+                        && character.GetDirection() == direction)
                     {
                         character.ChangeState(eState.RUN);
                         return;
@@ -89,7 +90,7 @@ public class WalkState : State
         }
         else
         {
-            character.MovePosition();
+            character.MoveDirectionPosition(character.GetDirection());
         }
     }
 }

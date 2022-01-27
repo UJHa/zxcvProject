@@ -10,12 +10,11 @@ public class IdleState : State
 
     public override void StartState()
     {
-
+        character.ResetMoveSpeed();
     }
 
     public override void EndState()
     {
-
     }
 
     public override void UpdateState()

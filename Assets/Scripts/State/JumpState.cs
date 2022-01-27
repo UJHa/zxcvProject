@@ -15,14 +15,6 @@ public class JumpState : State
 
     public override void StartState()
     {
-        eState prevState = character.GetPrevState();
-        if (prevState == eState.IDLE)
-            character.ResetMoveSpeed();
-        if (prevState == eState.WALK)
-            character.SetMoveSpeedToWalk();
-        if (prevState == eState.RUN)
-            character.SetMoveSpeedToRun();
-
         animator.SetBool("IsGround", false);
         character.StartJump();
 

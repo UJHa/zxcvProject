@@ -66,6 +66,18 @@ public class NonPlayer : Character
         stateMap[_curState].StartState();
     }
 
+    protected override void StartUI()
+    {
+        base.StartUI();
+
+        Vector3 sliderPos = transform.position;
+        sliderPos.y += 2f;
+        slider.transform.position = Camera.main.WorldToScreenPoint(sliderPos);
+
+        sliderScale = Vector3.Magnitude(Camera.main.transform.position - GameManager.Instance.GetPlayerUIPos()) / Vector3.Magnitude(Camera.main.transform.position - sliderPos);
+        slider.gameObject.transform.localScale = Vector3.one * sliderScale;
+    }
+
     public override void DeadDisable()
     {
         base.DeadDisable();

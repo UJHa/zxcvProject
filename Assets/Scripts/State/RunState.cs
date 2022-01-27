@@ -50,7 +50,7 @@ public class RunState : State
         }
         else
         {
-            character.MovePosition();
+            character.MoveDirectionPosition(character.GetDirection());
         }
     }
 }

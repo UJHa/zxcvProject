@@ -65,6 +65,24 @@ public class Player : Character
         stateMap[_curState].StartState();
     }
 
+    protected override void StartUI()
+    {
+        base.StartUI();
+        
+        Vector3 sliderPos = transform.position;
+        sliderPos.y += 2f;
+        GameManager.Instance.SetPlayerUIPos(sliderPos);
+        slider.transform.position = Camera.main.WorldToScreenPoint(sliderPos);
+    }
+
+    protected override void UpdateUI()
+    {
+        base.UpdateUI();
+        Vector3 sliderPos = transform.position;
+        sliderPos.y += 2f;
+        GameManager.Instance.SetPlayerUIPos(transform.position);
+    }
+
     public override void DeadDisable()
     {
         base.DeadDisable();
