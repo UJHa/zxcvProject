@@ -6,17 +6,26 @@ using UnityEditor;
 
 public class Character : MonoBehaviour
 {
-    protected Slider slider;
-    protected float sliderScale = 1.0f;
-
+    [Header("Stats")]
     private float _fullHp = 100f;
-    private float _curHp = 0f;
-
     private float _attackPower = 30f;
-
+    
     private float _walkSpeed = 0.005f;
     private float _runSpeed = 0.015f;
     private float _moveSpeed = 0.0f;
+
+    public float _jumpPowerY = 6f;
+    public float _jumpPowerXZ = 1f;
+
+    [Header("JumpStats")]
+    public float _jumpOffset = 0.31f;
+    public float _downBoxHeight = 0.2f;
+
+    [Header("UI")]
+    protected Slider slider;
+
+    private float _curHp = 0f;
+    protected float sliderScale = 1.0f;
 
     protected Direction _direction;
     protected Dictionary<Direction, Vector3> _rotationMap = new Dictionary<Direction, Vector3>();
@@ -32,8 +41,6 @@ public class Character : MonoBehaviour
     public bool _isGround = false;
     private bool _checkGround = true;
 
-    public float _jumpPowerY = 6f;
-    public float _jumpPowerXZ = 1f;
 
     public Vector3 _prevMoveSpeed = Vector3.zero;
 
@@ -70,33 +77,69 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Debug.Log($"IsGround : {_isGround}");
         if (_checkGround)
         {
-            Vector3 curPos = transform.position;
-            // Bit shift the index of the layer (8) to get a bit mask
-            int layerMask = 0;
-
-            // This would cast rays only against colliders in layer 8.
-            // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
-            layerMask = ~layerMask;
-
-
-            RaycastHit hit;
-            if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
+            Vector3 boxCenter = transform.position;
+            boxCenter.y -= _downBoxHeight / 2;
+            Vector3 boxHalfSize = new Vector3(1f, _downBoxHeight, 1f) / 2;  // 캐스트할 박스 크기의 절반 크기. 이렇게 하면 가로 2 세로 2 높이 2의 크기의 공간을 캐스트한다.
+            int layerMask = 1;
+            layerMask = layerMask << LayerMask.NameToLayer("Ground");
+            RaycastHit[] hits = Physics.BoxCastAll(boxCenter, boxHalfSize, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+            
+            //if (hits.Length > 1)
+            //{
+            //    Debug.Log("=====");
+            //    foreach (var hi in hits)
+            //    {
+            //        if (_downBoxHeight > Vector3.Distance(boxCenter, hi.transform.position))
+            //            Debug.Log($"name : {hi.collider.name} distance : {Vector3.Distance(boxCenter, hi.transform.position)}");
+            //    }
+            //}
+            if (hits.Length > 0)
             {
-                Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
-                _isGround = false;
-                if (hit.distance <= CHECK_GROUND_DISTANCE)
-                {
-                    _isGround = true;
-                }
-            }
-            else
-            {
-                Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
+                //Debug.Log("Ground Box!!!");
                 _isGround = true;
             }
+
+            // todo
+            // 바닥으로 레이져 쏴서 모든 ground의 접점 거리 체크하기
+            // 접점이 가장 짧은 길이가 height보다 작으면 바닥으로 취급시키기
+            // >> 점프 시작 상태일 때 높이가 up 벡터 방향으로 이동 시 바닥을 무시하도록 변경
+            // 
+            // 점프 시작 시 바닥으로 변경하는 처리가 필요 
+            // // + 기존에 0.2초 딜레이 후 바닥체크를 시작했었음...(JumpState 참고)
+            // // + 시간 초 제거 후 JumpState 상태 시 y값이 최대값이 아니게 될 때부터 바닥 체크
+            // // + fall 코드 한번만 더 생각해보자
+
+            //RaycastHit hit;
+            //if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
+            //{
+            //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
+            //    _isGround = false;
+            //    if (hit.distance <= CHECK_GROUND_DISTANCE)
+            //    {
+            //        _isGround = true;
+            //        Debug.Log("Ground Check!!!");
+            //    }
+            //}
+            //else
+            //{
+            //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
+            //    _isGround = true;
+            //    Debug.Log("Ground not ray!!!");
+            //}
         }
+        //Debug.Log($"tranform height : {transform.position.y}");
+    }
+
+    private void OnDrawGizmos()
+    {
+        float height = 0.2f;
+        Vector3 center = transform.position;
+        //center.y -= height / 2;
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(center, new Vector3(1f, 0.2f, 1f));
     }
 
     // Update is called once per frame
@@ -231,15 +274,6 @@ public class Character : MonoBehaviour
     public bool IsGround()
     {
         return _isGround;
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        // Draw a yellow sphere at the transform's position
-        //Gizmos.color = Color.yellow;
-        //Vector3 vector3 = transform.position;
-        //vector3.y += 0.9f;
-        //Gizmos.DrawSphere(vector3, findRange);
     }
 
     public GameObject FindCollisions()

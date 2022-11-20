@@ -5,7 +5,7 @@ using System.Diagnostics;
 public class JumpState : State
 {
     private Stopwatch stopwatch;
-    private long delayMillisec = 200;
+    private long delayMillisec = 0;
     private Direction _jumpDirection = Direction.FRONT;
 
     public JumpState(Character character) : base(character)
@@ -23,7 +23,11 @@ public class JumpState : State
 
         _jumpDirection = character.GetDirection();
 
+        Vector3 pos = character.transform.position;
+        pos.y += character._jumpOffset;
+        character.transform.position = pos;
         character.GetComponent<Rigidbody>().AddForce(character.GetJumpForce(), ForceMode.VelocityChange);
+        UnityEngine.Debug.Log("=======Jump Start!");
     }
 
     public override void EndState()
@@ -50,7 +54,6 @@ public class JumpState : State
         }
         character.MoveDirectionPosition(_jumpDirection);
 
-        bool isInput = false;
         foreach (Direction direction in character.GetDirections())
         {
             if (character.GetKeysDirection(direction))
