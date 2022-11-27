@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,16 +11,21 @@ public class Character : MonoBehaviour
     private float _fullHp = 100f;
     private float _attackPower = 30f;
     
-    private float _walkSpeed = 0.005f;
-    private float _runSpeed = 0.015f;
-    private float _moveSpeed = 0.0f;
+    [SerializeField] private float _walkSpeed = 2f;
+    [SerializeField] private float _runSpeed = 6f;
+    [SerializeField] private float _moveSpeed = 0.0f;
 
-    public float _jumpPowerY = 6f;
-    public float _jumpPowerXZ = 1f;
+    [SerializeField] private float _jumpHeight = 2f;
+    [SerializeField] private float _jumpPowerY = 6f;
+    [SerializeField] private float _jumpPowerXZ = 1f;
 
     [Header("JumpStats")]
     public float _jumpOffset = 0.31f;
     public float _downBoxHeight = 0.2f;
+
+    [Header("3D Phygics Component")] 
+    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private ForceMode _forceModeType = ForceMode.Force;
 
     [Header("UI")]
     protected Slider slider;
@@ -41,11 +47,13 @@ public class Character : MonoBehaviour
     public bool _isGround = false;
     private bool _checkGround = true;
 
-
-    public Vector3 _prevMoveSpeed = Vector3.zero;
-
     public float _hitDistance = 0.0f;
     public double CHECK_GROUND_DISTANCE = 0.2;
+
+    private void Awake()
+    {
+        
+    }
 
     protected virtual void StartUI()
     {
@@ -77,7 +85,7 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log($"IsGround : {_isGround}");
+        // Debug.Log($"IsGround : {_isGround}");
         if (_checkGround)
         {
             Vector3 boxCenter = transform.position;
@@ -137,7 +145,7 @@ public class Character : MonoBehaviour
     {
         float height = 0.2f;
         Vector3 center = transform.position;
-        //center.y -= height / 2;
+        center.y -= height / 2;
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(center, new Vector3(1f, 0.2f, 1f));
     }
@@ -158,19 +166,24 @@ public class Character : MonoBehaviour
 
     public void MoveDirectionPosition(Direction direction)
     {
-        transform.position += _moveMap[direction] * _moveSpeed;
-        _prevMoveSpeed = _moveMap[direction] * _moveSpeed;
+        // transform.position += _moveMap[direction] * _moveSpeed;
+        _rigidbody.velocity = _moveMap[direction] * _moveSpeed;
     }
 
     public void ResetPrevMoveSpeed()
     {
-        _prevMoveSpeed = Vector3.zero;
+        // _prevMoveSpeed = Vector3.zero;
     }
 
     public void SetDirection(Direction direction)
     {
         _direction = direction;
         transform.eulerAngles = _rotationMap[_direction];
+    }
+    
+    public Rigidbody GetRigidbody()
+    {
+        return _rigidbody;
     }
 
     public Direction GetDirection()
@@ -191,6 +204,8 @@ public class Character : MonoBehaviour
     public void ResetMoveSpeed()
     {
         _moveSpeed = 0.0f;
+        // 점프한 y 좌표는 따로 관리해야 될듯?
+        _rigidbody.velocity = Vector3.zero;
     }
 
     public void SetMoveSpeedToWalk()
@@ -261,7 +276,7 @@ public class Character : MonoBehaviour
 
     public Vector3 GetJumpForce()
     {
-        Vector3 result = _prevMoveSpeed * _jumpPowerXZ;
+        Vector3 result = _rigidbody.velocity * _jumpPowerXZ;
         result.y = _jumpPowerY;
         return result;
     }
@@ -341,5 +356,10 @@ public class Character : MonoBehaviour
     {
         gameObject.SetActive(false);
         slider.gameObject.SetActive(false);
+    }
+
+    public ForceMode GetForceModeType()
+    {
+        return _forceModeType;
     }
 }

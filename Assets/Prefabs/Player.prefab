@@ -86,8 +86,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _walkSpeed: 2
+  _runSpeed: 6
+  _moveSpeed: 0
   _jumpPowerY: 6
   _jumpPowerXZ: 1
+  _jumpOffset: 0.31
+  _downBoxHeight: 0.2
+  _rigidbody: {fileID: 885296071429854327}
   _curState: 0
   _isGround: 0
   _prevMoveSpeed: {x: 0, y: 0, z: 0}

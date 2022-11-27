@@ -5,7 +5,7 @@ using System.Diagnostics;
 public class JumpState : State
 {
     private Stopwatch stopwatch;
-    private long delayMillisec = 0;
+    private long delayMillisec = 1000;
     private Direction _jumpDirection = Direction.FRONT;
 
     public JumpState(Character character) : base(character)
@@ -24,10 +24,11 @@ public class JumpState : State
         _jumpDirection = character.GetDirection();
 
         Vector3 pos = character.transform.position;
-        pos.y += character._jumpOffset;
-        character.transform.position = pos;
-        character.GetComponent<Rigidbody>().AddForce(character.GetJumpForce(), ForceMode.VelocityChange);
-        UnityEngine.Debug.Log("=======Jump Start!");
+        // pos.y += character._jumpOffset;
+        // character.transform.position = pos;
+        // character.GetRigidbody().velocity = character.GetJumpForce();
+        character.GetRigidbody().AddForce(character.GetJumpForce(), character.GetForceModeType());
+        UnityEngine.Debug.Log($"=======Jump Start! velocity({character.GetRigidbody().velocity})");
     }
 
     public override void EndState()

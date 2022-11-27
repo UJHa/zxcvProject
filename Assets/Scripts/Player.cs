@@ -9,8 +9,8 @@ public class Player : Character
     {
         StartUI();
 
-        SetWalkSpeed(0.005f);
-        SetRunSpeed(0.015f);
+        // SetWalkSpeed(0.005f);
+        // SetRunSpeed(0.015f);
 
         _rotationMap.Add(Direction.FRONT, new Vector3(0, 0, 0));
         _rotationMap.Add(Direction.BACK, new Vector3(0, 180, 0));
