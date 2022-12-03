@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
+using UnityEngine.Serialization;
 
 public class Character : MonoBehaviour
 {
@@ -11,11 +12,15 @@ public class Character : MonoBehaviour
     private float _fullHp = 100f;
     private float _attackPower = 30f;
     
+    [SerializeField] private AnimationCurve _jumpUp = new ();
+    [SerializeField] private AnimationCurve _jumpDown = new ();
     [SerializeField] private float _walkSpeed = 2f;
     [SerializeField] private float _runSpeed = 6f;
     [SerializeField] private float _moveSpeed = 0.0f;
-
-    [SerializeField] private float _jumpHeight = 2f;
+    [Header("Jump Stats")]
+    [SerializeField] private bool _useReverse = false;
+    [SerializeField] private float _jumpMaxHeight = 2f;
+    [SerializeField] private float _jumpUpMaxTimer = 2f;
     [SerializeField] private float _jumpPowerY = 6f;
     [SerializeField] private float _jumpPowerXZ = 1f;
 
@@ -52,7 +57,69 @@ public class Character : MonoBehaviour
 
     private void Awake()
     {
+        _isGround = true;
+        MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
+        if (false == _useReverse)
+            MakeFixedDeltaTimeCurve(_jumpDown, _jumpUpMaxTimer / 2f);
+        else
+        {
+            MakeReverseCurve(_jumpUp, _jumpDown);
+        }
+    }
+
+    private void MakeFixedDeltaTimeCurve(AnimationCurve curve, float argMaxTime)
+    {
+        // 초단위로 커브 만들고 maxTime 통해서 커브 시간 변경
+        List<float> temp = new();
+        var divideLength = Time.fixedDeltaTime * 1f;
+        var count = (int)(1f / divideLength);
+        for (int i = 0; i < count; i++)
+        {
+            temp.Add(curve.Evaluate(divideLength * i));
+        }
+        temp.Add(1f);
         
+        while (curve.keys.Length > 0)
+        {
+            curve.RemoveKey(0);
+        }
+
+        for (int i = 0; i < temp.Count; i++)
+        {
+            curve.AddKey(i * divideLength * argMaxTime, temp[i]);
+            Debug.Log($"[testum]key({i * Time.fixedDeltaTime * argMaxTime})/val({temp[i]})");
+        }
+    }
+
+    private void MakeReverseCurve(AnimationCurve origin, AnimationCurve reverse)
+    {
+        var maxX = origin[origin.length - 1].time;
+        var maxY = origin[origin.length - 1].value;
+        for (int i = 0; i < origin.length; i++)
+        {
+            Debug.Log($"i({i}) time({origin[i].time}) value({origin[i].value})");
+            reverse.AddKey(maxX-origin[i].time, maxY-origin[i].value);
+        }
+    }
+
+    public float GetJumpUpVelocity(float deltatime)
+    {
+        if (deltatime <= 0f)
+            return 0f;
+        var prevTime = deltatime - Time.fixedDeltaTime;
+        float dx = deltatime - prevTime;
+        float dy = _jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime);
+        return (_jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime)) / (deltatime - prevTime) * _jumpMaxHeight;
+    }
+    
+    public float GetJumpDownVelocity(float deltatime)
+    {
+        if (deltatime <= 0f)
+            return 0f;
+        var prevTime = deltatime - Time.fixedDeltaTime;
+        float dx = deltatime - prevTime;
+        float dy = _jumpDown.Evaluate(deltatime) - _jumpDown.Evaluate(prevTime);
+        return -1f * (_jumpDown.Evaluate(deltatime) - _jumpDown.Evaluate(prevTime)) / (deltatime - prevTime) * _jumpMaxHeight;
     }
 
     protected virtual void StartUI()
@@ -86,6 +153,87 @@ public class Character : MonoBehaviour
     private void FixedUpdate()
     {
         // Debug.Log($"IsGround : {_isGround}");
+        // if (_checkGround)
+        // {
+        //     Vector3 boxCenter = transform.position;
+        //     boxCenter.y -= _downBoxHeight / 2;
+        //     Vector3 boxHalfSize = new Vector3(1f, _downBoxHeight, 1f) / 2;  // 캐스트할 박스 크기의 절반 크기. 이렇게 하면 가로 2 세로 2 높이 2의 크기의 공간을 캐스트한다.
+        //     int layerMask = 1;
+        //     layerMask = layerMask << LayerMask.NameToLayer("Ground");
+        //     RaycastHit[] hits = Physics.BoxCastAll(boxCenter, boxHalfSize, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        //     
+        //     //if (hits.Length > 1)
+        //     //{
+        //     //    Debug.Log("=====");
+        //     //    foreach (var hi in hits)
+        //     //    {
+        //     //        if (_downBoxHeight > Vector3.Distance(boxCenter, hi.transform.position))
+        //     //            Debug.Log($"name : {hi.collider.name} distance : {Vector3.Distance(boxCenter, hi.transform.position)}");
+        //     //    }
+        //     //}
+        //     if (hits.Length > 0)
+        //     {
+        //         //Debug.Log("Ground Box!!!");
+        //         _isGround = true;
+        //     }
+        //
+        //     // todo
+        //     // 바닥으로 레이져 쏴서 모든 ground의 접점 거리 체크하기
+        //     // 접점이 가장 짧은 길이가 height보다 작으면 바닥으로 취급시키기
+        //     // >> 점프 시작 상태일 때 높이가 up 벡터 방향으로 이동 시 바닥을 무시하도록 변경
+        //     // 
+        //     // 점프 시작 시 바닥으로 변경하는 처리가 필요 
+        //     // // + 기존에 0.2초 딜레이 후 바닥체크를 시작했었음...(JumpState 참고)
+        //     // // + 시간 초 제거 후 JumpState 상태 시 y값이 최대값이 아니게 될 때부터 바닥 체크
+        //     // // + fall 코드 한번만 더 생각해보자
+        //
+        //     //RaycastHit hit;
+        //     //if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
+        //     //{
+        //     //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
+        //     //    _isGround = false;
+        //     //    if (hit.distance <= CHECK_GROUND_DISTANCE)
+        //     //    {
+        //     //        _isGround = true;
+        //     //        Debug.Log("Ground Check!!!");
+        //     //    }
+        //     //}
+        //     //else
+        //     //{
+        //     //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
+        //     //    _isGround = true;
+        //     //    Debug.Log("Ground not ray!!!");
+        //     //}
+        // }
+        //Debug.Log($"tranform height : {transform.position.y}");
+        stateMap[_curState].FixedUpdateState();
+    }
+
+    private void OnDrawGizmos()
+    {
+        float height = 0.2f;
+        Vector3 center = transform.position;
+        center.y -= height / 2;
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(center, new Vector3(1f, 0.2f, 1f));
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (_prevState != _curState)
+        {
+            stateMap[_prevState].EndState();
+            stateMap[_curState].StartState();
+        }
+        _prevState = _curState;
+        stateMap[_curState].UpdateState();
+
+        UpdateUI();
+    }
+
+    public void FixedUpdatePhygics()
+    {
         if (_checkGround)
         {
             Vector3 boxCenter = transform.position;
@@ -138,30 +286,6 @@ public class Character : MonoBehaviour
             //    Debug.Log("Ground not ray!!!");
             //}
         }
-        //Debug.Log($"tranform height : {transform.position.y}");
-    }
-
-    private void OnDrawGizmos()
-    {
-        float height = 0.2f;
-        Vector3 center = transform.position;
-        center.y -= height / 2;
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(center, new Vector3(1f, 0.2f, 1f));
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        _prevState = _curState;
-        stateMap[_curState].UpdateState();
-        if (_prevState != _curState)
-        {
-            stateMap[_prevState].EndState();
-            stateMap[_curState].StartState();
-        }
-
-        UpdateUI();
     }
 
     public void MoveDirectionPosition(Direction direction)
@@ -179,6 +303,16 @@ public class Character : MonoBehaviour
     {
         _direction = direction;
         transform.eulerAngles = _rotationMap[_direction];
+    }
+    
+    public float GetJumpUpMaxTimer()
+    {
+        return _jumpUpMaxTimer;
+    }
+    
+    public float GetJumpMaxHeight()
+    {
+        return _jumpMaxHeight;
     }
     
     public Rigidbody GetRigidbody()
@@ -279,6 +413,11 @@ public class Character : MonoBehaviour
         Vector3 result = _rigidbody.velocity * _jumpPowerXZ;
         result.y = _jumpPowerY;
         return result;
+    }
+    
+    public float GetJumpPowerY()
+    {
+        return _jumpPowerY;
     }
 
     public eState GetPrevState()

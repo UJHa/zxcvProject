@@ -7,6 +7,8 @@ public enum eState
     WALK,
     RUN,
     JUMP,
+    JUMP_UP,
+    JUMP_DOWN,
     ATTACK,
     DEAD
 }
@@ -24,5 +26,6 @@ public abstract class State
 
     public abstract void StartState();
     public abstract void UpdateState();
+    public abstract void FixedUpdateState();
     public abstract void EndState();
 }

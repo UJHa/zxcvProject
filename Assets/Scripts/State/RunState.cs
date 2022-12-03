@@ -17,6 +17,11 @@ public class RunState : State
         animator.SetBool("Run", true);
     }
 
+    public override void FixedUpdateState()
+    {
+        
+    }
+
     public override void EndState()
     {
         if(!_isJump)
@@ -28,7 +33,7 @@ public class RunState : State
         if (Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
             _isJump = true;
-            character.ChangeState(eState.JUMP);
+            character.ChangeState(eState.JUMP_UP);
             return;
         }
 

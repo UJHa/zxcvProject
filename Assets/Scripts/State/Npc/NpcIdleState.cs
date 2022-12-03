@@ -17,6 +17,11 @@ public class NpcIdleState : State
         stopwatch.Start();
     }
 
+    public override void FixedUpdateState()
+    {
+        
+    }
+
     public override void EndState()
     {
         stopwatch.Stop();

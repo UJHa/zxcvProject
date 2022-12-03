@@ -13,6 +13,11 @@ public class IdleState : State
         character.ResetMoveSpeed();
     }
 
+    public override void FixedUpdateState()
+    {
+        
+    }
+
     public override void EndState()
     {
     }
@@ -31,7 +36,7 @@ public class IdleState : State
 
         if(Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
-            character.ChangeState(eState.JUMP);
+            character.ChangeState(eState.JUMP_UP);
         }
 
         if (Input.GetKeyDown(KeyCode.C) && character.IsGround())

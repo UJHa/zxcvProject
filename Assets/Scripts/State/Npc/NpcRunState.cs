@@ -18,6 +18,10 @@ public class NpcRunState : State
         animator.SetBool("Run", true);
     }
 
+    public override void FixedUpdateState()
+    {
+    }
+
     public override void EndState()
     {
         if (!_isJump)

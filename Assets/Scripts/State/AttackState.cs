@@ -12,6 +12,10 @@ public class AttackState : State
         animator.SetBool("Attack", true);
     }
 
+    public override void FixedUpdateState()
+    {
+    }
+
     public override void EndState()
     {
         animator.SetBool("Attack", false);

@@ -13,6 +13,10 @@ public class DeadState : State
         
     }
 
+    public override void FixedUpdateState()
+    {
+    }
+
     public override void EndState()
     {
 

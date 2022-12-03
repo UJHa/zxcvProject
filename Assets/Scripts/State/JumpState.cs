@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class JumpState : State
 {
@@ -27,8 +28,13 @@ public class JumpState : State
         // pos.y += character._jumpOffset;
         // character.transform.position = pos;
         // character.GetRigidbody().velocity = character.GetJumpForce();
-        character.GetRigidbody().AddForce(character.GetJumpForce(), character.GetForceModeType());
+        // character.GetRigidbody().AddForce(character.GetJumpForce(), character.GetForceModeType());
         UnityEngine.Debug.Log($"=======Jump Start! velocity({character.GetRigidbody().velocity})");
+    }
+
+    public override void FixedUpdateState()
+    {
+        
     }
 
     public override void EndState()
@@ -49,6 +55,7 @@ public class JumpState : State
             stopwatch.Stop();
         }
 
+        // 이건 여기서 처리하면 이제 안됨(State 별 체크?)
         if (character.IsGround())
         {
             character.ChangeState(eState.IDLE);

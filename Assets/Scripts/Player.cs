@@ -57,6 +57,8 @@ public class Player : Character
         stateMap.Add(eState.WALK, new WalkState(this));
         stateMap.Add(eState.RUN, new RunState(this));
         stateMap.Add(eState.JUMP, new JumpState(this));
+        stateMap.Add(eState.JUMP_UP, new JumpUpState(this));
+        stateMap.Add(eState.JUMP_DOWN, new JumpDownState(this));
         stateMap.Add(eState.ATTACK, new AttackState(this));
         stateMap.Add(eState.DEAD, new DeadState(this));
 

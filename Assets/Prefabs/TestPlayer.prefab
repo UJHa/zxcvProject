@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 885296071429854324}
   - component: {fileID: 885296071429854325}
   m_Layer: 8
-  m_Name: Player
+  m_Name: TestPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -88,7 +88,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _jumpUp:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.8
+      outSlope: 0.8
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.29965234
+      value: 0.70571023
+      inSlope: 1.0972899
+      outSlope: 1.0972899
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.31865907
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6999904
+      value: 0.9771663
+      inSlope: 0.15094371
+      outSlope: 0.15094371
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.22396122
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.9999938
+      value: 0.9952774
+      inSlope: -0.013102756
+      outSlope: -0.013102756
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.7714285
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

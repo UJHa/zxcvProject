@@ -25,6 +25,11 @@ public class WalkState : State
         animator.SetBool("Walk", true);
     }
 
+    public override void FixedUpdateState()
+    {
+        
+    }
+
     public override void EndState()
     {
         stopwatch.Stop();
@@ -38,7 +43,7 @@ public class WalkState : State
         if (Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
             _isJump = true;
-            character.ChangeState(eState.JUMP);
+            character.ChangeState(eState.JUMP_UP);
             return;
         }
 
