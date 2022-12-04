@@ -11,6 +11,10 @@ public class IdleState : State
     public override void StartState()
     {
         character.ResetMoveSpeed();
+        character._isGround = true;
+        animator.SetBool("IsGround", true);
+        animator.SetBool("Walk", false);
+        animator.SetBool("Run", false);
     }
 
     public override void FixedUpdateState()
