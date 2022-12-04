@@ -109,17 +109,22 @@ public class Character : MonoBehaviour
         var prevTime = deltatime - Time.fixedDeltaTime;
         float dx = deltatime - prevTime;
         float dy = _jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime);
-        return (_jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime)) / (deltatime - prevTime) * _jumpMaxHeight;
+        return dy / dx * _jumpMaxHeight;
     }
     
     public float GetJumpDownVelocity(float deltatime)
     {
         if (deltatime <= 0f)
             return 0f;
-        var prevTime = deltatime - Time.fixedDeltaTime;
-        float dx = deltatime - prevTime;
-        float dy = _jumpDown.Evaluate(deltatime) - _jumpDown.Evaluate(prevTime);
-        return -1f * (_jumpDown.Evaluate(deltatime) - _jumpDown.Evaluate(prevTime)) / (deltatime - prevTime) * _jumpMaxHeight;
+        
+        var dx = Time.fixedDeltaTime;
+        var curTime = deltatime;
+        if (deltatime >= _jumpDownMaxTimer)
+            curTime = _jumpDownMaxTimer;
+        var dy = _jumpDown.Evaluate(curTime) - _jumpDown.Evaluate(curTime - dx);
+        
+        return -1f * dy / dx * _jumpMaxHeight;
+        
     }
 
     protected virtual void StartUI()
