@@ -6,6 +6,18 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEngine.Serialization;
 
+public class StateInfo
+{
+    public eState state;
+    public eStateType stateType;
+}
+
+public enum eStateType
+{
+    INPUT,
+    NONE,
+}
+
 public class Character : MonoBehaviour
 {
     [Header("Stats")]
@@ -52,6 +64,8 @@ public class Character : MonoBehaviour
 
     public bool _isGround = false;
     private bool _checkGround = true;
+
+    private List<StateInfo> _changeStates = new();
 
     public float _hitDistance = 0.0f;
     public double CHECK_GROUND_DISTANCE = 0.2;
@@ -190,16 +204,49 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // 엄todo : ChangeState Queue 구조로 바꾸자!(즉시 변경으로 인한 제어 버그가 생길 수 있음)(현재 간헐적 점프 씹힘)
-        if (_prevState != _curState)
+        if (_changeStates.Count > 0)
         {
-            stateMap[_prevState].EndState();
-            stateMap[_curState].StartState();
+            Debug.Log($"[testState]Change prev({_curState}) count({_changeStates.Count})");
+            if (_changeStates.Count == 1)
+            {
+                eState state = _changeStates[0].state;
+                stateMap[_curState].EndState();
+                stateMap[state].StartState();
+                _curState = state;
+            }
+            else
+            {
+                eState state = GetNextState();
+                stateMap[_curState].EndState();
+                stateMap[state].StartState();
+                _curState = state;
+            }
+            _changeStates.Clear();
         }
-        _prevState = _curState;
+        
+        // 엄todo : ChangeState Queue 구조로 바꾸자!(즉시 변경으로 인한 제어 버그가 생길 수 있음)(현재 간헐적 점프 씹힘)
+        // if (_prevState != _curState)
+        // {
+        //     Debug.Log($"[testState]End State({_prevState})");
+        //     stateMap[_prevState].EndState();
+        //     Debug.Log($"[testState]Start State({_curState})");
+        //     stateMap[_curState].StartState();
+        // }
+        // _prevState = _curState;
         stateMap[_curState].UpdateState();
 
         UpdateUI();
+    }
+
+    private eState GetNextState()
+    {
+        foreach (var stateInfo in _changeStates)
+        {
+            if (stateInfo.stateType == eStateType.INPUT)
+                return stateInfo.state;
+        }
+
+        return _changeStates[0].state;
     }
 
     public void FixedUpdatePhygics()
@@ -300,9 +347,15 @@ public class Character : MonoBehaviour
         return _direction;
     }
 
-    public void ChangeState(eState state)
+    public void ChangeState(eState state, eStateType stateType = eStateType.NONE)
     {
+        Debug.Log($"[testState]State Change prev({_curState}) cur({state})");
         _curState = state;
+        _changeStates.Add(new StateInfo()
+        {
+            state = state,
+            stateType = stateType
+        });
     }
 
     public List<Direction> GetDirections()

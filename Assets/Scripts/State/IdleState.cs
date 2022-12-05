@@ -40,7 +40,7 @@ public class IdleState : State
 
         if(Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
-            character.ChangeState(eState.JUMP_UP);
+            character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
         }
 
         if (Input.GetKeyDown(KeyCode.C) && character.IsGround())

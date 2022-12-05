@@ -33,7 +33,7 @@ public class RunState : State
         if (Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
             _isJump = true;
-            character.ChangeState(eState.JUMP_UP);
+            character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
             return;
         }
 
