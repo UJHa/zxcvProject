@@ -9,7 +9,7 @@ public class AttackState : State
 
     public override void StartState()
     {
-        animator.SetBool("Attack", true);
+        animator.Play("Attack");
     }
 
     public override void FixedUpdateState()
@@ -18,7 +18,7 @@ public class AttackState : State
 
     public override void EndState()
     {
-        animator.SetBool("Attack", false);
+        
     }
 
     public override void UpdateState()

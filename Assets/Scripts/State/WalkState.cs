@@ -22,7 +22,7 @@ public class WalkState : State
         stopwatch.Reset();
         isAllKeyUp = false;
 
-        animator.SetBool("Walk", true);
+        animator.Play("Walk");
     }
 
     public override void FixedUpdateState()
@@ -33,9 +33,6 @@ public class WalkState : State
     public override void EndState()
     {
         stopwatch.Stop();
-
-        if (!_isJump)
-            animator.SetBool("Walk", false);
     }
 
     public override void UpdateState()

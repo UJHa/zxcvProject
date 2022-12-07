@@ -14,7 +14,7 @@ public class RunState : State
         _isJump = false;
 
         character.SetMoveSpeedToRun();
-        animator.SetBool("Run", true);
+        animator.Play("Run");
     }
 
     public override void FixedUpdateState()
@@ -24,8 +24,7 @@ public class RunState : State
 
     public override void EndState()
     {
-        if(!_isJump)
-            animator.SetBool("Run", false);
+        
     }
 
     public override void UpdateState()

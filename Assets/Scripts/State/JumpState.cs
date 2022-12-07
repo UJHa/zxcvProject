@@ -16,7 +16,6 @@ public class JumpState : State
 
     public override void StartState()
     {
-        animator.SetBool("IsGround", false);
         character.StartJump();
 
         stopwatch.Reset();
@@ -39,9 +38,6 @@ public class JumpState : State
 
     public override void EndState()
     {
-        animator.SetBool("IsGround", true);
-        animator.SetBool("Walk", false);
-        animator.SetBool("Run", false);
         stopwatch.Stop();
 
         character.ResetPrevMoveSpeed();

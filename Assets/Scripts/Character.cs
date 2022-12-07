@@ -36,6 +36,7 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpDownMaxTimer = 1f;
     [SerializeField] private float _jumpPowerY = 6f;
     [SerializeField] private float _jumpPowerXZ = 1f;
+    [SerializeField] public float _jumpUpCrossFadeSec = 0.07f;
 
     [Header("JumpStats")]
     public float _jumpOffset = 0.31f;
@@ -223,16 +224,6 @@ public class Character : MonoBehaviour
             }
             _changeStates.Clear();
         }
-        
-        // 엄todo : ChangeState Queue 구조로 바꾸자!(즉시 변경으로 인한 제어 버그가 생길 수 있음)(현재 간헐적 점프 씹힘)
-        // if (_prevState != _curState)
-        // {
-        //     Debug.Log($"[testState]End State({_prevState})");
-        //     stateMap[_prevState].EndState();
-        //     Debug.Log($"[testState]Start State({_curState})");
-        //     stateMap[_curState].StartState();
-        // }
-        // _prevState = _curState;
         stateMap[_curState].UpdateState();
 
         UpdateUI();
@@ -528,5 +519,16 @@ public class Character : MonoBehaviour
     public ForceMode GetForceModeType()
     {
         return _forceModeType;
+    }
+
+    public bool IsGroundCheck()
+    {
+        Vector3 boxCenter = transform.position;
+        boxCenter.y -= _downBoxHeight / 2;
+        Vector3 boxHalfSize = new Vector3(1f, _downBoxHeight, 1f) / 2;  // 캐스트할 박스 크기의 절반 크기. 이렇게 하면 가로 2 세로 2 높이 2의 크기의 공간을 캐스트한다.
+        int layerMask = 1;
+        layerMask = layerMask << LayerMask.NameToLayer("Ground");
+        RaycastHit[] hits = Physics.BoxCastAll(boxCenter, boxHalfSize, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        return hits.Length > 0;
     }
 }

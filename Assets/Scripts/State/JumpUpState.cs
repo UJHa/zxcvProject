@@ -14,7 +14,7 @@ public class JumpUpState : State
     {
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpup start");
-        animator.SetBool("IsGround", false);
+        animator.CrossFade("Jump", character._jumpUpCrossFadeSec);
         character._isGround = false;
     }
 
