@@ -37,6 +37,9 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpPowerY = 6f;
     [SerializeField] private float _jumpPowerXZ = 1f;
     [SerializeField] public float _jumpUpCrossFadeSec = 0.07f;
+    [SerializeField] public float _idleJumpSpeedRate = 0.1f;
+    [SerializeField] public float _walkJumpSpeedRate = 0.3f;
+    [SerializeField] public float _runJumpSpeedRate = 1f;
 
     [Header("JumpStats")]
     public float _jumpOffset = 0.31f;

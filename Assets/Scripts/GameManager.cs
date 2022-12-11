@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        InputManager.CreateInstance();
+        InputManager.Instance.Init();
+        
         foreach(NonPlayer enemy in GameObject.FindObjectsOfType<NonPlayer>())
         {
             enemies.Add(enemy);
@@ -47,6 +50,9 @@ public class GameManager : MonoBehaviour
     {
         if (camera)
             camera.transform.position = player.transform.position + adjust_pos;
+        
+        if (InputManager.IsExistInstance)
+            InputManager.Instance.Update();
     }
 
     public Transform GetCanvas() => canvas.transform;

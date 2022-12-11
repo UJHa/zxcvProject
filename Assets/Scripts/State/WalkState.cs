@@ -46,6 +46,7 @@ public class WalkState : State
 
         if (isAllKeyUp)
         {
+            // 엄todo 키 입력 구조 짜기
             if (delayMillisec <= stopwatch.ElapsedMilliseconds)
             {
                 character.ChangeState(eState.IDLE);

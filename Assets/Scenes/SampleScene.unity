@@ -2236,6 +2236,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ReverseJumpDownPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 868199507173096284, guid: 6be0fd1bc6af37443bf213dc2e1bb0b5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 885296071429854324, guid: 6be0fd1bc6af37443bf213dc2e1bb0b5, type: 3}
       propertyPath: _useReverse
       value: 1
@@ -4314,6 +4318,10 @@ PrefabInstance:
     - target: {fileID: 1097527484480378869, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 1097527484480378869, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
