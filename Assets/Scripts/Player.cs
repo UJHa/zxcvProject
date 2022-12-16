@@ -11,52 +11,25 @@ public class Player : Character
 
         // SetWalkSpeed(0.005f);
         // SetRunSpeed(0.015f);
+        // Vector3 temp = new Vector3(0, 0, 1);    //Direction.FRONT
+        // Vector3 temp = new Vector3(0, 0, -1);    //Direction.BACK
+        // Vector3 temp = new Vector3(1, 0, 0);    //Direction.LEFT
+        // Vector3 temp = new Vector3(-1, 0, 0);    //Direction.RIGHT
+        // Vector3 temp = new Vector3(1, 0, 1);    //Direction.LEFT_FRONT
+        // Vector3 temp = new Vector3(1, 0, -1);    //Direction.LEFT_BACK
+        // Vector3 temp = new Vector3(-1, 0, 1);    //Direction.RIGHT_FRONT
+        // Vector3 temp = new Vector3(-1, 0, -1);    //Direction.RIGHT_BACK
+        
+        Vector3 temp = new Vector3(0, 0, -1);    //Direction.RIGHT
+        var temp2 = Quaternion.LookRotation(temp);
+        var temp3 = temp2.eulerAngles;
+        Debug.Log($"[onlyTestUm]vec({temp}), lookRot({temp2}), euler({temp3})");
 
-        _rotationMap.Add(Direction.FRONT, new Vector3(0, 0, 0));
-        _rotationMap.Add(Direction.BACK, new Vector3(0, 180, 0));
-        _rotationMap.Add(Direction.LEFT, new Vector3(0, 90, 0));
-        _rotationMap.Add(Direction.RIGHT, new Vector3(0, -90, 0));
-        _rotationMap.Add(Direction.LEFT_FRONT, new Vector3(0, 45, 0));
-        _rotationMap.Add(Direction.RIGHT_FRONT, new Vector3(0, -45, 0));
-        _rotationMap.Add(Direction.LEFT_BACK, new Vector3(0, 135, 0));
-        _rotationMap.Add(Direction.RIGHT_BACK, new Vector3(0, -135, 0));
-
-        float diagonal = Mathf.Sqrt(2f) / 2f;
-
-        _moveMap.Add(Direction.FRONT, new Vector3(0, 0, 1));
-        _moveMap.Add(Direction.BACK, new Vector3(0, 0, -1));
-        _moveMap.Add(Direction.LEFT, new Vector3(1, 0, 0));
-        _moveMap.Add(Direction.RIGHT, new Vector3(-1, 0, 0));
-        _moveMap.Add(Direction.LEFT_FRONT, new Vector3(diagonal, 0, diagonal));
-        _moveMap.Add(Direction.RIGHT_FRONT, new Vector3(-diagonal, 0, diagonal));
-        _moveMap.Add(Direction.LEFT_BACK, new Vector3(diagonal, 0, -diagonal));
-        _moveMap.Add(Direction.RIGHT_BACK, new Vector3(-diagonal, 0, -diagonal));
-
-        _inputMap.Add(Direction.FRONT, new KeyCode[] { KeyCode.DownArrow });
-        _inputMap.Add(Direction.BACK, new KeyCode[] { KeyCode.UpArrow });
-        _inputMap.Add(Direction.LEFT, new KeyCode[] { KeyCode.LeftArrow });
-        _inputMap.Add(Direction.RIGHT, new KeyCode[] { KeyCode.RightArrow });
-        _inputMap.Add(Direction.LEFT_FRONT, new KeyCode[] { KeyCode.DownArrow, KeyCode.LeftArrow });
-        _inputMap.Add(Direction.RIGHT_FRONT, new KeyCode[] { KeyCode.DownArrow, KeyCode.RightArrow });
-        _inputMap.Add(Direction.LEFT_BACK, new KeyCode[] { KeyCode.UpArrow, KeyCode.LeftArrow });
-        _inputMap.Add(Direction.RIGHT_BACK, new KeyCode[] { KeyCode.UpArrow, KeyCode.RightArrow });
-
-        _directionList.Add(Direction.LEFT_FRONT);
-        _directionList.Add(Direction.RIGHT_FRONT);
-        _directionList.Add(Direction.LEFT_BACK);
-        _directionList.Add(Direction.RIGHT_BACK);
-        _directionList.Add(Direction.FRONT);
-        _directionList.Add(Direction.BACK);
-        _directionList.Add(Direction.LEFT);
-        _directionList.Add(Direction.RIGHT);
-
-        //transform.Rotate(0, 90, 0);
-        _direction = Direction.FRONT;
+        _directionVector = Vector3.back;
 
         stateMap.Add(eState.IDLE, new IdleState(this));
         stateMap.Add(eState.WALK, new WalkState(this));
         stateMap.Add(eState.RUN, new RunState(this));
-        stateMap.Add(eState.JUMP, new JumpState(this));
         stateMap.Add(eState.JUMP_UP, new JumpUpState(this));
         stateMap.Add(eState.JUMP_DOWN, new JumpDownState(this));
         stateMap.Add(eState.ATTACK, new AttackState(this));

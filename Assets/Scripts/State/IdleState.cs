@@ -1,12 +1,16 @@
+using System.Diagnostics;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.PlayerLoop;
+using Debug = UnityEngine.Debug;
 
 public class IdleState : State
 {
+    private Stopwatch stopwatch;
+    private long delayMillisec = 150;
     public IdleState(Character character) : base(character)
     {
-
+        stopwatch = new Stopwatch();
     }
 
     public override void StartState()
@@ -17,6 +21,7 @@ public class IdleState : State
             animator.Play("JumpEnd");
         else
             animator.Play("Idle");
+        stopwatch.Start();
     }
 
     public override void FixedUpdateState()
@@ -30,20 +35,29 @@ public class IdleState : State
 
     public override void EndState()
     {
+        stopwatch.Reset();
     }
 
     public override void UpdateState()
     {
         UpdateAnimation();
-        foreach (Direction direction in character.GetDirections())
-        {
-            if (character.GetKeysDownDirection(direction))
-            {
-                character.SetDirection(direction);
+        UpdateInput();
+    }
 
-                character.ChangeState(eState.WALK);
-            }
-        }
+    private void UpdateAnimation()
+    {
+        var curStateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (curStateInfo.IsName("JumpEnd"))
+            if (curStateInfo.normalizedTime >= 1.0f)
+                animator.Play("Idle");
+    }
+
+    private void UpdateInput()
+    {
+        if (!InputManager.IsExistInstance)
+            return;
+        
+        UpdateMoveInput();
 
         if(Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
@@ -55,12 +69,22 @@ public class IdleState : State
             character.ChangeState(eState.ATTACK);
         }
     }
-
-    private void UpdateAnimation()
+    
+    private void UpdateMoveInput()
     {
-        var curStateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (curStateInfo.IsName("JumpEnd"))
-            if (curStateInfo.normalizedTime >= 1.0f)
-                animator.Play("Idle");
+        var vector = InputManager.Instance.GetButtonAxisRaw();
+        if (Vector3.zero != vector)
+        {
+            if (eState.WALK == character.GetPrevState()
+                && vector == character.GetDirectionVector()
+                && stopwatch.ElapsedMilliseconds <= delayMillisec)
+            {
+                character.ChangeState(eState.RUN);
+            }
+            else
+            {
+                character.ChangeState(eState.WALK);
+            }
+        }
     }
 }

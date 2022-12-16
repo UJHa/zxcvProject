@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
-using UnityEngine.Serialization;
 
 public class StateInfo
 {
@@ -18,6 +16,7 @@ public enum eStateType
     NONE,
 }
 
+// 엄todo : 걷기, 달리기 시 낙하 처리
 public class Character : MonoBehaviour
 {
     [Header("Stats")]
@@ -55,15 +54,11 @@ public class Character : MonoBehaviour
     private float _curHp = 0f;
     protected float sliderScale = 1.0f;
 
-    protected Direction _direction;
-    protected Dictionary<Direction, Vector3> _rotationMap = new Dictionary<Direction, Vector3>();
-    protected Dictionary<Direction, Vector3> _moveMap = new Dictionary<Direction, Vector3>();
-    protected Dictionary<Direction, KeyCode[]> _inputMap = new Dictionary<Direction, KeyCode[]>();
-    protected List<Direction> _directionList = new List<Direction>();
+    protected Vector3 _directionVector = Vector3.zero;
 
-    protected Dictionary<eState, State> stateMap = new Dictionary<eState, State>();
+    protected Dictionary<eState, State> stateMap = new();
 
-    private eState _prevState;
+    public eState _prevState;
     public eState _curState;
 
     public bool _isGround = false;
@@ -71,7 +66,6 @@ public class Character : MonoBehaviour
 
     private List<StateInfo> _changeStates = new();
 
-    public float _hitDistance = 0.0f;
     public double CHECK_GROUND_DISTANCE = 0.2;
 
     private void Awake()
@@ -210,12 +204,14 @@ public class Character : MonoBehaviour
     {
         if (_changeStates.Count > 0)
         {
+            // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
             Debug.Log($"[testState]Change prev({_curState}) count({_changeStates.Count})");
             if (_changeStates.Count == 1)
             {
                 eState state = _changeStates[0].state;
                 stateMap[_curState].EndState();
                 stateMap[state].StartState();
+                _prevState = _curState;
                 _curState = state;
             }
             else
@@ -223,6 +219,7 @@ public class Character : MonoBehaviour
                 eState state = GetNextState();
                 stateMap[_curState].EndState();
                 stateMap[state].StartState();
+                _prevState = _curState;
                 _curState = state;
             }
             _changeStates.Clear();
@@ -241,6 +238,11 @@ public class Character : MonoBehaviour
         }
 
         return _changeStates[0].state;
+    }
+
+    public eState GetPrevState()
+    {
+        return _prevState;
     }
 
     public void FixedUpdatePhygics()
@@ -298,22 +300,23 @@ public class Character : MonoBehaviour
             //}
         }
     }
-
-    public void MoveDirectionPosition(Direction direction)
+    
+    public void MovePosition(Vector3 direction)
     {
         // transform.position += _moveMap[direction] * _moveSpeed;
-        _rigidbody.velocity = _moveMap[direction] * _moveSpeed;
+        _rigidbody.velocity = direction * _moveSpeed;
+    }
+    
+    public void SetDirectionByVector3(Vector3 argVector)
+    {
+        _directionVector = argVector;
+        var euler = GetEuler(_directionVector);
+        transform.eulerAngles = euler;
     }
 
-    public void ResetPrevMoveSpeed()
+    public Vector3 GetDirectionVector()
     {
-        // _prevMoveSpeed = Vector3.zero;
-    }
-
-    public void SetDirection(Direction direction)
-    {
-        _direction = direction;
-        transform.eulerAngles = _rotationMap[_direction];
+        return _directionVector;
     }
     
     public float GetJumpUpMaxTimer()
@@ -321,40 +324,26 @@ public class Character : MonoBehaviour
         return _jumpUpMaxTimer;
     }
     
-    public float GetJumpDownMaxTimer()
-    {
-        return _jumpDownMaxTimer;
-    }
-    
-    public float GetJumpMaxHeight()
-    {
-        return _jumpMaxHeight;
-    }
-    
     public Rigidbody GetRigidbody()
     {
         return _rigidbody;
     }
-
-    public Direction GetDirection()
+    
+    public Vector3 GetEuler(Vector3 argVector)
     {
-        return _direction;
+        var rot = Quaternion.LookRotation(argVector);
+        return rot.eulerAngles;
     }
 
     public void ChangeState(eState state, eStateType stateType = eStateType.NONE)
     {
         Debug.Log($"[testState]State Change prev({_curState}) cur({state})");
-        _curState = state;
+        // _curState = state;
         _changeStates.Add(new StateInfo()
         {
             state = state,
             stateType = stateType
         });
-    }
-
-    public List<Direction> GetDirections()
-    {
-        return _directionList;
     }
 
     public void ResetMoveSpeed()
@@ -387,64 +376,6 @@ public class Character : MonoBehaviour
     public float GetMoveSpeed()
     {
         return _moveSpeed;
-    }
-
-    public bool GetKeysDirection(Direction direction)
-    {
-        bool result = true;
-        foreach (KeyCode keyCode in _inputMap[direction])
-        {
-            result = Input.GetKey(keyCode) && result;
-        }
-        return result;
-    }
-
-    public bool GetKeysDownDirection(Direction direction)
-    {
-        bool result = true;
-        foreach (KeyCode keyCode in _inputMap[direction])
-        {
-            result = Input.GetKeyDown(keyCode) && result;
-        }
-        return result;
-    }
-
-    public bool GetKeysUpDirection(Direction direction)
-    {
-        bool result = true;
-        foreach (KeyCode keyCode in _inputMap[direction])
-        {
-            result = Input.GetKeyUp(keyCode) && result;
-        }
-        return result;
-    }
-
-    public void StartJump()
-    {
-        _isGround = false;
-        _checkGround = false;
-    }
-
-    public void CheckIsGround()
-    {
-        _checkGround = true;
-    }
-
-    public Vector3 GetJumpForce()
-    {
-        Vector3 result = _rigidbody.velocity * _jumpPowerXZ;
-        result.y = _jumpPowerY;
-        return result;
-    }
-    
-    public float GetJumpPowerY()
-    {
-        return _jumpPowerY;
-    }
-
-    public eState GetPrevState()
-    {
-        return _prevState;
     }
 
     public bool IsGround()
@@ -517,11 +448,6 @@ public class Character : MonoBehaviour
     {
         gameObject.SetActive(false);
         slider.gameObject.SetActive(false);
-    }
-
-    public ForceMode GetForceModeType()
-    {
-        return _forceModeType;
     }
 
     public bool IsGroundCheck()

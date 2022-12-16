@@ -3,16 +3,12 @@ using UnityEditor;
 
 public class RunState : State
 {
-    private bool _isJump = false;
-
     public RunState(Character character) : base(character)
     {
     }
 
     public override void StartState()
     {
-        _isJump = false;
-
         character.SetMoveSpeedToRun();
         animator.Play("Run");
     }
@@ -29,32 +25,25 @@ public class RunState : State
 
     public override void UpdateState()
     {
-        if (Input.GetKeyDown(KeyCode.V) && character.IsGround())
+        UpdateInput();
+    }
+
+    void UpdateInput()
+    {
+        var vector = InputManager.Instance.GetButtonAxisRaw();
+        if (Vector3.zero == vector)
         {
-            _isJump = true;
-            character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            character.ChangeState(eState.IDLE);
             return;
         }
 
-        bool isInput = false;
-        foreach (Direction direction in character.GetDirections())
+        if (InputManager.Instance.GetButtonDown(KeyBindingType.JUMP))
         {
-            if (character.GetKeysDirection(direction))
-            {
-                character.SetDirection(direction);
-
-                isInput = true;
-                break;
-            }
+            character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            return;
         }
-
-        if (isInput == false)
-        {
-            character.ChangeState(eState.IDLE);
-        }
-        else
-        {
-            character.MoveDirectionPosition(character.GetDirection());
-        }
+        
+        character.SetDirectionByVector3(vector);
+        character.MovePosition(vector);
     }
 }
