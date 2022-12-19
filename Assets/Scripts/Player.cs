@@ -20,10 +20,10 @@ public class Player : Character
         // Vector3 temp = new Vector3(-1, 0, 1);    //Direction.RIGHT_FRONT
         // Vector3 temp = new Vector3(-1, 0, -1);    //Direction.RIGHT_BACK
         
-        Vector3 temp = new Vector3(0, 0, -1);    //Direction.RIGHT
-        var temp2 = Quaternion.LookRotation(temp);
-        var temp3 = temp2.eulerAngles;
-        Debug.Log($"[onlyTestUm]vec({temp}), lookRot({temp2}), euler({temp3})");
+        // Vector3 temp = new Vector3(0, 0, -1);    //Direction.RIGHT
+        // var temp2 = Quaternion.LookRotation(temp);
+        // var temp3 = temp2.eulerAngles;
+        // Debug.Log($"[onlyTestUm]vec({temp}), lookRot({temp2}), euler({temp3})");
 
         _directionVector = Vector3.back;
 

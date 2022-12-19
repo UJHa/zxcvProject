@@ -40,9 +40,11 @@ public class InputManager
     }
     
     private Dictionary<KeyBindingType, KeyInfo> _inputMap = new ();
-    private Queue<KeyBindingType> _downQueue = new();
-    private Queue<KeyBindingType> _upQueue = new();
+    private LinkedList<KeyBindingType> _downList = new();
+    private LinkedList<KeyBindingType> _holdList = new();
+    private LinkedList<KeyBindingType> _upList = new();
     private int _downMaxSize = 5;
+    private int _holdMaxSize = 5;
     private int _upMaxSize = 5;
 
     public void Init()
@@ -58,6 +60,7 @@ public class InputManager
 
     public void Update()
     {
+        Debug.Log($"[testumm]down({_downList.Count})hold({_holdList.Count})up({_upList.Count})");
         foreach (var key in _inputMap.Keys)
         {
             var info = _inputMap[key];
@@ -71,31 +74,43 @@ public class InputManager
         // var horAxisRaw = Input.GetAxisRaw("Horizontal"); // true false
         // var verAxisRaw = Input.GetAxisRaw("Vertical");   // true false
         // Debug.Log($"hor({horAxisRaw})ver({verAxisRaw})");
+        // var vector = InputManager.Instance.GetButtonAxisRaw();
+        // Debug.Log($"vector({vector})");
     }
 
     private void SaveQueue(KeyInfo input)
     {
         if (input.isDown)
         {
-            if (_downQueue.Count <= _downMaxSize)
+            if (false == _holdList.Contains(input.keyType))
+                _holdList.AddLast(input.keyType);
+            if (_downList.Count < _downMaxSize)
             {
-                _downQueue.Enqueue(input.keyType);
+                _downList.AddLast(input.keyType);
             }
             else
             {
-                _downQueue.Dequeue();
+                _downList.RemoveFirst();
             }
         }
         
         if (input.isUp)
         {
-            if (_upQueue.Count <= _upMaxSize)
+            foreach (var holdKeyType in _holdList)
             {
-                _upQueue.Enqueue(input.keyType);
+                if (input.keyType == holdKeyType)
+                {
+                    _holdList.Remove(input.keyType);
+                    break;
+                }
+            }
+            if (_upList.Count < _upMaxSize)
+            {
+                _upList.AddLast(input.keyType);
             }
             else
             {
-                _upQueue.Dequeue();
+                _upList.RemoveFirst();
             }
         }
     }
@@ -120,20 +135,65 @@ public class InputManager
         var horAxisRaw = Input.GetAxisRaw("Horizontal"); // true false
         var verAxisRaw = Input.GetAxisRaw("Vertical");   // true false
         var origin = new Vector3(-horAxisRaw, 0, -verAxisRaw);
+        var holdCount = GetArrowKeyHoldCount();
+        if (Vector3.zero == origin)
+        {
+            if (holdCount == 2 || holdCount == 1)
+            {
+                var keyType = GetLastKeyHold();
+                origin = GetAxisVector(keyType);
+            }
+        }
+        Debug.Log($"[testVector]{origin}InputCount({holdCount})");
         return origin.normalized;
-    }
-
-    public KeyBindingType GetLastKeyUp()
-    {
-        if (_upQueue.Count == 0)
-            return KeyBindingType.NONE;
-        return _upQueue.Last();
     }
     
     public KeyBindingType GetLastKeyDown()
     {
-        if (_downQueue.Count == 0)
+        if (_downList.Count == 0)
             return KeyBindingType.NONE;
-        return _downQueue.Last();
+        return _downList.Last();
+    }
+    
+    public KeyBindingType GetLastKeyHold()
+    {
+        if (_holdList.Count == 0)
+            return KeyBindingType.NONE;
+        return _holdList.Last();
+    }
+
+    public KeyBindingType GetLastKeyUp()
+    {
+        if (_upList.Count == 0)
+            return KeyBindingType.NONE;
+        return _upList.Last();
+    }
+    
+    private int GetArrowKeyHoldCount()
+    {
+        int result = 0;
+        foreach (var keyType in _holdList)
+        {
+            if (keyType == KeyBindingType.UP_ARROW
+                || keyType == KeyBindingType.DOWN_ARROW
+                || keyType == KeyBindingType.LEFT_ARROW
+                || keyType == KeyBindingType.RIGHT_ARROW)
+                result++;
+        }
+        return result;
+    }
+
+    private Vector3 GetAxisVector(KeyBindingType keyType)
+    {
+        if (keyType == KeyBindingType.UP_ARROW)
+            return -Vector3.forward;
+        if (keyType == KeyBindingType.DOWN_ARROW)
+            return -Vector3.back;
+        if (keyType == KeyBindingType.LEFT_ARROW)
+            return -Vector3.left;
+        if (keyType == KeyBindingType.RIGHT_ARROW)
+            return -Vector3.right;
+            
+        return Vector3.zero;
     }
 }
