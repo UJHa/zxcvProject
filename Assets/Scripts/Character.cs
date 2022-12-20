@@ -16,7 +16,10 @@ public enum eStateType
     NONE,
 }
 
-// 엄todo : 걷기, 달리기 시 낙하 처리
+// 엄todo : 정밀한 바닥 처리
+// 엄todo : 부드러운 캐릭터 회전 처리
+// 엄todo : 언덕 오르기
+// 엄todo : 공격 기능 개발
 public class Character : MonoBehaviour
 {
     [Header("Stats")]

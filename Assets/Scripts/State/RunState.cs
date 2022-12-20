@@ -15,7 +15,10 @@ public class RunState : State
 
     public override void FixedUpdateState()
     {
-        
+        if (false == character.IsGroundCheck())
+        {
+            character.ChangeState(eState.JUMP_DOWN);
+        }
     }
 
     public override void EndState()
