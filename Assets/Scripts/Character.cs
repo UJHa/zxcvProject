@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +18,6 @@ public enum eStateType
 }
 
 // 엄todo : 정밀한 바닥 처리
-// 엄todo : 부드러운 캐릭터 회전 처리
 // 엄todo : 언덕 오르기
 // 엄todo : 공격 기능 개발
 public class Character : MonoBehaviour
@@ -68,6 +68,8 @@ public class Character : MonoBehaviour
     private bool _checkGround = true;
 
     private List<StateInfo> _changeStates = new();
+
+    private Tween _rotationTween = null;
 
     public double CHECK_GROUND_DISTANCE = 0.2;
 
@@ -314,7 +316,11 @@ public class Character : MonoBehaviour
     {
         _directionVector = argVector;
         var euler = GetEuler(_directionVector);
-        transform.eulerAngles = euler;
+        if (null != _rotationTween)
+            _rotationTween.Kill();
+        var rot = GetRotation(_directionVector);
+        _rotationTween = transform.DORotateQuaternion(rot, 0.1f);
+        // transform.eulerAngles = euler;
     }
 
     public Vector3 GetDirectionVector()
@@ -332,7 +338,13 @@ public class Character : MonoBehaviour
         return _rigidbody;
     }
     
-    public Vector3 GetEuler(Vector3 argVector)
+    private Quaternion GetRotation(Vector3 argVector)
+    {
+        var rot = Quaternion.LookRotation(argVector);
+        return rot;
+    }
+    
+    private Vector3 GetEuler(Vector3 argVector)
     {
         var rot = Quaternion.LookRotation(argVector);
         return rot.eulerAngles;

@@ -131,7 +131,7 @@ public class InputManager
                 {
                     origin = GetDiagonalVector();
                 }
-                else
+                if (Vector3.zero == origin)
                 {
                     var keyType = GetLastKeyHold();
                     origin = GetAxisVector(keyType);
