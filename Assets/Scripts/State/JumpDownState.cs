@@ -31,12 +31,14 @@ public class JumpDownState : State
             character.ChangeState(eState.IDLE);
             return;
         }
+        else
+            character.UpdateGroundHeight();
         
         _jumpTimer += Time.fixedDeltaTime;
         _moveVelocity.y = character.GetJumpDownVelocity(_jumpTimer);
         character.GetRigidbody().velocity = _moveVelocity;
         // character.GetRigidbody().velocity = new Vector3(0f, character.GetJumpDownVelocity(_jumpTimer), 0f) ; 
-        Debug.Log($"[jumpdown]timer({_jumpTimer}) GetVelocity({character.GetJumpDownVelocity(_jumpTimer)}), position({character.transform.position}), rigid pos({character.GetRigidbody().position})");
+        // Debug.Log($"[jumpdown]timer({_jumpTimer}) GetVelocity({character.GetJumpDownVelocity(_jumpTimer)}), position({character.transform.position}), rigid pos({character.GetRigidbody().position})");
     }
 
     public override void EndState()

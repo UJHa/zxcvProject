@@ -10,7 +10,7 @@ public class RunState : State
     public override void StartState()
     {
         character.SetMoveSpeedToRun();
-        animator.Play("Run");
+        animator.CrossFade("Run", character.runStart);
     }
 
     public override void FixedUpdateState()
@@ -19,6 +19,8 @@ public class RunState : State
         {
             character.ChangeState(eState.JUMP_DOWN);
         }
+        else
+            character.UpdateGroundHeight();
     }
 
     public override void EndState()

@@ -18,10 +18,13 @@ public class IdleState : State
         character.ResetMoveSpeed();
         character._isGround = true;
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
-            animator.Play("JumpEnd");
+            animator.CrossFade("JumpEnd", character.jumpEnd);
         else
-            animator.Play("Idle");
+            animator.CrossFade("Idle", character.idleStart);
         stopwatch.Start();
+
+        // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
+        character.UpdateGroundHeight();
     }
 
     public override void FixedUpdateState()

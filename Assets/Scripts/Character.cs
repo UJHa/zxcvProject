@@ -17,14 +17,22 @@ public enum eStateType
     NONE,
 }
 
-// 엄todo : 정밀한 바닥 처리
-// 엄todo : 언덕 오르기
+// 엄todo : 정밀한 바닥 처리(1차 작업 완료)
 // 엄todo : 공격 기능 개발
+// 엄todo : 언덕 오르기
 public class Character : MonoBehaviour
 {
     [Header("Stats")]
-    private float _fullHp = 100f;
-    private float _attackPower = 30f;
+    [SerializeField] private float _fullHp = 100f;
+    [SerializeField] private float _attackPower = 30f;
+    
+    [Header("[ Anim CrossFadeTime ]")]
+    [SerializeField] public float jumpUpStart = 0.07f;
+    [SerializeField] public float idleStart = 0.07f;
+    [SerializeField] public float walkStart = 0.07f;
+    [SerializeField] public float runStart = 0.07f;
+    [SerializeField] public float jumpEnd = 0.07f;
+    
     
     [SerializeField] private AnimationCurve _jumpUp = new ();
     [SerializeField] private AnimationCurve _jumpDown = new ();
@@ -38,14 +46,15 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpDownMaxTimer = 1f;
     [SerializeField] private float _jumpPowerY = 6f;
     [SerializeField] private float _jumpPowerXZ = 1f;
-    [SerializeField] public float _jumpUpCrossFadeSec = 0.07f;
-    [SerializeField] public float _idleJumpSpeedRate = 0.1f;
-    [SerializeField] public float _walkJumpSpeedRate = 0.3f;
-    [SerializeField] public float _runJumpSpeedRate = 1f;
+    [SerializeField] private float _idleJumpSpeedRate = 0.1f;
+    [SerializeField] private float _walkJumpSpeedRate = 0.3f;
+    [SerializeField] private float _runJumpSpeedRate = 1f;
 
-    [Header("JumpStats")]
-    public float _jumpOffset = 0.31f;
-    public float _downBoxHeight = 0.2f;
+    [Header("JumpStats 2")]
+    [SerializeField] public float _jumpOffset = 0.31f;
+    [SerializeField] public Vector3 _groundCheckBoxSize = new Vector3(1f, 0.2f, 1f);
+    
+    [SerializeField] private float _interpolationHeight = 0.25f;
 
     [Header("3D Phygics Component")] 
     [SerializeField] private Rigidbody _rigidbody;
@@ -197,11 +206,10 @@ public class Character : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        float height = 0.2f;
         Vector3 center = transform.position;
-        center.y -= height / 2;
+        center.y -= _groundCheckBoxSize.y / 2;
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(center, new Vector3(1f, 0.2f, 1f));
+        Gizmos.DrawWireCube(center, _groundCheckBoxSize);
     }
 
     // Update is called once per frame
@@ -254,12 +262,9 @@ public class Character : MonoBehaviour
     {
         if (_checkGround)
         {
-            Vector3 boxCenter = transform.position;
-            boxCenter.y -= _downBoxHeight / 2;
-            Vector3 boxHalfSize = new Vector3(1f, _downBoxHeight, 1f) / 2;  // 캐스트할 박스 크기의 절반 크기. 이렇게 하면 가로 2 세로 2 높이 2의 크기의 공간을 캐스트한다.
             int layerMask = 1;
             layerMask = layerMask << LayerMask.NameToLayer("Ground");
-            RaycastHit[] hits = Physics.BoxCastAll(boxCenter, boxHalfSize, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+            RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), GetGroundBoxHalfSize(), Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
             
             //if (hits.Length > 1)
             //{
@@ -467,12 +472,55 @@ public class Character : MonoBehaviour
 
     public bool IsGroundCheck()
     {
-        Vector3 boxCenter = transform.position;
-        boxCenter.y -= _downBoxHeight / 2;
-        Vector3 boxHalfSize = new Vector3(1f, _downBoxHeight, 1f) / 2;  // 캐스트할 박스 크기의 절반 크기. 이렇게 하면 가로 2 세로 2 높이 2의 크기의 공간을 캐스트한다.
         int layerMask = 1;
         layerMask = layerMask << LayerMask.NameToLayer("Ground");
-        RaycastHit[] hits = Physics.BoxCastAll(boxCenter, boxHalfSize, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), GetGroundBoxHalfSize(), Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         return hits.Length > 0;
+    }
+
+    public RaycastHit[] GetGroundCheckObjects()
+    {
+        int layerMask = 1;
+        layerMask = layerMask << LayerMask.NameToLayer("Ground");
+        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), GetGroundBoxHalfSize(), Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        return hits;
+    }
+
+    public void SetPositionY(float groundHeight)
+    {
+        Debug.Log($"groundHeight({groundHeight})");
+        var transform1 = transform;
+        Vector3 pos = transform1.position;
+        transform1.position = new Vector3(pos.x, groundHeight, pos.z);
+    }
+
+    public void UpdateGroundHeight()
+    {
+        float groundHeight = float.MinValue;
+        var rayObjs = GetGroundCheckObjects();
+        foreach (var rayObj in rayObjs)
+        {
+            if (rayObj.transform.TryGetComponent<Ground>(out var ground))
+            {
+                if (groundHeight < ground.heightPosY)
+                {
+                    groundHeight = ground.heightPosY;
+                }
+            }
+        }
+        if (false == groundHeight.Equals(float.MinValue) && Math.Abs(groundHeight - transform.position.y) < _interpolationHeight)
+            SetPositionY(groundHeight);
+    }
+
+    private Vector3 GetGroundBoxHalfSize()
+    {
+        return _groundCheckBoxSize / 2;
+    }
+    
+    private Vector3 GetGroundBoxCenter()
+    {
+        Vector3 boxCenter = transform.position;
+        boxCenter.y -= _groundCheckBoxSize.y / 2;
+        return boxCenter;
     }
 }

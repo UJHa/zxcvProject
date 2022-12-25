@@ -14,7 +14,7 @@ public class WalkState : State
 
         character.SetMoveSpeedToWalk();
 
-        animator.Play("Walk");
+        animator.CrossFade("Walk", character.walkStart);
     }
 
     public override void FixedUpdateState()
@@ -23,6 +23,8 @@ public class WalkState : State
         {
             character.ChangeState(eState.JUMP_DOWN);
         }
+        else
+            character.UpdateGroundHeight();
     }
 
     public override void EndState()
