@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
@@ -17,11 +16,30 @@ public enum eStateType
     NONE,
 }
 
+public class ColliderInfo
+{
+    public GameObject cObject;
+    public eWallDirection colliderType;
+}
+
+public enum eWallDirection
+{
+    LEFT,
+    RIGHT,
+    FRONT,
+    BACK
+}
+
 // 엄todo : 정밀한 바닥 처리(1차 작업 완료)
+// 엄todo : 벽 비비기 중력 처리(완료)
+// 엄todo : 벽 비비기 대각 이동 처리(완료)
+// 엄todo : 벽 비비기 대각벽에서의 대각 이동 버그 처리
+// 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 // 엄todo : 공격 기능 개발
 // 엄todo : 언덕 오르기
 public class Character : MonoBehaviour
 {
+    [SerializeField] private float _testPosX = -3.5f;
     [Header("Stats")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _attackPower = 30f;
@@ -53,6 +71,9 @@ public class Character : MonoBehaviour
     [Header("JumpStats 2")]
     [SerializeField] public float _jumpOffset = 0.31f;
     [SerializeField] public Vector3 _groundCheckBoxSize = new Vector3(1f, 0.2f, 1f);
+    [SerializeField] public float _wallBoxThickness = 0.05f;
+    [SerializeField] public float _wallBoxWidth = 0.2f;
+    [SerializeField] public float _wallBoxHeight = 1f;
     
     [SerializeField] private float _interpolationHeight = 0.25f;
 
@@ -81,6 +102,13 @@ public class Character : MonoBehaviour
     private Tween _rotationTween = null;
 
     public double CHECK_GROUND_DISTANCE = 0.2;
+
+    private RaycastHit[] _groundObjs = null;
+    private Dictionary<eWallDirection, List<ColliderInfo>> _colliderInfos = new();
+    private RaycastHit[] _leftWallObjs = null;
+    private RaycastHit[] _rightWallObjs = null;
+    private RaycastHit[] _frontWallObjs = null;
+    private RaycastHit[] _backWallObjs = null;
 
     private void Awake()
     {
@@ -183,33 +211,116 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //RaycastHit hit;
-        //if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
-        //{
-        //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
-        //    _isGround = false;
-        //    if (hit.distance <= CHECK_GROUND_DISTANCE)
-        //    {
-        //        _isGround = true;
-        //        Debug.Log("Ground Check!!!");
-        //    }
-        //}
-        //else
-        //{
-        //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
-        //    _isGround = true;
-        //    Debug.Log("Ground not ray!!!");
-        //}
-        //Debug.Log($"tranform height : {transform.position.y}");
+        // ground check
+        _groundObjs = GetGroundCheckObjects();
+        
+        _colliderInfos.Clear();
+        _colliderInfos.Add(eWallDirection.LEFT, new());
+        _colliderInfos.Add(eWallDirection.RIGHT, new());
+        _colliderInfos.Add(eWallDirection.FRONT, new());
+        _colliderInfos.Add(eWallDirection.BACK, new());
+        {
+            RaycastHit[] hits = GetWallCheckObjects(Vector3.left);
+            foreach (var hit in hits)
+            {
+                _colliderInfos[eWallDirection.LEFT].Add(new()
+                {
+                    cObject = hit.collider.gameObject,
+                    colliderType = eWallDirection.LEFT
+                });
+            }
+        }
+        {
+            RaycastHit[] hits = GetWallCheckObjects(Vector3.right);
+            foreach (var hit in hits)
+            {
+                _colliderInfos[eWallDirection.RIGHT].Add(new()
+                {
+                    cObject = hit.collider.gameObject,
+                    colliderType = eWallDirection.RIGHT
+                });
+            }
+        }
+        {
+            RaycastHit[] hits = GetWallCheckObjects(Vector3.forward);
+            foreach (var hit in hits)
+            {
+                _colliderInfos[eWallDirection.FRONT].Add(new()
+                {
+                    cObject = hit.collider.gameObject,
+                    colliderType = eWallDirection.FRONT
+                });
+            }
+        }
+        {
+            RaycastHit[] hits = GetWallCheckObjects(Vector3.back);
+            foreach (var hit in hits)
+            {
+                _colliderInfos[eWallDirection.BACK].Add(new()
+                {
+                    cObject = hit.collider.gameObject,
+                    colliderType = eWallDirection.BACK
+                });
+            }
+        }
+        
+        // _rightWallObjs = GetWallCheckObjects(Vector3.right);
         stateMap[_curState].FixedUpdateState();
     }
 
     private void OnDrawGizmos()
     {
+        DrawGroundCheckBox();
+        DrawWallCheckBox();
+    }
+
+    private void DrawGroundCheckBox()
+    {
         Vector3 center = transform.position;
         center.y -= _groundCheckBoxSize.y / 2;
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(center, _groundCheckBoxSize);
+    }
+
+    private void DrawWallCheckBox()
+    {
+        if (TryGetComponent<CapsuleCollider>(out var collider))
+        {
+            // DrawWallCube();
+            Vector3 wallBoxFrontBack = new Vector3(_wallBoxWidth, _wallBoxHeight, _wallBoxThickness);
+            {
+                var wallFrontPos = collider.center;
+                wallFrontPos.z += collider.radius + (wallBoxFrontBack.z / 2);
+                wallFrontPos += transform.position;
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(wallFrontPos, wallBoxFrontBack);
+            }
+
+            {
+                var wallBackPos = collider.center;
+                wallBackPos.z -= collider.radius + (wallBoxFrontBack.z / 2);
+                wallBackPos += transform.position;
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(wallBackPos, wallBoxFrontBack);
+            }
+            
+            Vector3 wallBoxLeftRight = new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth);
+            {
+                var wallLeftPos = collider.center;
+                wallLeftPos.x += collider.radius + (wallBoxLeftRight.x / 2);
+                wallLeftPos += transform.position;
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(wallLeftPos, wallBoxLeftRight);
+            }
+            
+            {
+                var wallRightPos = collider.center;
+                wallRightPos.x -= collider.radius + (wallBoxLeftRight.x / 2);
+                wallRightPos += transform.position;
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(wallRightPos, wallBoxLeftRight);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -257,66 +368,82 @@ public class Character : MonoBehaviour
     {
         return _prevState;
     }
-
-    public void FixedUpdatePhygics()
-    {
-        if (_checkGround)
-        {
-            int layerMask = 1;
-            layerMask = layerMask << LayerMask.NameToLayer("Ground");
-            RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), GetGroundBoxHalfSize(), Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
-            
-            //if (hits.Length > 1)
-            //{
-            //    Debug.Log("=====");
-            //    foreach (var hi in hits)
-            //    {
-            //        if (_downBoxHeight > Vector3.Distance(boxCenter, hi.transform.position))
-            //            Debug.Log($"name : {hi.collider.name} distance : {Vector3.Distance(boxCenter, hi.transform.position)}");
-            //    }
-            //}
-            if (hits.Length > 0)
-            {
-                //Debug.Log("Ground Box!!!");
-                _isGround = true;
-            }
-
-            // todo
-            // 바닥으로 레이져 쏴서 모든 ground의 접점 거리 체크하기
-            // 접점이 가장 짧은 길이가 height보다 작으면 바닥으로 취급시키기
-            // >> 점프 시작 상태일 때 높이가 up 벡터 방향으로 이동 시 바닥을 무시하도록 변경
-            // 
-            // 점프 시작 시 바닥으로 변경하는 처리가 필요 
-            // // + 기존에 0.2초 딜레이 후 바닥체크를 시작했었음...(JumpState 참고)
-            // // + 시간 초 제거 후 JumpState 상태 시 y값이 최대값이 아니게 될 때부터 바닥 체크
-            // // + fall 코드 한번만 더 생각해보자
-
-            //RaycastHit hit;
-            //if (Physics.Raycast(curPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
-            //{
-            //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.red);
-            //    _isGround = false;
-            //    if (hit.distance <= CHECK_GROUND_DISTANCE)
-            //    {
-            //        _isGround = true;
-            //        Debug.Log("Ground Check!!!");
-            //    }
-            //}
-            //else
-            //{
-            //    Debug.DrawRay(curPos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
-            //    _isGround = true;
-            //    Debug.Log("Ground not ray!!!");
-            //}
-        }
-    }
     
     public void MovePosition(Vector3 direction)
     {
-        // transform.position += _moveMap[direction] * _moveSpeed;
-        _rigidbody.velocity = direction * _moveSpeed;
+        Vector3 moveDirection = GetMoveDirectionVector(direction);
+
+        Vector3 moveVelocity = moveDirection * _moveSpeed;
+        Debug.Log($"[testumMove]moveDirection({moveDirection})moveVelocity({moveVelocity})");
+        
+        _rigidbody.velocity = moveVelocity;
     }
-    
+
+    public Vector3 GetMoveDirectionVector(Vector3 normDirection)
+    {
+        if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.BACK }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.forward).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.back).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.BACK }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.forward).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.back).normalized);
+        }
+        else if (ContactWall(eWallDirection.LEFT))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection,  Vector3.right);
+            // normDirection.x = normDirection.x > 0 ? 0 : normDirection.x;
+        }
+        else if (ContactWall(eWallDirection.RIGHT))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, Vector3.left);
+            // normDirection.x = normDirection.x < 0 ? 0 : normDirection.x;
+        }
+        else if (ContactWall(eWallDirection.BACK))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, Vector3.forward);
+            // normDirection.z = normDirection.z > 0 ? 0 : normDirection.z;
+        }
+        else if (ContactWall(eWallDirection.FRONT))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, Vector3.back);
+            // normDirection.z = normDirection.z < 0 ? 0 : normDirection.z;
+        }
+
+        return normDirection;
+    }
+
+    private Vector3 GetInterpolationWallDirection(Vector3 normDirection, Vector3 standard)
+    {
+        Vector3 result = normDirection;
+        // string testLog = "";
+        // testLog += $"[testumWall]normDirection({result})standard({standard})내적({Vector3.Dot(result, standard)})";
+        Vector3[] reverses = GetReverseVectors(standard);
+        foreach (var reverse in reverses)
+        {
+            if (reverse.normalized != result.normalized)
+                continue;
+            result -= standard * Vector3.Dot(result, standard);
+            // testLog += $"changed({result})";
+            // Debug.Log(testLog);
+        }
+
+        return result.normalized;
+    }
+
+    private Vector3[] GetReverseVectors(Vector3 vector)
+    {
+        return new[] { vector, Quaternion.Euler(0, 45, 0) * vector, Quaternion.Euler(0, -45, 0) * vector };
+    }
+
     public void SetDirectionByVector3(Vector3 argVector)
     {
         _directionVector = argVector;
@@ -478,11 +605,29 @@ public class Character : MonoBehaviour
         return hits.Length > 0;
     }
 
-    public RaycastHit[] GetGroundCheckObjects()
+    private RaycastHit[] GetGroundCheckObjects()
     {
         int layerMask = 1;
         layerMask = layerMask << LayerMask.NameToLayer("Ground");
         RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), GetGroundBoxHalfSize(), Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        return hits;
+    }
+    
+    private RaycastHit[] GetWallCheckObjects(Vector3 direction)
+    {
+        int layerMask = 1;
+        layerMask = layerMask << LayerMask.NameToLayer("Ground");
+        RaycastHit[] hits = Physics.BoxCastAll(GetWallBoxCenter(direction), GetLeftRightWallBoxSize(), direction, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        Debug.Log($"[testum]wall collision size({hits.Length})");
+        return hits;
+    }
+    
+    private RaycastHit[] GetRightWallCheckObjects()
+    {
+        int layerMask = 1;
+        layerMask = layerMask << LayerMask.NameToLayer("Ground");
+        RaycastHit[] hits = Physics.BoxCastAll(GetWallBoxCenter(Vector3.right), GetLeftRightWallBoxSize(), Vector3.right, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        Debug.Log($"[testum]wall collision size({hits.Length})");
         return hits;
     }
 
@@ -497,7 +642,9 @@ public class Character : MonoBehaviour
     public void UpdateGroundHeight()
     {
         float groundHeight = float.MinValue;
-        var rayObjs = GetGroundCheckObjects();
+        var rayObjs = _groundObjs;
+        if (null == rayObjs)
+            return;
         foreach (var rayObj in rayObjs)
         {
             if (rayObj.transform.TryGetComponent<Ground>(out var ground))
@@ -522,5 +669,43 @@ public class Character : MonoBehaviour
         Vector3 boxCenter = transform.position;
         boxCenter.y -= _groundCheckBoxSize.y / 2;
         return boxCenter;
+    }
+    
+    private Vector3 GetWallBoxCenter(Vector3 normVector)
+    {
+        if (false == TryGetComponent<CapsuleCollider>(out var collider))
+        {
+            Debug.LogError($"[testum]캡슐 콜리더 없음!");
+            return Vector3.zero;
+        }
+        Vector3 boxCenter = transform.position + collider.center;   // 캐릭터 캡슐의 중앙
+        boxCenter -= normVector * (collider.radius + (_wallBoxThickness / 2));    // 캐릭터 중앙에서 Wall Box 중앙 구하기
+        Debug.Log($"[testum]boxCenter({boxCenter})");
+            
+        // var wallBox = new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth);
+        return boxCenter;
+    }
+    
+    private bool ContactWalls(eWallDirection[] directions)
+    {
+        bool result = true;
+        foreach (var direction in directions)
+        {
+            result &= ContactWall(direction);
+        }
+
+        return result;
+    }
+
+    private bool ContactWall(eWallDirection wallDir)
+    {
+        if (false == _colliderInfos.ContainsKey(wallDir))
+            return false;
+        return _colliderInfos[wallDir].Count > 0;
+    }
+    
+    private Vector3 GetLeftRightWallBoxSize()
+    {
+        return new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth) / 2;
     }
 }

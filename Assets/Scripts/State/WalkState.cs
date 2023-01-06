@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class WalkState : State
 {
@@ -11,7 +12,13 @@ public class WalkState : State
 
     public override void StartState()
     {
-
+        string name = "";
+        name = name.Equals("") && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") ? "Idle" : name;
+        name = name.Equals("") && animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") ? "Walk" : name;
+        name = name.Equals("") && animator.GetCurrentAnimatorStateInfo(0).IsName("Run") ? "Run" : name;
+        name = name.Equals("") && animator.GetCurrentAnimatorStateInfo(0).IsName("Jump") ? "Jump" : name;
+        name = name.Equals("") && animator.GetCurrentAnimatorStateInfo(0).IsName("JumpEnd") ? "JumpEnd" : name;
+        Debug.Log($"[walkstart] prev anim{name}");
         character.SetMoveSpeedToWalk();
 
         animator.CrossFade("Walk", character.walkStart);

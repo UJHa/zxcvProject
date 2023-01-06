@@ -52,6 +52,7 @@ public class JumpUpState : State
 
         if (Vector3.zero != vector)
             character.SetDirectionByVector3(vector);
-        _moveVelocity = vector * character.GetMoveSpeed();
+        var moveVector = character.GetMoveDirectionVector(vector);
+        _moveVelocity = moveVector * character.GetMoveSpeed();
     }
 }
