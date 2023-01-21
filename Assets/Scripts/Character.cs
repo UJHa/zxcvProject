@@ -30,13 +30,10 @@ public enum eWallDirection
     BACK
 }
 
-// 엄todo : 정밀한 바닥 처리(1차 작업 완료)
-// 엄todo : 벽 비비기 중력 처리(완료)
-// 엄todo : 벽 비비기 대각 이동 처리(완료)
-// 엄todo : 벽 비비기 대각벽에서의 대각 이동 버그 처리
-// 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
+// 엄todo : 벽 비비기 대각벽에서의 대각 이동 버그 처리(캐릭터의 캡슐 콜리더 isTrigger 켜서 해결>>원인 언젠간 알아내자)
 // 엄todo : 공격 기능 개발
 // 엄todo : 언덕 오르기
+// 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
     [SerializeField] private float _testPosX = -3.5f;
@@ -50,6 +47,7 @@ public class Character : MonoBehaviour
     [SerializeField] public float walkStart = 0.07f;
     [SerializeField] public float runStart = 0.07f;
     [SerializeField] public float jumpEnd = 0.07f;
+    [SerializeField] public float attackStart = 0.1f;
     
     
     [SerializeField] private AnimationCurve _jumpUp = new ();
@@ -349,7 +347,10 @@ public class Character : MonoBehaviour
             _changeStates.Clear();
         }
         stateMap[_curState].UpdateState();
+    }
 
+    private void LateUpdate()
+    {
         UpdateUI();
     }
 
@@ -381,6 +382,7 @@ public class Character : MonoBehaviour
 
     public Vector3 GetMoveDirectionVector(Vector3 normDirection)
     {
+        ContactWallForLog(new[] { eWallDirection.LEFT, eWallDirection.RIGHT, eWallDirection.FRONT, eWallDirection.BACK });
         if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.BACK }))
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.forward).normalized);
@@ -618,16 +620,7 @@ public class Character : MonoBehaviour
         int layerMask = 1;
         layerMask = layerMask << LayerMask.NameToLayer("Ground");
         RaycastHit[] hits = Physics.BoxCastAll(GetWallBoxCenter(direction), GetLeftRightWallBoxSize(), direction, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
-        Debug.Log($"[testum]wall collision size({hits.Length})");
-        return hits;
-    }
-    
-    private RaycastHit[] GetRightWallCheckObjects()
-    {
-        int layerMask = 1;
-        layerMask = layerMask << LayerMask.NameToLayer("Ground");
-        RaycastHit[] hits = Physics.BoxCastAll(GetWallBoxCenter(Vector3.right), GetLeftRightWallBoxSize(), Vector3.right, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
-        Debug.Log($"[testum]wall collision size({hits.Length})");
+        Debug.Log($"[testum][{direction}]wall collision size({hits.Length})");
         return hits;
     }
 
@@ -684,6 +677,16 @@ public class Character : MonoBehaviour
             
         // var wallBox = new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth);
         return boxCenter;
+    }
+    
+    private void ContactWallForLog(eWallDirection[] directions)
+    {
+        string log = "[testum][Logger]";
+        foreach (var direction in directions)
+        {
+            log += $"{direction}({ContactWall(direction)})";
+        }
+        Debug.Log(log);
     }
     
     private bool ContactWalls(eWallDirection[] directions)

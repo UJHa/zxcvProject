@@ -28,7 +28,7 @@ public class JumpDownState : State
         if (character.IsGroundCheck())
         {
             Debug.Log("[testumLanding]isGround!");
-            character.ChangeState(eState.IDLE);
+            character.ChangeState(eState.LANDING);
             return;
         }
         else

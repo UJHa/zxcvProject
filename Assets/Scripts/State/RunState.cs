@@ -38,7 +38,7 @@ public class RunState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
         if (Vector3.zero == vector)
         {
-            character.ChangeState(eState.IDLE);
+            character.ChangeState(eState.RUNSTOP);
             return;
         }
 

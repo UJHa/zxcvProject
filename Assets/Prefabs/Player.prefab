@@ -86,6 +86,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _testPosX: -3.5
+  _fullHp: 100
+  _attackPower: 30
+  jumpUpStart: 0.07
+  idleStart: 0.07
+  walkStart: 0.07
+  runStart: 0.07
+  jumpEnd: 0.07
   _jumpUp:
     serializedVersion: 2
     m_Curve:
@@ -143,13 +151,20 @@ MonoBehaviour:
   _jumpDownMaxTimer: 0.6
   _jumpPowerY: 6
   _jumpPowerXZ: 1
+  _idleJumpSpeedRate: 0.1
+  _walkJumpSpeedRate: 0.3
+  _runJumpSpeedRate: 1
   _jumpOffset: 0.31
-  _downBoxHeight: 0.2
+  _groundCheckBoxSize: {x: 1, y: 0.2, z: 1}
+  _wallBoxThickness: 0.05
+  _wallBoxWidth: 0.2
+  _wallBoxHeight: 1
+  _interpolationHeight: 0.25
   _rigidbody: {fileID: 1097527484480378824}
   _forceModeType: 0
+  _prevState: 0
   _curState: 0
   _isGround: 0
-  _hitDistance: 0
   CHECK_GROUND_DISTANCE: 0.2
   traceTarget: {fileID: 0}
 --- !u!136 &1097527484480378870
@@ -160,7 +175,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1097527484480378869}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.2
   m_Height: 1.8

@@ -1,14 +1,13 @@
 using System.Diagnostics;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.PlayerLoop;
 using Debug = UnityEngine.Debug;
 
-public class IdleState : State
+public class LandingState : State
 {
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
-    public IdleState(Character character) : base(character)
+    public LandingState(Character character) : base(character)
     {
         _inputTimer = new Stopwatch();
     }
@@ -17,8 +16,7 @@ public class IdleState : State
     {
         character.ResetMoveSpeed();
         character._isGround = true;
-        animator.enabled = true;
-        animator.CrossFade("Idle", character.idleStart);
+        animator.CrossFade("JumpEnd", character.jumpEnd);
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
@@ -27,11 +25,7 @@ public class IdleState : State
 
     public override void FixedUpdateState()
     {
-        if (false == character.IsGroundCheck())
-        {
-            Debug.Log("[testumAir]is not Ground!");
-            character.ChangeState(eState.JUMP_DOWN);
-        }
+        
     }
 
     public override void EndState()
@@ -50,7 +44,7 @@ public class IdleState : State
         var curStateInfo = animator.GetCurrentAnimatorStateInfo(0);
         if (curStateInfo.IsName("JumpEnd"))
             if (curStateInfo.normalizedTime >= 1.0f)
-                animator.Play("Idle");
+                character.ChangeState(eState.IDLE);
     }
 
     private void UpdateInput()
@@ -59,12 +53,12 @@ public class IdleState : State
             return;
         
         UpdateMoveInput();
-
+        
         if(Input.GetKeyDown(KeyCode.V) && character.IsGround())
         {
             character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
         }
-
+        
         if (Input.GetKeyDown(KeyCode.C) && character.IsGround())
         {
             character.ChangeState(eState.ATTACK);

@@ -1,14 +1,14 @@
 using UnityEngine;
-using UnityEditor;
 
 public enum eState
 {
     IDLE,
     WALK,
     RUN,
-    JUMP,
+    RUNSTOP,
     JUMP_UP,
     JUMP_DOWN,
+    LANDING,
     ATTACK,
     DEAD
 }

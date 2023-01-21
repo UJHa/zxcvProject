@@ -9,7 +9,7 @@ public class AttackState : State
 
     public override void StartState()
     {
-        animator.Play("Attack");
+        animator.CrossFade("Attack", character.attackStart);
     }
 
     public override void FixedUpdateState()
