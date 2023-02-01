@@ -31,6 +31,8 @@ public enum eWallDirection
 }
 
 // 엄todo : 벽 비비기 대각벽에서의 대각 이동 버그 처리(캐릭터의 캡슐 콜리더 isTrigger 켜서 해결>>원인 언젠간 알아내자)
+// //       벽 판정 로직 재구현 필요(8각으로 재갱신)
+// //        8각 Gizmo 그리기 완료
 // 엄todo : 공격 기능 개발
 // 엄todo : 언덕 오르기
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
@@ -286,38 +288,50 @@ public class Character : MonoBehaviour
         {
             // DrawWallCube();
             Vector3 wallBoxFrontBack = new Vector3(_wallBoxWidth, _wallBoxHeight, _wallBoxThickness);
+            // {
+            //     var boxPos = transform.position + collider.center;
+            //     var pivot = 0.5f;
+            //     var pivotPos = wallBoxFrontBack.z / 2;
+            //     var centerMovePos = collider.radius;
+            //     boxPos.z += centerMovePos + pivotPos;
+            //     Gizmos.color = Color.red;
+            //     Gizmos.DrawWireCube(boxPos, wallBoxFrontBack);
+            // }
+            for (int i = 0; i < 8; i++)
             {
-                var wallFrontPos = collider.center;
-                wallFrontPos.z += collider.radius + (wallBoxFrontBack.z / 2);
-                wallFrontPos += transform.position;
+                var rotateAngle = i * 45;
+                var characterCenterPos = transform.position + collider.center; 
+                var pivot = 0.5f;
+                var pivotPos = wallBoxFrontBack.z / 2;
+                Gizmos.matrix = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one);
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(wallFrontPos, wallBoxFrontBack);
+                Gizmos.DrawWireCube(Vector3.forward * collider.radius, wallBoxFrontBack);
             }
 
-            {
-                var wallBackPos = collider.center;
-                wallBackPos.z -= collider.radius + (wallBoxFrontBack.z / 2);
-                wallBackPos += transform.position;
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(wallBackPos, wallBoxFrontBack);
-            }
-            
-            Vector3 wallBoxLeftRight = new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth);
-            {
-                var wallLeftPos = collider.center;
-                wallLeftPos.x += collider.radius + (wallBoxLeftRight.x / 2);
-                wallLeftPos += transform.position;
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(wallLeftPos, wallBoxLeftRight);
-            }
-            
-            {
-                var wallRightPos = collider.center;
-                wallRightPos.x -= collider.radius + (wallBoxLeftRight.x / 2);
-                wallRightPos += transform.position;
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(wallRightPos, wallBoxLeftRight);
-            }
+            // {
+            //     var wallBackPos = collider.center;
+            //     wallBackPos.z -= collider.radius + (wallBoxFrontBack.z / 2);
+            //     wallBackPos += transform.position;
+            //     Gizmos.color = Color.red;
+            //     Gizmos.DrawWireCube(wallBackPos, wallBoxFrontBack);
+            // }
+            //
+            // Vector3 wallBoxLeftRight = new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth);
+            // {
+            //     var wallLeftPos = collider.center;
+            //     wallLeftPos.x += collider.radius + (wallBoxLeftRight.x / 2);
+            //     wallLeftPos += transform.position;
+            //     Gizmos.color = Color.red;
+            //     Gizmos.DrawWireCube(wallLeftPos, wallBoxLeftRight);
+            // }
+            //
+            // {
+            //     var wallRightPos = collider.center;
+            //     wallRightPos.x -= collider.radius + (wallBoxLeftRight.x / 2);
+            //     wallRightPos += transform.position;
+            //     Gizmos.color = Color.red;
+            //     Gizmos.DrawWireCube(wallRightPos, wallBoxLeftRight);
+            // }
         }
     }
 

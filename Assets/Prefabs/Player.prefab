@@ -94,6 +94,7 @@ MonoBehaviour:
   walkStart: 0.07
   runStart: 0.07
   jumpEnd: 0.07
+  attackStart: 0.1
   _jumpUp:
     serializedVersion: 2
     m_Curve:
@@ -155,10 +156,10 @@ MonoBehaviour:
   _walkJumpSpeedRate: 0.3
   _runJumpSpeedRate: 1
   _jumpOffset: 0.31
-  _groundCheckBoxSize: {x: 1, y: 0.2, z: 1}
+  _groundCheckBoxSize: {x: 0.2, y: 0.03, z: 0.2}
   _wallBoxThickness: 0.05
   _wallBoxWidth: 0.2
-  _wallBoxHeight: 1
+  _wallBoxHeight: 1.7
   _interpolationHeight: 0.25
   _rigidbody: {fileID: 1097527484480378824}
   _forceModeType: 0
@@ -175,7 +176,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1097527484480378869}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.2
   m_Height: 1.8

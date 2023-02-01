@@ -4545,7 +4545,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1097527484480378826, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.7160001
+      value: 1.81
       objectReference: {fileID: 0}
     - target: {fileID: 1097527484480378826, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4587,13 +4587,9 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1097527484480378870, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1097527484480378871, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
       propertyPath: _wallBoxHeight
-      value: 1.7
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 1097527484480378871, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
       propertyPath: _wallCheckBoxSize.x
@@ -4602,18 +4598,6 @@ PrefabInstance:
     - target: {fileID: 1097527484480378871, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
       propertyPath: _wallCheckBoxSize.z
       value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 1097527484480378871, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
-      propertyPath: _groundCheckBoxSize.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1097527484480378871, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
-      propertyPath: _groundCheckBoxSize.y
-      value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 1097527484480378871, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
-      propertyPath: _groundCheckBoxSize.z
-      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 697155f2bc31ea24f963af1bf3703b0e, type: 3}
