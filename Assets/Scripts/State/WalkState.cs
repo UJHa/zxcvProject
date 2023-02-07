@@ -26,7 +26,8 @@ public class WalkState : State
 
     public override void FixedUpdateState()
     {
-        if (false == character.IsGroundCheck())
+        var groundObjs = character.GetGroundCheckObjects();
+        if (0 == groundObjs.Length)
         {
             character.ChangeState(eState.JUMP_DOWN);
         }

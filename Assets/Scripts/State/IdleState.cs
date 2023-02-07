@@ -27,7 +27,8 @@ public class IdleState : State
 
     public override void FixedUpdateState()
     {
-        if (false == character.IsGroundCheck())
+        var groundObjs = character.GetGroundCheckObjects();
+        if (0 == groundObjs.Length)
         {
             Debug.Log("[testumAir]is not Ground!");
             character.ChangeState(eState.JUMP_DOWN);

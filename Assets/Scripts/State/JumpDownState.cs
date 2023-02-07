@@ -25,7 +25,8 @@ public class JumpDownState : State
 
     public override void FixedUpdateState()
     {
-        if (character.IsGroundCheck())
+        var groundObjs = character.GetGroundCheckObjects();
+        if (groundObjs.Length > 0)
         {
             Debug.Log("[testumLanding]isGround!");
             character.ChangeState(eState.LANDING);

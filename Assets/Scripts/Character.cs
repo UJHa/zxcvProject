@@ -27,12 +27,24 @@ public enum eWallDirection
     LEFT,
     RIGHT,
     FRONT,
-    BACK
+    BACK,
+    LEFT_FRONT,
+    RIGHT_FRONT,
+    LEFT_BACK,
+    RIGHT_BACK,
+}
+[Serializable]
+public class ColliderCube
+{
+    public Vector3 colliderSize;
+    public Vector3 colliderPos;
+    public Vector3 gizmoPos;
 }
 
 // 엄todo : 벽 비비기 대각벽에서의 대각 이동 버그 처리(캐릭터의 캡슐 콜리더 isTrigger 켜서 해결>>원인 언젠간 알아내자)
 // //       벽 판정 로직 재구현 필요(8각으로 재갱신)
 // //        8각 Gizmo 그리기 완료
+// 대쉬 슬라이드 도중 중력 안 먹음 
 // 엄todo : 공격 기능 개발
 // 엄todo : 언덕 오르기
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
@@ -70,10 +82,23 @@ public class Character : MonoBehaviour
 
     [Header("JumpStats 2")]
     [SerializeField] public float _jumpOffset = 0.31f;
-    [SerializeField] public Vector3 _groundCheckBoxSize = new Vector3(1f, 0.2f, 1f);
+
+    [Header("Collider")]
+    [SerializeField] private ColliderCube _groundCollider = new ColliderCube
+    {
+        colliderSize = new(0.2f, 0.03f, 0.2f),
+        colliderPos = default,
+        gizmoPos = default
+    };
+    [SerializeField] private ColliderCube _wallCollider = new ColliderCube
+    {
+        colliderSize = new(0.1f, 1.5f, 0.05f),
+        colliderPos = default,
+        gizmoPos = default
+    };
     [SerializeField] public float _wallBoxThickness = 0.05f;
-    [SerializeField] public float _wallBoxWidth = 0.2f;
-    [SerializeField] public float _wallBoxHeight = 1f;
+    [SerializeField] public float _wallBoxWidth = 0.1f;
+    [SerializeField] public float _wallBoxHeight = 1.5f;
     
     [SerializeField] private float _interpolationHeight = 0.25f;
 
@@ -215,57 +240,34 @@ public class Character : MonoBehaviour
         _groundObjs = GetGroundCheckObjects();
         
         _colliderInfos.Clear();
-        _colliderInfos.Add(eWallDirection.LEFT, new());
-        _colliderInfos.Add(eWallDirection.RIGHT, new());
-        _colliderInfos.Add(eWallDirection.FRONT, new());
-        _colliderInfos.Add(eWallDirection.BACK, new());
-        {
-            RaycastHit[] hits = GetWallCheckObjects(Vector3.left);
-            foreach (var hit in hits)
-            {
-                _colliderInfos[eWallDirection.LEFT].Add(new()
-                {
-                    cObject = hit.collider.gameObject,
-                    colliderType = eWallDirection.LEFT
-                });
-            }
-        }
-        {
-            RaycastHit[] hits = GetWallCheckObjects(Vector3.right);
-            foreach (var hit in hits)
-            {
-                _colliderInfos[eWallDirection.RIGHT].Add(new()
-                {
-                    cObject = hit.collider.gameObject,
-                    colliderType = eWallDirection.RIGHT
-                });
-            }
-        }
-        {
-            RaycastHit[] hits = GetWallCheckObjects(Vector3.forward);
-            foreach (var hit in hits)
-            {
-                _colliderInfos[eWallDirection.FRONT].Add(new()
-                {
-                    cObject = hit.collider.gameObject,
-                    colliderType = eWallDirection.FRONT
-                });
-            }
-        }
-        {
-            RaycastHit[] hits = GetWallCheckObjects(Vector3.back);
-            foreach (var hit in hits)
-            {
-                _colliderInfos[eWallDirection.BACK].Add(new()
-                {
-                    cObject = hit.collider.gameObject,
-                    colliderType = eWallDirection.BACK
-                });
-            }
-        }
-        
+        UpdateWallCollisions(eWallDirection.LEFT, Vector3.left);
+        UpdateWallCollisions(eWallDirection.RIGHT, Vector3.right);
+        UpdateWallCollisions(eWallDirection.FRONT, Vector3.forward);
+        UpdateWallCollisions(eWallDirection.BACK, Vector3.back);
+        UpdateWallCollisions(eWallDirection.LEFT_FRONT, (Vector3.left + Vector3.forward).normalized);
+        UpdateWallCollisions(eWallDirection.RIGHT_FRONT, (Vector3.right + Vector3.forward).normalized);
+        UpdateWallCollisions(eWallDirection.LEFT_BACK, (Vector3.left + Vector3.back).normalized);
+        UpdateWallCollisions(eWallDirection.RIGHT_BACK, (Vector3.right + Vector3.back).normalized);
+
         // _rightWallObjs = GetWallCheckObjects(Vector3.right);
         stateMap[_curState].FixedUpdateState();
+    }
+
+    private void UpdateWallCollisions(eWallDirection eWallDir, Vector3 dirVector)
+    {
+        _colliderInfos.Add(eWallDir, new());
+        {
+            RaycastHit[] hits = GetWallCheckObjects(dirVector);
+            foreach (var hit in hits)
+            {
+                _colliderInfos[eWallDir].Add(new()
+                {
+                    cObject = hit.collider.gameObject,
+                    colliderType = eWallDir
+                });
+            }
+            Debug.Log($"[testum][WallCollision][{eWallDir}]count({hits.Length})");
+        }
     }
 
     private void OnDrawGizmos()
@@ -276,10 +278,11 @@ public class Character : MonoBehaviour
 
     private void DrawGroundCheckBox()
     {
-        Vector3 center = transform.position;
-        center.y -= _groundCheckBoxSize.y / 2;
+        Vector3 center = new(0f, - _groundCollider.colliderSize.y / 2, 0f);
+        _groundCollider.gizmoPos = center;
+        Gizmos.matrix = Matrix4x4.TRS(transform.position, Quaternion.identity, Vector3.one);
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(center, _groundCheckBoxSize);
+        Gizmos.DrawWireCube(center, _groundCollider.colliderSize);
     }
 
     private void DrawWallCheckBox()
@@ -287,7 +290,7 @@ public class Character : MonoBehaviour
         if (TryGetComponent<CapsuleCollider>(out var collider))
         {
             // DrawWallCube();
-            Vector3 wallBoxFrontBack = new Vector3(_wallBoxWidth, _wallBoxHeight, _wallBoxThickness);
+            // Vector3 wallBoxFrontBack = new Vector3(_wallBoxWidth, _wallBoxHeight, _wallBoxThickness);
             // {
             //     var boxPos = transform.position + collider.center;
             //     var pivot = 0.5f;
@@ -302,10 +305,11 @@ public class Character : MonoBehaviour
                 var rotateAngle = i * 45;
                 var characterCenterPos = transform.position + collider.center; 
                 var pivot = 0.5f;
-                var pivotPos = wallBoxFrontBack.z / 2;
+                var pivotPos = _wallCollider.colliderSize.z / 2;
                 Gizmos.matrix = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one);
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(Vector3.forward * collider.radius, wallBoxFrontBack);
+                var cubePos = Vector3.forward * (collider.radius + _wallCollider.colliderSize.z / 2);
+                Gizmos.DrawWireCube(cubePos, _wallCollider.colliderSize);
             }
 
             // {
@@ -396,23 +400,74 @@ public class Character : MonoBehaviour
 
     public Vector3 GetMoveDirectionVector(Vector3 normDirection)
     {
-        ContactWallForLog(new[] { eWallDirection.LEFT, eWallDirection.RIGHT, eWallDirection.FRONT, eWallDirection.BACK });
-        if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.BACK }))
+        // ContactWallForLog(new[] { eWallDirection.LEFT, eWallDirection.RIGHT, eWallDirection.FRONT, eWallDirection.BACK });
+        // 3개의 충돌체 검증 시 정확한 역방향 처리
+        if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.LEFT_BACK, eWallDirection.BACK }))
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.forward).normalized);
         }
-        else if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.FRONT }))
+        else if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.LEFT_FRONT, eWallDirection.FRONT }))
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.back).normalized);
         }
-        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.BACK }))
+        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.RIGHT_BACK, eWallDirection.BACK }))
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.forward).normalized);
         }
-        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.FRONT }))
+        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.RIGHT_FRONT, eWallDirection.FRONT }))
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.back).normalized);
         }
+        else if (ContactWalls(new[] { eWallDirection.LEFT_BACK, eWallDirection.LEFT, eWallDirection.LEFT_FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection,  Vector3.right);
+        }
+        else if (ContactWalls(new[] { eWallDirection.RIGHT_BACK, eWallDirection.RIGHT, eWallDirection.RIGHT_FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, Vector3.left);
+        }
+        else if (ContactWalls(new[] { eWallDirection.LEFT_BACK, eWallDirection.BACK, eWallDirection.RIGHT_BACK }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, Vector3.forward);
+        }
+        else if (ContactWalls(new[] { eWallDirection.LEFT_FRONT, eWallDirection.FRONT, eWallDirection.RIGHT_FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, Vector3.back);
+        }
+        // 2개의 충돌체 검출 시 정확한 역방향 처리
+        else if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.LEFT_BACK }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.forward).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.LEFT_BACK, eWallDirection.BACK }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.forward).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.LEFT_FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.back).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.LEFT_FRONT, eWallDirection.FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.back).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.RIGHT_BACK }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.forward).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.RIGHT_BACK, eWallDirection.BACK }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.forward).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.RIGHT, eWallDirection.RIGHT_FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.back).normalized);
+        }
+        else if (ContactWalls(new[] { eWallDirection.RIGHT_FRONT, eWallDirection.FRONT }))
+        {
+            normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.back).normalized);
+        }
+        // 1개의 충돌체 검출 시 정확한 역방향 처리
         else if (ContactWall(eWallDirection.LEFT))
         {
             normDirection = GetInterpolationWallDirection(normDirection,  Vector3.right);
@@ -613,27 +668,47 @@ public class Character : MonoBehaviour
         slider.gameObject.SetActive(false);
     }
 
-    public bool IsGroundCheck()
+    public RaycastHit[] GetGroundCheckObjects()
     {
-        int layerMask = 1;
-        layerMask = layerMask << LayerMask.NameToLayer("Ground");
-        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), GetGroundBoxHalfSize(), Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
-        return hits.Length > 0;
-    }
-
-    private RaycastHit[] GetGroundCheckObjects()
-    {
-        int layerMask = 1;
-        layerMask = layerMask << LayerMask.NameToLayer("Ground");
-        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), GetGroundBoxHalfSize(), Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        int layerMask = 1 << LayerMask.NameToLayer("Ground");
+        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.colliderSize / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         return hits;
     }
     
     private RaycastHit[] GetWallCheckObjects(Vector3 direction)
     {
-        int layerMask = 1;
-        layerMask = layerMask << LayerMask.NameToLayer("Ground");
-        RaycastHit[] hits = Physics.BoxCastAll(GetWallBoxCenter(direction), GetLeftRightWallBoxSize(), direction, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        int layerMask = 1 << LayerMask.NameToLayer("Ground");
+        
+        if (false == TryGetComponent<CapsuleCollider>(out var collider))
+            return null;
+        var from = Vector3.forward;
+        var to = direction;
+        float rotateAngle = Vector3.SignedAngle(from, to, transform.up);
+        var characterCenterPos = transform.position + collider.center;
+        var wallPos = direction * (collider.radius + _wallCollider.colliderSize.z / 2);
+        var boxCenter = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one).GetPosition();
+        // Debug.Log($"[testum]cobj direction({direction}) ({GetWallBoxCenter(direction)}) boxCenter({boxCenter-wallPos})");
+        RaycastHit[] hits = Physics.BoxCastAll(boxCenter-wallPos, _wallCollider.colliderSize / 2, direction, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        return hits;
+    }
+    
+    private RaycastHit[] GetWallFrontObjects(Vector3 direction)
+    {
+        int layerMask = 1 << LayerMask.NameToLayer("Ground");
+        
+        // GetWallBoxCenter 대신 각도의 값으로 바꾸자 일단 졸려서 못함
+        if (false == TryGetComponent<CapsuleCollider>(out var collider))
+            return null;
+        
+        var from = Vector3.forward;
+        var to = direction;
+        float rotateAngle = Vector3.SignedAngle(from, to, transform.up);
+        Debug.Log($"[testum]Rotate({rotateAngle})");
+        
+        var characterCenterPos = transform.position + collider.center;
+        var boxCenter = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one).GetPosition();
+        
+        RaycastHit[] hits = Physics.BoxCastAll(boxCenter, _wallCollider.colliderSize / 2, Vector3.forward, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         Debug.Log($"[testum][{direction}]wall collision size({hits.Length})");
         return hits;
     }
@@ -668,13 +743,13 @@ public class Character : MonoBehaviour
 
     private Vector3 GetGroundBoxHalfSize()
     {
-        return _groundCheckBoxSize / 2;
+        return _groundCollider.colliderSize / 2;
     }
     
     private Vector3 GetGroundBoxCenter()
     {
         Vector3 boxCenter = transform.position;
-        boxCenter.y -= _groundCheckBoxSize.y / 2;
+        boxCenter.y -= _groundCollider.colliderSize.y / 2;
         return boxCenter;
     }
     

@@ -156,10 +156,13 @@ MonoBehaviour:
   _walkJumpSpeedRate: 0.3
   _runJumpSpeedRate: 1
   _jumpOffset: 0.31
-  _groundCheckBoxSize: {x: 0.2, y: 0.03, z: 0.2}
+  _groundCollider:
+    colliderSize: {x: 0.2, y: 0.03, z: 0.2}
+    colliderPos: {x: 0, y: 0, z: 0}
+    gizmoPos: {x: 0, y: -0.015, z: 0}
   _wallBoxThickness: 0.05
-  _wallBoxWidth: 0.2
-  _wallBoxHeight: 1.7
+  _wallBoxWidth: 0.1
+  _wallBoxHeight: 1.5
   _interpolationHeight: 0.25
   _rigidbody: {fileID: 1097527484480378824}
   _forceModeType: 0
