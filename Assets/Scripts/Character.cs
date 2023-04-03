@@ -41,11 +41,14 @@ public class ColliderCube
     public Vector3 gizmoPos;
 }
 
-// 엄todo : 벽 비비기 대각벽에서의 대각 이동 버그 처리(캐릭터의 캡슐 콜리더 isTrigger 켜서 해결>>원인 언젠간 알아내자)
-// //       벽 판정 로직 재구현 필요(8각으로 재갱신)
-// //        8각 Gizmo 그리기 완료
-// 대쉬 슬라이드 도중 중력 안 먹음 
+// 엄todo : 대쉬 슬라이드로 언덕 오르기/내리기 테스트 및 구현
+// // 대각 바닥 오르기 안되는 버그
+// // >> 원인 : 바닥 타입 일 때 posY 갱신으로 인해서 대각 오르기 실패 >> slop 타입, wall 타입 분리 필요
+// // 대각 바닥 내리기 기능 개발
+// // >> slop 타입 분리 필요
+// // >> 바닥 콜리전 없을 때, 경사용 컬리전으로 다시 체크하는 방식?
 // 엄todo : 공격 기능 개발
+// // Mixamo Punch 검색해서 가져오기
 // 엄todo : 언덕 오르기
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
@@ -397,6 +400,16 @@ public class Character : MonoBehaviour
         
         _rigidbody.velocity = moveVelocity;
     }
+    
+    public void MovePosition(Vector3 direction, float moveSpeed)
+    {
+        Vector3 moveDirection = GetMoveDirectionVector(direction);
+
+        Vector3 moveVelocity = moveDirection * moveSpeed;
+        Debug.Log($"[testumMove]moveDirection({moveDirection})moveVelocity({moveVelocity})");
+        
+        _rigidbody.velocity = moveVelocity;
+    }
 
     public Vector3 GetMoveDirectionVector(Vector3 normDirection)
     {
@@ -737,8 +750,8 @@ public class Character : MonoBehaviour
                 }
             }
         }
-        if (false == groundHeight.Equals(float.MinValue) && Math.Abs(groundHeight - transform.position.y) < _interpolationHeight)
-            SetPositionY(groundHeight);
+        // if (false == groundHeight.Equals(float.MinValue) && Math.Abs(groundHeight - transform.position.y) < _interpolationHeight)
+        //     SetPositionY(groundHeight);
     }
 
     private Vector3 GetGroundBoxHalfSize()

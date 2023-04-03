@@ -17,7 +17,7 @@ public class IdleState : State
     {
         character.ResetMoveSpeed();
         character._isGround = true;
-        animator.enabled = true;
+        // animator.enabled = true;
         animator.CrossFade("Idle", character.idleStart);
         _inputTimer.Start();
 
