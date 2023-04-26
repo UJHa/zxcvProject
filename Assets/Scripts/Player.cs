@@ -34,7 +34,7 @@ public class Player : Character
         stateMap.Add(eState.JUMP_UP, new JumpUpState(this));
         stateMap.Add(eState.JUMP_DOWN, new JumpDownState(this));
         stateMap.Add(eState.LANDING, new LandingState(this));
-        stateMap.Add(eState.ATTACK, new AttackState(this));
+        stateMap.Add(eState.ATTACK, new ComboState(this));
         stateMap.Add(eState.DEAD, new DeadState(this));
 
         _curState = eState.IDLE;
