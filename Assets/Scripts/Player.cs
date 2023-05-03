@@ -27,19 +27,31 @@ public class Player : Character
 
         _directionVector = Vector3.back;
 
-        stateMap.Add(eState.IDLE, new IdleState(this));
-        stateMap.Add(eState.WALK, new WalkState(this));
-        stateMap.Add(eState.RUN, new RunState(this));
-        stateMap.Add(eState.RUNSTOP, new RunStopState(this));
-        stateMap.Add(eState.JUMP_UP, new JumpUpState(this));
-        stateMap.Add(eState.JUMP_DOWN, new JumpDownState(this));
-        stateMap.Add(eState.LANDING, new LandingState(this));
-        stateMap.Add(eState.ATTACK, new ComboState(this));
-        stateMap.Add(eState.DEAD, new DeadState(this));
+        // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
+        _stateMap.Add(eState.IDLE, new IdleState(this, eState.IDLE));
+        _stateMap.Add(eState.WALK, new WalkState(this, eState.WALK));
+        _stateMap.Add(eState.RUN, new RunState(this, eState.RUN));
+        _stateMap.Add(eState.RUNSTOP, new RunStopState(this, eState.RUNSTOP));
+        _stateMap.Add(eState.JUMP_UP, new JumpUpState(this, eState.JUMP_UP));
+        _stateMap.Add(eState.JUMP_DOWN, new JumpDownState(this, eState.JUMP_DOWN));
+        _stateMap.Add(eState.LANDING, new LandingState(this, eState.LANDING));
+        _stateMap.Add(eState.ATTACK, new ComboState(this, eState.ATTACK));
+        _stateMap.Add(eState.DEAD, new DeadState(this, eState.DEAD));
+
+        var animator = GetComponent<Animator>();
+        if (null == animator)
+        {
+            Debug.LogError($"Player don't have animator!");
+            return;
+        }
+        _moveSet.Init(animator);
+        _moveSet.RegisterAction("Punch1", KeyCode.C, eState.IDLE, eState.ATTACK);
+        // _moveSet.RegisterAction("Punch2");
+        // _moveSet.RegisterAction("Punch3");
 
         _curState = eState.IDLE;
 
-        stateMap[_curState].StartState();
+        _stateMap[_curState].StartState();
     }
 
     protected override void StartUI()

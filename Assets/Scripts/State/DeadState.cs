@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class DeadState : State
 {
-    public DeadState(Character character) : base(character)
+    public DeadState(Character character, eState eState) : base(character, eState)
     {
 
     }
@@ -24,6 +24,6 @@ public class DeadState : State
 
     public override void UpdateState()
     {
-        character.DeadDisable();
+        _character.DeadDisable();
     }
 }

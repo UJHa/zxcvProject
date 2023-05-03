@@ -7,20 +7,20 @@ public class LandingState : State
 {
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
-    public LandingState(Character character) : base(character)
+    public LandingState(Character character, eState eState) : base(character, eState)
     {
         _inputTimer = new Stopwatch();
     }
 
     public override void StartState()
     {
-        character.ResetMoveSpeed();
-        character._isGround = true;
-        animator.CrossFade("JumpEnd", character.jumpEnd);
+        _character.ResetMoveSpeed();
+        _character._isGround = true;
+        _animator.CrossFade("JumpEnd", _character.jumpEnd);
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
-        character.UpdateGroundHeight();
+        _character.UpdateGroundHeight();
     }
 
     public override void FixedUpdateState()
@@ -41,10 +41,10 @@ public class LandingState : State
 
     private void UpdateAnimation()
     {
-        var curStateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        var curStateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         if (curStateInfo.IsName("JumpEnd"))
             if (curStateInfo.normalizedTime >= 1.0f)
-                character.ChangeState(eState.IDLE);
+                _character.ChangeState(eState.IDLE);
     }
 
     private void UpdateInput()
@@ -54,14 +54,14 @@ public class LandingState : State
         
         UpdateMoveInput();
         
-        if(Input.GetKeyDown(KeyCode.V) && character.IsGround())
+        if(Input.GetKeyDown(KeyCode.V) && _character.IsGround())
         {
-            character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
         }
         
-        if (Input.GetKeyDown(KeyCode.C) && character.IsGround())
+        if (Input.GetKeyDown(KeyCode.C) && _character.IsGround())
         {
-            character.ChangeState(eState.ATTACK);
+            _character.ChangeState(eState.ATTACK);
         }
     }
     
@@ -70,15 +70,15 @@ public class LandingState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
         if (Vector3.zero != vector)
         {
-            if (eState.WALK == character.GetPrevState()
-                && vector == character.GetDirectionVector()
+            if (eState.WALK == _character.GetPrevState()
+                && vector == _character.GetDirectionVector()
                 && _inputTimer.ElapsedMilliseconds <= _inputDelayMSec)
             {
-                character.ChangeState(eState.RUN);
+                _character.ChangeState(eState.RUN);
             }
             else
             {
-                character.ChangeState(eState.WALK);
+                _character.ChangeState(eState.WALK);
             }
         }
     }

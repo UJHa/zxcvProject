@@ -6,7 +6,7 @@ public class NpcRunState : State
     private bool _isJump = false;
     private float _attackRange = 1.0f;
 
-    public NpcRunState(Character character) : base(character)
+    public NpcRunState(Character character, eState eState) : base(character, eState)
     {
     }
 
@@ -14,8 +14,8 @@ public class NpcRunState : State
     {
         _isJump = false;
 
-        character.SetMoveSpeedToRun();
-        animator.Play("Run");
+        _character.SetMoveSpeedToRun();
+        _animator.Play("Run");
     }
 
     public override void FixedUpdateState()
@@ -28,27 +28,27 @@ public class NpcRunState : State
 
     public override void UpdateState()
     {
-        if(character.GetTraceTarget() != null)
+        if(_character.GetTraceTarget() != null)
         {
-            character.transform.LookAt(character.GetTraceTarget().transform);
-            Vector3 temp = character.transform.eulerAngles;
+            _character.transform.LookAt(_character.GetTraceTarget().transform);
+            Vector3 temp = _character.transform.eulerAngles;
             temp.x = 0.0f;
-            character.transform.eulerAngles = temp;
-            Vector3 traceDirection = (character.GetTraceTarget().transform.position - character.transform.position).normalized;
-            character.transform.position += traceDirection * character.GetMoveSpeed();
-            if (Vector3.Distance(character.GetTraceTarget().transform.position, character.transform.position) <= _attackRange)
+            _character.transform.eulerAngles = temp;
+            Vector3 traceDirection = (_character.GetTraceTarget().transform.position - _character.transform.position).normalized;
+            _character.transform.position += traceDirection * _character.GetMoveSpeed();
+            if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) <= _attackRange)
             {
-                character.ChangeState(eState.ATTACK);
+                _character.ChangeState(eState.ATTACK);
             }
-            if (character.IsInRange())
+            if (_character.IsInRange())
             {
-                character.SetTarget(null);
-                character.ChangeState(eState.IDLE);
+                _character.SetTarget(null);
+                _character.ChangeState(eState.IDLE);
             }
         }
         else
         {
-            character.ChangeState(eState.IDLE);
+            _character.ChangeState(eState.IDLE);
         }
     }
 }

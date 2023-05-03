@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum eState
 {
+    NONE,
     IDLE,
     WALK,
     RUN,
@@ -15,13 +16,15 @@ public enum eState
 
 public abstract class State
 {
-    protected Character character;
-    protected Animator animator;
+    protected Character _character;
+    protected Animator _animator;
+    protected readonly eState _eState;
 
-    public State(Character character)
+    public State(Character character, eState eState)
     {
-        this.character = character;
-        this.animator = character.GetComponent<Animator>();
+        this._character = character;
+        this._animator = character.GetComponent<Animator>();
+        _eState = eState;
     }
 
     public abstract void StartState();

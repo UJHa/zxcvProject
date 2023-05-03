@@ -117,7 +117,7 @@ public class Character : MonoBehaviour
 
     protected Vector3 _directionVector = Vector3.zero;
 
-    protected Dictionary<eState, State> stateMap = new();
+    protected Dictionary<eState, State> _stateMap = new();
 
     public eState _prevState;
     public eState _curState;
@@ -137,6 +137,8 @@ public class Character : MonoBehaviour
     private RaycastHit[] _rightWallObjs = null;
     private RaycastHit[] _frontWallObjs = null;
     private RaycastHit[] _backWallObjs = null;
+
+    protected MoveSet _moveSet = new();
 
     private void Awake()
     {
@@ -253,7 +255,7 @@ public class Character : MonoBehaviour
         UpdateWallCollisions(eWallDirection.RIGHT_BACK, (Vector3.right + Vector3.back).normalized);
 
         // _rightWallObjs = GetWallCheckObjects(Vector3.right);
-        stateMap[_curState].FixedUpdateState();
+        _stateMap[_curState].FixedUpdateState();
     }
 
     private void UpdateWallCollisions(eWallDirection eWallDir, Vector3 dirVector)
@@ -352,22 +354,22 @@ public class Character : MonoBehaviour
             if (_changeStates.Count == 1)
             {
                 eState state = _changeStates[0].state;
-                stateMap[_curState].EndState();
-                stateMap[state].StartState();
+                _stateMap[_curState].EndState();
+                _stateMap[state].StartState();
                 _prevState = _curState;
                 _curState = state;
             }
             else
             {
                 eState state = GetNextState();
-                stateMap[_curState].EndState();
-                stateMap[state].StartState();
+                _stateMap[_curState].EndState();
+                _stateMap[state].StartState();
                 _prevState = _curState;
                 _curState = state;
             }
             _changeStates.Clear();
         }
-        stateMap[_curState].UpdateState();
+        _stateMap[_curState].UpdateState();
     }
 
     private void LateUpdate()
@@ -812,5 +814,13 @@ public class Character : MonoBehaviour
     private Vector3 GetLeftRightWallBoxSize()
     {
         return new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth) / 2;
+    }
+
+    public void StartAction(KeyCode inputKey)
+    {
+        var nextState = _moveSet.DetermineNextState(_curState, inputKey);
+        if (eState.NONE == nextState)
+            return;
+        ChangeState(nextState);
     }
 }

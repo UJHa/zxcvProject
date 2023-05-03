@@ -15,15 +15,15 @@ public class NonPlayer : Character
 
         _directionVector = Vector3.back;
 
-        stateMap.Add(eState.IDLE, new NpcIdleState(this));
-        stateMap.Add(eState.WALK, new WalkState(this));
-        stateMap.Add(eState.RUN, new NpcRunState(this));
-        stateMap.Add(eState.ATTACK, new AttackState(this));
-        stateMap.Add(eState.DEAD, new DeadState(this));
+        _stateMap.Add(eState.IDLE, new NpcIdleState(this, eState.IDLE));
+        _stateMap.Add(eState.WALK, new WalkState(this, eState.WALK));
+        _stateMap.Add(eState.RUN, new NpcRunState(this, eState.RUN));
+        _stateMap.Add(eState.ATTACK, new AttackState(this, eState.ATTACK));
+        _stateMap.Add(eState.DEAD, new DeadState(this, eState.DEAD));
 
         _curState = eState.IDLE;
 
-        stateMap[_curState].StartState();
+        _stateMap[_curState].StartState();
     }
 
     protected override void StartUI()

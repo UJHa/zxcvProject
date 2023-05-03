@@ -3,13 +3,13 @@ using UnityEditor;
 
 public class AttackState : State
 {
-    public AttackState(Character character) : base(character)
+    public AttackState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
-        animator.Play("Punch");
+        _animator.Play("Punch");
         // animator.CrossFade("X_Punch", character.attackStart);
         // animator.CrossFade("Attack", character.attackStart);
     }
@@ -25,11 +25,11 @@ public class AttackState : State
 
     public override void UpdateState()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Punch"))
+        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Punch"))
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
+            if (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
             {
-                character.ChangeState(eState.IDLE);
+                _character.ChangeState(eState.IDLE);
             }
         }
     }

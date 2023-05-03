@@ -6,7 +6,7 @@ public class NpcIdleState : State
 {
     private Stopwatch stopwatch;
     private long findTimeMillisec = 1000;
-    public NpcIdleState(Character character) : base(character)
+    public NpcIdleState(Character character, eState eState) : base(character, eState)
     {
         stopwatch = new Stopwatch();
     }
@@ -31,11 +31,11 @@ public class NpcIdleState : State
     {
         if (findTimeMillisec <= stopwatch.ElapsedMilliseconds)
         {
-            GameObject target = character.FindCollisions();
+            GameObject target = _character.FindCollisions();
             if (target != null)
             {
-                character.SetTarget(target);
-                character.ChangeState(eState.RUN);
+                _character.SetTarget(target);
+                _character.ChangeState(eState.RUN);
             }
 
             stopwatch.Reset();

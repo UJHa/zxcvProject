@@ -10,7 +10,7 @@ public class RunStopState : State
     private long _stopingTimeMSec = 500;
     private long _remainTime;
     private float _remainRate;
-    public RunStopState(Character character) : base(character)
+    public RunStopState(Character character, eState eState) : base(character, eState)
     {
         _inputTimer = new Stopwatch();
     }
@@ -22,20 +22,20 @@ public class RunStopState : State
         _remainRate = (float)_remainTime / _stopingTimeMSec;
         // character.ResetMoveSpeed();
         // animator.CrossFade("JumpEnd", character.jumpEnd);
-        animator.Play("RunStop");
+        _animator.Play("RunStop");
     }
 
     public override void FixedUpdateState()
     {
-        var groundObjs = character.GetGroundCheckObjects();
+        var groundObjs = _character.GetGroundCheckObjects();
         // _remainRate = 1f;
         if (0 == groundObjs.Length)
         {
             // animator.enabled = true;
-            character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeState(eState.JUMP_DOWN);
         }
         else
-            character.MovePosition(character.GetDirectionVector(), character.GetMoveSpeed() * _remainRate);
+            _character.MovePosition(_character.GetDirectionVector(), _character.GetMoveSpeed() * _remainRate);
     }
 
     public override void EndState()
@@ -49,7 +49,7 @@ public class RunStopState : State
         _remainRate = (float)_remainTime / _stopingTimeMSec;
         if (0 >= _remainTime)
         {
-            character.ChangeState(eState.IDLE);
+            _character.ChangeState(eState.IDLE);
             return;
         }
         

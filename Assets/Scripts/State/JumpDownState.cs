@@ -7,13 +7,13 @@ public class JumpDownState : State
 {
     private float _jumpTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
-    public JumpDownState(Character character) : base(character)
+    public JumpDownState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
-        animator.Play("Jump");
+        _animator.Play("Jump");
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpdown start");
     }
@@ -25,19 +25,19 @@ public class JumpDownState : State
 
     public override void FixedUpdateState()
     {
-        var groundObjs = character.GetGroundCheckObjects();
+        var groundObjs = _character.GetGroundCheckObjects();
         if (groundObjs.Length > 0)
         {
             Debug.Log("[testumLanding]isGround!");
-            character.ChangeState(eState.LANDING);
+            _character.ChangeState(eState.LANDING);
             return;
         }
         else
-            character.UpdateGroundHeight();
+            _character.UpdateGroundHeight();
         
         _jumpTimer += Time.fixedDeltaTime;
-        _moveVelocity.y = character.GetJumpDownVelocity(_jumpTimer);
-        character.GetRigidbody().velocity = _moveVelocity;
+        _moveVelocity.y = _character.GetJumpDownVelocity(_jumpTimer);
+        _character.GetRigidbody().velocity = _moveVelocity;
         // character.GetRigidbody().velocity = new Vector3(0f, character.GetJumpDownVelocity(_jumpTimer), 0f) ; 
         // Debug.Log($"[jumpdown]timer({_jumpTimer}) GetVelocity({character.GetJumpDownVelocity(_jumpTimer)}), position({character.transform.position}), rigid pos({character.GetRigidbody().position})");
     }
@@ -52,8 +52,8 @@ public class JumpDownState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
 
         if (Vector3.zero != vector)
-            character.SetDirectionByVector3(vector);
-        var moveVector = character.GetMoveDirectionVector(vector);
-        _moveVelocity = moveVector * character.GetMoveSpeed();
+            _character.SetDirectionByVector3(vector);
+        var moveVector = _character.GetMoveDirectionVector(vector);
+        _moveVelocity = moveVector * _character.GetMoveSpeed();
     }
 }

@@ -8,30 +8,30 @@ public class IdleState : State
 {
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
-    public IdleState(Character character) : base(character)
+    public IdleState(Character character, eState eState) : base(character, eState)
     {
         _inputTimer = new Stopwatch();
     }
 
     public override void StartState()
     {
-        character.ResetMoveSpeed();
-        character._isGround = true;
+        _character.ResetMoveSpeed();
+        _character._isGround = true;
         // animator.enabled = true;
-        animator.CrossFade("Idle", character.idleStart);
+        _animator.CrossFade("Idle", _character.idleStart);
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
-        character.UpdateGroundHeight();
+        _character.UpdateGroundHeight();
     }
 
     public override void FixedUpdateState()
     {
-        var groundObjs = character.GetGroundCheckObjects();
+        var groundObjs = _character.GetGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
             Debug.Log("[testumAir]is not Ground!");
-            character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeState(eState.JUMP_DOWN);
         }
     }
 
@@ -48,10 +48,10 @@ public class IdleState : State
 
     private void UpdateAnimation()
     {
-        var curStateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        var curStateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         if (curStateInfo.IsName("JumpEnd"))
             if (curStateInfo.normalizedTime >= 1.0f)
-                animator.Play("Idle");
+                _animator.Play("Idle");
     }
 
     private void UpdateInput()
@@ -61,14 +61,17 @@ public class IdleState : State
         
         UpdateMoveInput();
 
-        if(Input.GetKeyDown(KeyCode.V) && character.IsGround())
+        if (_character.IsGround())
         {
-            character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
-        }
-
-        if (Input.GetKeyDown(KeyCode.C) && character.IsGround())
-        {
-            character.ChangeState(eState.ATTACK);
+            if(Input.GetKeyDown(KeyCode.V))
+            {
+                _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            }
+            // else if (Input.GetKeyDown(KeyCode.C))
+            else
+            {
+                _character.StartAction(KeyCode.C);
+            }
         }
     }
     
@@ -77,15 +80,15 @@ public class IdleState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
         if (Vector3.zero != vector)
         {
-            if (eState.WALK == character.GetPrevState()
-                && vector == character.GetDirectionVector()
+            if (eState.WALK == _character.GetPrevState()
+                && vector == _character.GetDirectionVector()
                 && _inputTimer.ElapsedMilliseconds <= _inputDelayMSec)
             {
-                character.ChangeState(eState.RUN);
+                _character.ChangeState(eState.RUN);
             }
             else
             {
-                character.ChangeState(eState.WALK);
+                _character.ChangeState(eState.WALK);
             }
         }
     }

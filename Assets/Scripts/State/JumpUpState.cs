@@ -7,7 +7,7 @@ public class JumpUpState : State
 {
     private float _jumpTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
-    public JumpUpState(Character character) : base(character)
+    public JumpUpState(Character character, eState eState) : base(character, eState)
     {
     }
 
@@ -16,10 +16,10 @@ public class JumpUpState : State
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpup start");
         // 엄todo : 이전 State 따라서 Jump CrossFadeSec 값이 다르게 주자!
-        animator.CrossFade("Jump", character.jumpUpStart);
-        character._isGround = false;
+        _animator.CrossFade("Jump", _character.jumpUpStart);
+        _character._isGround = false;
         _moveVelocity = Vector3.zero;
-        Debug.Log($"[testum]speed({character.GetMoveSpeed()})");
+        Debug.Log($"[testum]speed({_character.GetMoveSpeed()})");
     }
 
     public override void UpdateState()
@@ -29,16 +29,16 @@ public class JumpUpState : State
 
     public override void FixedUpdateState()
     {
-        if (_jumpTimer >= character.GetJumpUpMaxTimer())
+        if (_jumpTimer >= _character.GetJumpUpMaxTimer())
         {
             Debug.Log($"[testlog] jump up update fin?");
-            character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeState(eState.JUMP_DOWN);
             return;
         }
         _jumpTimer += Time.fixedDeltaTime;
-        _moveVelocity.y = character.GetJumpUpVelocity(_jumpTimer);
-        character.GetRigidbody().velocity = _moveVelocity;
-        Debug.Log($"[jumpup]timer({_jumpTimer}) GetVelocity({character.GetJumpUpVelocity(_jumpTimer)}), position({character.transform.position}), rigid pos({character.GetRigidbody().position})");
+        _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer);
+        _character.GetRigidbody().velocity = _moveVelocity;
+        Debug.Log($"[jumpup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
     public override void EndState()
@@ -51,8 +51,8 @@ public class JumpUpState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
 
         if (Vector3.zero != vector)
-            character.SetDirectionByVector3(vector);
-        var moveVector = character.GetMoveDirectionVector(vector);
-        _moveVelocity = moveVector * character.GetMoveSpeed();
+            _character.SetDirectionByVector3(vector);
+        var moveVector = _character.GetMoveDirectionVector(vector);
+        _moveVelocity = moveVector * _character.GetMoveSpeed();
     }
 }

@@ -1,20 +1,26 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+// 엄todo : 여기에 여러개의 Action을 넣어서 공격 처리 구현하기 
 public class ComboState : State
 {
     private int maxComboCount = 3;
     private int curComboCount = 1;
-    public ComboState(Character character) : base(character)
+
+    private List<Action> _actions = new();
+    public ComboState(Character character, eState eState) : base(character, eState)
     {
+        // _actions.Add( new Action("Punch1", _animator));
+        // _actions.Add(new Action("Punch2", _animator));
+        // _actions.Add(new Action("Punch3", _animator));
     }
 
     public override void StartState()
     {
         curComboCount = 1;
-        animator.Play($"Punch{curComboCount}");
-        // animator.CrossFade("X_Punch", character.attackStart);
-        // animator.CrossFade("Attack", character.attackStart);
+        _animator.Play("Punch1");
+        // _actions[curComboCount - 1].PlayStart();
     }
 
     public override void FixedUpdateState()
@@ -28,20 +34,31 @@ public class ComboState : State
 
     public override void UpdateState()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Punch1")
-            || animator.GetCurrentAnimatorStateInfo(0).IsName("Punch2")
-            || animator.GetCurrentAnimatorStateInfo(0).IsName("Punch3"))
+        // if (IsComboAction())
+        if (true)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
+            if (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
             {
-                character.ChangeState(eState.IDLE);
+                _character.ChangeState(eState.IDLE);
             }
-            else if (Input.GetKeyDown(KeyCode.C) && character.IsGround() && curComboCount < maxComboCount)
+            else if (Input.GetKeyDown(KeyCode.C) && _character.IsGround() && curComboCount < maxComboCount)
             {
-                animator.Rebind();
+                _animator.Rebind();
                 curComboCount++;
-                animator.Play($"Punch{curComboCount}");
+                _animator.Play("Punch1");
+                // _actions[curComboCount - 1].PlayStart();
             }
         }
+    }
+
+    private bool IsComboAction()
+    {
+        bool result = false;
+        // foreach (var actionName in _actions)
+        // {
+        //     result |= _animator.GetCurrentAnimatorStateInfo(0).IsName(actionName);
+        // }
+
+        return result;
     }
 }

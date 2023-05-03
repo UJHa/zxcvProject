@@ -3,25 +3,25 @@ using UnityEditor;
 
 public class RunState : State
 {
-    public RunState(Character character) : base(character)
+    public RunState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
-        character.SetMoveSpeedToRun();
-        animator.CrossFade("Run", character.runStart);
+        _character.SetMoveSpeedToRun();
+        _animator.CrossFade("Run", _character.runStart);
     }
 
     public override void FixedUpdateState()
     {
-        var groundObjs = character.GetGroundCheckObjects();
+        var groundObjs = _character.GetGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
-            character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeState(eState.JUMP_DOWN);
         }
         else
-            character.UpdateGroundHeight();
+            _character.UpdateGroundHeight();
     }
 
     public override void EndState()
@@ -39,17 +39,17 @@ public class RunState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
         if (Vector3.zero == vector)
         {
-            character.ChangeState(eState.RUNSTOP);
+            _character.ChangeState(eState.RUNSTOP);
             return;
         }
 
         if (InputManager.Instance.GetButtonDown(KeyBindingType.JUMP))
         {
-            character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
             return;
         }
         
-        character.SetDirectionByVector3(vector);
-        character.MovePosition(vector);
+        _character.SetDirectionByVector3(vector);
+        _character.MovePosition(vector);
     }
 }
