@@ -119,8 +119,8 @@ public class Character : MonoBehaviour
 
     protected Dictionary<eState, State> _stateMap = new();
 
-    public eState _prevState;
-    public eState _curState;
+    [SerializeField] protected eState _prevState;
+    [SerializeField] protected eState _curState;
 
     public bool _isGround = false;
     private bool _checkGround = true;
@@ -347,6 +347,7 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Debug.Log($"[testum]clip name : {_moveSet.GetCurActionName()}");
         if (_changeStates.Count > 0)
         {
             // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
@@ -361,7 +362,7 @@ public class Character : MonoBehaviour
             }
             else
             {
-                eState state = GetNextState();
+                eState state = SelectNextState();
                 _stateMap[_curState].EndState();
                 _stateMap[state].StartState();
                 _prevState = _curState;
@@ -377,7 +378,7 @@ public class Character : MonoBehaviour
         UpdateUI();
     }
 
-    private eState GetNextState()
+    private eState SelectNextState()
     {
         foreach (var stateInfo in _changeStates)
         {
@@ -391,6 +392,16 @@ public class Character : MonoBehaviour
     public eState GetPrevState()
     {
         return _prevState;
+    }
+    
+    public eState GetCurState()
+    {
+        return _curState;
+    }
+    
+    public MoveSet GetMoveSet()
+    {
+        return _moveSet;
     }
     
     public void MovePosition(Vector3 direction)
@@ -814,13 +825,5 @@ public class Character : MonoBehaviour
     private Vector3 GetLeftRightWallBoxSize()
     {
         return new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth) / 2;
-    }
-
-    public void StartAction(KeyCode inputKey)
-    {
-        var nextState = _moveSet.DetermineNextState(_curState, inputKey);
-        if (eState.NONE == nextState)
-            return;
-        ChangeState(nextState);
     }
 }

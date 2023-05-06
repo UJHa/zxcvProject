@@ -70,7 +70,11 @@ public class IdleState : State
             // else if (Input.GetKeyDown(KeyCode.C))
             else
             {
-                _character.StartAction(KeyCode.C);
+                var moveSet = _character.GetMoveSet();
+                var nextState = moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+                Debug.Log($"[testum]idleChange Test ({nextState})");
+                if (eState.NONE != nextState)
+                    _character.ChangeState(nextState, eStateType.INPUT);
             }
         }
     }

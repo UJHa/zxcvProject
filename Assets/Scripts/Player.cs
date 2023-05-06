@@ -35,7 +35,9 @@ public class Player : Character
         _stateMap.Add(eState.JUMP_UP, new JumpUpState(this, eState.JUMP_UP));
         _stateMap.Add(eState.JUMP_DOWN, new JumpDownState(this, eState.JUMP_DOWN));
         _stateMap.Add(eState.LANDING, new LandingState(this, eState.LANDING));
-        _stateMap.Add(eState.ATTACK, new ComboState(this, eState.ATTACK));
+        _stateMap.Add(eState.ATTACK, new PunchOneState(this, eState.ATTACK));
+        _stateMap.Add(eState.ATTACK2, new PunchTwoState(this, eState.ATTACK2));
+        _stateMap.Add(eState.ATTACK3, new PunchThreeState(this, eState.ATTACK3));
         _stateMap.Add(eState.DEAD, new DeadState(this, eState.DEAD));
 
         var animator = GetComponent<Animator>();
@@ -45,7 +47,7 @@ public class Player : Character
             return;
         }
         _moveSet.Init(animator);
-        _moveSet.RegisterAction("Punch1", KeyCode.C, eState.IDLE, eState.ATTACK);
+        _moveSet.RegisterAction("PunchCombo", KeyCode.C, eState.IDLE, eState.ATTACK);
         // _moveSet.RegisterAction("Punch2");
         // _moveSet.RegisterAction("Punch3");
 

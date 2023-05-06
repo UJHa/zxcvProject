@@ -34,6 +34,7 @@ public class ComboState : State
 
     public override void UpdateState()
     {
+        UpdateInput();
         // if (IsComboAction())
         if (true)
         {
@@ -48,6 +49,17 @@ public class ComboState : State
                 _animator.Play("Punch1");
                 // _actions[curComboCount - 1].PlayStart();
             }
+        }
+    }
+
+    private void UpdateInput()
+    {
+        if (_character.IsGround())
+        {
+            var moveSet = _character.GetMoveSet();
+            var nextState = moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+            if (eState.NONE != nextState)
+                _character.ChangeState(nextState, eStateType.INPUT);
         }
     }
 

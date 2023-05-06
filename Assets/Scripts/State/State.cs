@@ -11,6 +11,8 @@ public enum eState
     JUMP_DOWN,
     LANDING,
     ATTACK,
+    ATTACK2,
+    ATTACK3,
     DEAD
 }
 

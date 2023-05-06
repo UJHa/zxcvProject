@@ -41,6 +41,7 @@ public class MoveSet
         }
         _inputEnableMap.Add(enableKey, action);
         
+        // 이 밑의 두개는 일단 디버깅용 불필요하면 지우자.
         if (false == _inputEnableStateMap.ContainsKey(enableState))
             _inputEnableStateMap.Add(enableState, new());
         _inputEnableStateMap[enableState].Add(action);
@@ -53,6 +54,17 @@ public class MoveSet
     public void Play(string name)
     {
         _animator.Play(name);
+    }
+
+    public string GetCurActionName()
+    {
+        string result = _animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+        return result;
+    }
+
+    public eState GetCurAction(eState curState, KeyCode inputKey)
+    {
+        return eState.RUN;
     }
 
     public eState DetermineNextState(eState curState, KeyCode inputKey)
