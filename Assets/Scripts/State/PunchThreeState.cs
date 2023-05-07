@@ -24,11 +24,18 @@ public class PunchThreeState : AttackState
 
     public override void UpdateState()
     {
-        if (_animator.GetCurrentAnimatorStateInfo(0).IsName(_animName))
+        if (_character.IsGround())
         {
-            if (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
+            var moveSet = _character.GetMoveSet();
+            var nextState = moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+            if (eState.NONE != nextState)
+                _character.ChangeState(nextState, eStateType.INPUT);
+            else if (_animator.GetCurrentAnimatorStateInfo(0).IsName(_animName))
             {
-                _character.ChangeState(eState.IDLE);
+                if (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
+                {
+                    _character.ChangeState(eState.IDLE);
+                }
             }
         }
     }

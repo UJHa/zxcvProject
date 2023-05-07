@@ -47,7 +47,9 @@ public class Player : Character
             return;
         }
         _moveSet.Init(animator);
-        _moveSet.RegisterAction("PunchCombo", KeyCode.C, eState.IDLE, eState.ATTACK);
+        _moveSet.RegisterAction("Punch1", KeyCode.C, eState.IDLE, eState.ATTACK);
+        _moveSet.RegisterAction("Punch2", KeyCode.C, eState.ATTACK, eState.ATTACK2);
+        _moveSet.RegisterAction("Punch3", KeyCode.C, eState.ATTACK2, eState.ATTACK3);
         // _moveSet.RegisterAction("Punch2");
         // _moveSet.RegisterAction("Punch3");
 
