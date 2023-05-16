@@ -95,3 +95,6 @@ Desktop.ini
 
 # Ignore Unity Editor layout files
 *.dwlt
+# Ignore Resource Example files
+[Ee]xample/
+[Ee]xamples/
