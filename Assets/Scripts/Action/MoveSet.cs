@@ -5,7 +5,6 @@ using UnityEngine;
 // // 
 public class MoveSet
 {
-    private Animator _animator;
     private Dictionary<string, Action> _actionMap = new();          // [key:name][value:Action]
     private Dictionary<string, Action> _inputEnableMap = new();   // [key:curState_enableKeyCode][value:Action]
     // 이 두개는 일단 디버깅용으로 사용할거라 나중에 지우기
@@ -17,9 +16,8 @@ public class MoveSet
         
     }
 
-    public void Init(Animator animator)
+    public void Init()
     {
-        _animator = animator;
     }
     
     public void RegisterAction(string actionName, KeyCode inputKey, eState enableState, eState actionState)
@@ -49,17 +47,6 @@ public class MoveSet
         if (false == _inputKeyMap.ContainsKey(inputKey))
             _inputKeyMap.Add(inputKey, new());
         _inputKeyMap[inputKey].Add(action);
-    }
-
-    public void Play(string name)
-    {
-        _animator.Play(name);
-    }
-
-    public string GetCurActionName()
-    {
-        string result = _animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-        return result;
     }
 
     public eState GetCurAction(eState curState, KeyCode inputKey)

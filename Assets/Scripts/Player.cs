@@ -9,22 +9,6 @@ public class Player : Character
     {
         StartUI();
 
-        // SetWalkSpeed(0.005f);
-        // SetRunSpeed(0.015f);
-        // Vector3 temp = new Vector3(0, 0, 1);    //Direction.FRONT
-        // Vector3 temp = new Vector3(0, 0, -1);    //Direction.BACK
-        // Vector3 temp = new Vector3(1, 0, 0);    //Direction.LEFT
-        // Vector3 temp = new Vector3(-1, 0, 0);    //Direction.RIGHT
-        // Vector3 temp = new Vector3(1, 0, 1);    //Direction.LEFT_FRONT
-        // Vector3 temp = new Vector3(1, 0, -1);    //Direction.LEFT_BACK
-        // Vector3 temp = new Vector3(-1, 0, 1);    //Direction.RIGHT_FRONT
-        // Vector3 temp = new Vector3(-1, 0, -1);    //Direction.RIGHT_BACK
-        
-        // Vector3 temp = new Vector3(0, 0, -1);    //Direction.RIGHT
-        // var temp2 = Quaternion.LookRotation(temp);
-        // var temp3 = temp2.eulerAngles;
-        // Debug.Log($"[onlyTestUm]vec({temp}), lookRot({temp2}), euler({temp3})");
-
         _directionVector = Vector3.back;
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
@@ -38,18 +22,15 @@ public class Player : Character
         _stateMap.Add(eState.ATTACK, new PunchOneState(this, eState.ATTACK));
         _stateMap.Add(eState.ATTACK2, new PunchTwoState(this, eState.ATTACK2));
         _stateMap.Add(eState.ATTACK3, new PunchThreeState(this, eState.ATTACK3));
+        _stateMap.Add(eState.DAMAGED, new DamagedState(this, eState.DAMAGED));
         _stateMap.Add(eState.DEAD, new DeadState(this, eState.DEAD));
-
-        var animator = GetComponent<Animator>();
-        if (null == animator)
-        {
-            Debug.LogError($"Player don't have animator!");
-            return;
-        }
-        _moveSet.Init(animator);
+        
+        _moveSet.Init();
         _moveSet.RegisterAction("Punch1", KeyCode.C, eState.IDLE, eState.ATTACK);
         _moveSet.RegisterAction("Punch2", KeyCode.C, eState.ATTACK, eState.ATTACK2);
         _moveSet.RegisterAction("Punch3", KeyCode.C, eState.ATTACK2, eState.ATTACK3);
+        _moveSet.RegisterAction("Damaged", KeyCode.X, eState.IDLE, eState.DAMAGED);
+        _moveSet.RegisterAction("Damaged2", KeyCode.X, eState.DAMAGED, eState.DAMAGED);
         // _moveSet.RegisterAction("Punch2");
         // _moveSet.RegisterAction("Punch3");
 

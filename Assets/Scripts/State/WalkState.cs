@@ -2,26 +2,25 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using System.Diagnostics;
+using Animancer;
 using Debug = UnityEngine.Debug;
 
 public class WalkState : State
 {
+    private AnimationClip _animClip;
+
     public WalkState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
-        string name = "";
-        name = name.Equals("") && _animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") ? "Idle" : name;
-        name = name.Equals("") && _animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") ? "Walk" : name;
-        name = name.Equals("") && _animator.GetCurrentAnimatorStateInfo(0).IsName("Run") ? "Run" : name;
-        name = name.Equals("") && _animator.GetCurrentAnimatorStateInfo(0).IsName("Jump") ? "Jump" : name;
-        name = name.Equals("") && _animator.GetCurrentAnimatorStateInfo(0).IsName("JumpEnd") ? "JumpEnd" : name;
-        Debug.Log($"[walkstart] prev anim{name}");
+        // string name = "";
         _character.SetMoveSpeedToWalk();
 
-        _animator.CrossFade("Walk", _character.walkStart);
+        if (null == _animClip)
+            _animClip = Resources.Load<AnimationClip>("Animation/Walk");
+        _animancer.Play(_animClip, _character.walkStart);
     }
 
     public override void FixedUpdateState()

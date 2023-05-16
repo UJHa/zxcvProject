@@ -1,16 +1,20 @@
+using Animancer;
 using UnityEngine;
 using UnityEditor;
 
 public class PunchTwoState : AttackState
 {
-    private string _animName = "Punch2";
+    private AnimationClip _animClip;
+    private AnimancerState _curState;
+
     public PunchTwoState(Character character, eState eState) : base(character, eState)
     {
+        _animClip = Resources.Load<AnimationClip>("Animation/Lucy_FightFist01_2");
     }
 
     public override void StartState()
     {
-        _animator.Play(_animName);
+        _curState = _animancer.Play(_animClip);
     }
 
     public override void FixedUpdateState()
@@ -26,16 +30,12 @@ public class PunchTwoState : AttackState
     {
         if (_character.IsGround())
         {
-            var moveSet = _character.GetMoveSet();
-            var nextState = moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
             if (eState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
-            else if (_animator.GetCurrentAnimatorStateInfo(0).IsName(_animName))
+            else if (_curState.NormalizedTime > 0.5f)
             {
-                if (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
-                {
-                    _character.ChangeState(eState.IDLE);
-                }
+                _character.ChangeState(eState.IDLE);
             }
         }
         // if (_animator.GetCurrentAnimatorStateInfo(0).IsName(_animName))

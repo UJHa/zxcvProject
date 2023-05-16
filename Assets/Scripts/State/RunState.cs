@@ -1,8 +1,11 @@
+using Animancer;
 using UnityEngine;
 using UnityEditor;
 
 public class RunState : State
 {
+    private AnimationClip _animClip;
+
     public RunState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -10,7 +13,9 @@ public class RunState : State
     public override void StartState()
     {
         _character.SetMoveSpeedToRun();
-        _animator.CrossFade("Run", _character.runStart);
+        if (null == _animClip)
+            _animClip = Resources.Load<AnimationClip>("Animation/Run");
+        _animancer.Play(_animClip, _character.runStart);
     }
 
     public override void FixedUpdateState()

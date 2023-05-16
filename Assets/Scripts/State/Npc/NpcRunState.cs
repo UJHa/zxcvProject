@@ -5,6 +5,7 @@ public class NpcRunState : State
 {
     private bool _isJump = false;
     private float _attackRange = 1.0f;
+    private AnimationClip _animClip;
 
     public NpcRunState(Character character, eState eState) : base(character, eState)
     {
@@ -15,7 +16,9 @@ public class NpcRunState : State
         _isJump = false;
 
         _character.SetMoveSpeedToRun();
-        _animator.Play("Run");
+        if (null == _animClip)
+            _animClip = Resources.Load<AnimationClip>("Animation/Run");
+        _animancer.Play(_animClip, _character.runStart);
     }
 
     public override void FixedUpdateState()

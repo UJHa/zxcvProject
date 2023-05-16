@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Animancer;
 using UnityEngine;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
@@ -7,6 +8,8 @@ public class LandingState : State
 {
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
+    private AnimationClip _animClip;
+
     public LandingState(Character character, eState eState) : base(character, eState)
     {
         _inputTimer = new Stopwatch();
@@ -16,7 +19,9 @@ public class LandingState : State
     {
         _character.ResetMoveSpeed();
         _character._isGround = true;
-        _animator.CrossFade("JumpEnd", _character.jumpEnd);
+        if (null == _animClip)
+            _animClip = Resources.Load<AnimationClip>("Animation/JumpEnd");
+        _animancer.Play(_animClip, _character.jumpEnd);
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
@@ -41,10 +46,10 @@ public class LandingState : State
 
     private void UpdateAnimation()
     {
-        var curStateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-        if (curStateInfo.IsName("JumpEnd"))
-            if (curStateInfo.normalizedTime >= 1.0f)
-                _character.ChangeState(eState.IDLE);
+        var curState = _animancer.States.Current;
+        Debug.Log($"[testum]TTT curState({curState.Key})");
+        if (curState.NormalizedTime >= 1.0f)
+            _character.ChangeState(eState.IDLE);
     }
 
     private void UpdateInput()

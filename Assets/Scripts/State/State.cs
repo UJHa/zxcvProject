@@ -1,3 +1,4 @@
+using Animancer;
 using UnityEngine;
 
 public enum eState
@@ -13,19 +14,22 @@ public enum eState
     ATTACK,
     ATTACK2,
     ATTACK3,
+    DAMAGED,
     DEAD
 }
 
 public abstract class State
 {
     protected Character _character;
-    protected Animator _animator;
+    protected readonly AnimancerComponent _animancer;
     protected readonly eState _eState;
+    protected readonly MoveSet _moveSet;
 
     public State(Character character, eState eState)
     {
         this._character = character;
-        this._animator = character.GetComponent<Animator>();
+        this._animancer = _character.GetComponent<AnimancerComponent>();
+        _moveSet = _character.GetMoveSet();
         _eState = eState;
     }
 

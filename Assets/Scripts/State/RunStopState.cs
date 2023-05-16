@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Linq;
+using Animancer;
 using UnityEngine;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
@@ -10,6 +12,8 @@ public class RunStopState : State
     private long _stopingTimeMSec = 500;
     private long _remainTime;
     private float _remainRate;
+    private AnimationClip _animClip;
+
     public RunStopState(Character character, eState eState) : base(character, eState)
     {
         _inputTimer = new Stopwatch();
@@ -20,9 +24,10 @@ public class RunStopState : State
         _inputTimer.Start();
         _remainTime = _stopingTimeMSec;
         _remainRate = (float)_remainTime / _stopingTimeMSec;
-        // character.ResetMoveSpeed();
-        // animator.CrossFade("JumpEnd", character.jumpEnd);
-        _animator.Play("RunStop");
+        if (null == _animClip)
+            _animClip = Resources.Load<AnimationClip>("Animation/RunStop");
+        var curState = _animancer.Play(_animClip);
+        curState.Speed = 0.8f;
     }
 
     public override void FixedUpdateState()

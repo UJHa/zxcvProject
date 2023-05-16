@@ -1,6 +1,13 @@
 using UnityEngine;
 using UnityEditor;
 
+// 
+// 
+/// <summary>
+/// 현재 미구현 클래스입니다
+/// 나중에 Attack을 묶을 상위 기능 추가 시 개발 예정나중에 Attack을 묶을 상위 기능 추가 시 개발 예정
+/// 일단 하위에 Punch1,2,3이 존재함
+/// </summary>
 public class AttackState : State
 {
     public AttackState(Character character, eState eState) : base(character, eState)
@@ -9,9 +16,6 @@ public class AttackState : State
 
     public override void StartState()
     {
-        _animator.Play("Punch");
-        // animator.CrossFade("X_Punch", character.attackStart);
-        // animator.CrossFade("Attack", character.attackStart);
     }
 
     public override void FixedUpdateState()
@@ -25,12 +29,5 @@ public class AttackState : State
 
     public override void UpdateState()
     {
-        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Punch"))
-        {
-            if (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
-            {
-                _character.ChangeState(eState.IDLE);
-            }
-        }
     }
 }

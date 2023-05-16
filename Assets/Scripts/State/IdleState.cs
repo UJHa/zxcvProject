@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Animancer;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.PlayerLoop;
@@ -8,6 +9,7 @@ public class IdleState : State
 {
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
+    private AnimationClip _animClip = null;
     public IdleState(Character character, eState eState) : base(character, eState)
     {
         _inputTimer = new Stopwatch();
@@ -17,8 +19,10 @@ public class IdleState : State
     {
         _character.ResetMoveSpeed();
         _character._isGround = true;
-        // animator.enabled = true;
-        _animator.CrossFade("Idle", _character.idleStart);
+        if (null == _animClip)
+            _animClip = Resources.Load<AnimationClip>("Animation/Idle");
+        _animancer.Play(_animClip, _character.idleStart);
+        
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
@@ -48,10 +52,10 @@ public class IdleState : State
 
     private void UpdateAnimation()
     {
-        var curStateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-        if (curStateInfo.IsName("JumpEnd"))
-            if (curStateInfo.normalizedTime >= 1.0f)
-                _animator.Play("Idle");
+        // var curState = _animancer.States.Current;
+        // Debug.Log($"[testum]TTT curState({curState.Key})");
+        // if (curState.Key.Equals("JumpEnd") && curState.NormalizedTime >= 1.0f)
+        //     _animancer.Play(_animClip, _character.idleStart);
     }
 
     private void UpdateInput()
@@ -70,11 +74,16 @@ public class IdleState : State
             // else if (Input.GetKeyDown(KeyCode.C))
             else
             {
-                var moveSet = _character.GetMoveSet();
-                var nextState = moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+                var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
                 Debug.Log($"[testum]idleChange Test ({nextState})");
                 if (eState.NONE != nextState)
                     _character.ChangeState(nextState, eStateType.INPUT);
+                else
+                {
+                    var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.X);
+                    if (eState.NONE != nextState2)
+                        _character.ChangeState(nextState2, eStateType.INPUT);
+                }
             }
         }
     }

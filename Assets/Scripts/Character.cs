@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Animancer;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -65,8 +66,7 @@ public class Character : MonoBehaviour
     [SerializeField] public float runStart = 0.07f;
     [SerializeField] public float jumpEnd = 0.07f;
     [SerializeField] public float attackStart = 0.1f;
-    
-    
+
     [SerializeField] private AnimationCurve _jumpUp = new ();
     [SerializeField] private AnimationCurve _jumpDown = new ();
     [SerializeField] private float _walkSpeed = 2f;
@@ -139,9 +139,11 @@ public class Character : MonoBehaviour
     private RaycastHit[] _backWallObjs = null;
 
     protected MoveSet _moveSet = new();
-
+    protected AnimancerComponent _animancer;
+    
     private void Awake()
     {
+        _animancer = GetComponent<AnimancerComponent>();
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
         if (false == _useReverse)
             MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);

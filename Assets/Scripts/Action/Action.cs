@@ -24,11 +24,6 @@ public class Action
         _state = state;
     }
 
-    public void PlayStart()
-    {
-        _moveSet.Play(_name);
-    }
-
     public eState GetState()
     {
         return _state;

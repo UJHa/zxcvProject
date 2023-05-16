@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEditor;
 using System.Diagnostics;
+using Animancer;
 using Debug = UnityEngine.Debug;
 
 public class JumpUpState : State
 {
     private float _jumpTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
+    private AnimationClip _animClip;
+
     public JumpUpState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -16,7 +19,9 @@ public class JumpUpState : State
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpup start");
         // 엄todo : 이전 State 따라서 Jump CrossFadeSec 값이 다르게 주자!
-        _animator.CrossFade("Jump", _character.jumpUpStart);
+        if (null == _animClip)
+            _animClip = Resources.Load<AnimationClip>("Animation/Jump");
+        _animancer.Play(_animClip, _character.jumpUpStart);
         _character._isGround = false;
         _moveVelocity = Vector3.zero;
         Debug.Log($"[testum]speed({_character.GetMoveSpeed()})");
