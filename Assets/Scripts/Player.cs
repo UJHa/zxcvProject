@@ -30,7 +30,7 @@ public class Player : Character
         _moveSet.RegisterAction("Punch2", KeyCode.C, eState.ATTACK, eState.ATTACK2);
         _moveSet.RegisterAction("Punch3", KeyCode.C, eState.ATTACK2, eState.ATTACK3);
         _moveSet.RegisterAction("Damaged", KeyCode.X, eState.IDLE, eState.DAMAGED);
-        _moveSet.RegisterAction("Damaged2", KeyCode.X, eState.DAMAGED, eState.DAMAGED);
+        _moveSet.RegisterAction("Damaged2", KeyCode.X, eState.DAMAGED, eState.DAMAGED); // damaged랑 같은거임
         // _moveSet.RegisterAction("Punch2");
         // _moveSet.RegisterAction("Punch3");
 
@@ -61,5 +61,16 @@ public class Player : Character
     {
         base.DeadDisable();
         GameManager.Instance.OpenFinishDialog("실패");
+    }
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log($"[testum][name:{name}]be hit other({other.name})");
+        // hitObject의 owner 정보 가질 수 있도록 하기
+        // hitObject의 owner가 Character일 때 먼저 구현
+        // 피격 시 State 변경
+        // gameObject.SetActive(false);
+        if (other.name.Equals("Cube"))
+            ChangeState(eState.DAMAGED);
     }
 }

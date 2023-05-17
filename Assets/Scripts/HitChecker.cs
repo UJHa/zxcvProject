@@ -19,6 +19,6 @@ public class HitChecker : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.name);
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false);
     }
 }
