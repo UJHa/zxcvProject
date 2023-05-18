@@ -21,6 +21,7 @@ public class RunStopState : State
 
     public override void StartState()
     {
+        base.StartState();
         _inputTimer.Start();
         _remainTime = _stopingTimeMSec;
         _remainRate = (float)_remainTime / _stopingTimeMSec;

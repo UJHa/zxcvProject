@@ -14,6 +14,7 @@ public class PunchTwoState : AttackState
 
     public override void StartState()
     {
+        base.StartState();
         _curState = _animancer.Play(_animClip);
     }
 
@@ -23,7 +24,7 @@ public class PunchTwoState : AttackState
 
     public override void EndState()
     {
-        
+        base.EndState();
     }
 
     public override void UpdateState()

@@ -16,6 +16,7 @@ public class JumpDownState : State
 
     public override void StartState()
     {
+        base.StartState();
         if (null == _animClip)
             _animClip = Resources.Load<AnimationClip>("Animation/Jump");
         _animancer.Play(_animClip);

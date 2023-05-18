@@ -12,6 +12,8 @@ public class DamagedState : State
 
     public override void StartState()
     {
+        base.StartState();
+        _animancer.States.Current.Time = 0f;
         _curState = _animancer.Play(_animClip);
     }
 

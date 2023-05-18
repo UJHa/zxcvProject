@@ -65,12 +65,14 @@ public class Player : Character
     
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[testum][name:{name}]be hit other({other.name})");
-        // hitObject의 owner 정보 가질 수 있도록 하기
-        // hitObject의 owner가 Character일 때 먼저 구현
-        // 피격 시 State 변경
-        // gameObject.SetActive(false);
-        if (other.name.Equals("Cube"))
-            ChangeState(eState.DAMAGED);
+        if (other.TryGetComponent<HitCollider>(out var hitCollider))
+        {
+            Debug.Log($"[testum][name:{name}]be hit other({other.name})");
+            var attacker = hitCollider.GetOwner();
+            if (attacker != this)
+            {
+                ChangeState(eState.DAMAGED);
+            }
+        }
     }
 }

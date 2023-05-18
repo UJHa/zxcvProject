@@ -49,12 +49,12 @@ public class ColliderCube
 // // >> slop 타입 분리 필요
 // // >> 바닥 콜리전 없을 때, 경사용 컬리전으로 다시 체크하는 방식?
 // 엄todo : 공격 기능 개발
-// // >> 바꾼 공격 모션에 콜리전 붙이기
-// // >> 바꾼 공격 모션에 콤보 만들기
+// // - 공격 애니메이션 종료 시간 데이터 제어
+// // - 공격 애니메이션 시 충돌체 활성화 시간 데이터 제어
+// // - 피격 시 동일한 HitCollider 인스턴스일 때 무시 처리
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
-    [SerializeField] private float _testPosX = -3.5f;
     [Header("Stats")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _attackPower = 30f;
@@ -65,34 +65,27 @@ public class Character : MonoBehaviour
     [SerializeField] public float walkStart = 0.07f;
     [SerializeField] public float runStart = 0.07f;
     [SerializeField] public float jumpEnd = 0.07f;
-    [SerializeField] public float attackStart = 0.1f;
 
-    [SerializeField] private AnimationCurve _jumpUp = new ();
-    [SerializeField] private AnimationCurve _jumpDown = new ();
+    [Header("Move Speed Stats")]
     [SerializeField] private float _walkSpeed = 2f;
     [SerializeField] private float _runSpeed = 6f;
     [SerializeField] private float _moveSpeed = 0.0f;
     [Header("Jump Stats")]
+    [SerializeField] private AnimationCurve _jumpUp = new ();
+    [SerializeField] private AnimationCurve _jumpDown = new ();
     [SerializeField] private bool _useReverse = false;
     [SerializeField] private float _jumpMaxHeight = 2f;
     [SerializeField] private float _jumpUpMaxTimer = 2f;
     [SerializeField] private float _jumpDownMaxTimer = 1f;
-    [SerializeField] private float _jumpPowerY = 6f;
-    [SerializeField] private float _jumpPowerXZ = 1f;
-    [SerializeField] private float _idleJumpSpeedRate = 0.1f;
-    [SerializeField] private float _walkJumpSpeedRate = 0.3f;
-    [SerializeField] private float _runJumpSpeedRate = 1f;
 
-    [Header("JumpStats 2")]
-    [SerializeField] public float _jumpOffset = 0.31f;
-
-    [Header("Collider")]
+    [Header("Ground Collider")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
     {
         colliderSize = new(0.2f, 0.03f, 0.2f),
         colliderPos = default,
         gizmoPos = default
     };
+    [Header("Wall Collider")]
     [SerializeField] private ColliderCube _wallCollider = new ColliderCube
     {
         colliderSize = new(0.1f, 1.5f, 0.05f),
@@ -103,11 +96,11 @@ public class Character : MonoBehaviour
     [SerializeField] public float _wallBoxWidth = 0.1f;
     [SerializeField] public float _wallBoxHeight = 1.5f;
     
-    [SerializeField] private float _interpolationHeight = 0.25f;
+    [Header("Attack Collider")]
+    [SerializeField] private List<HitCollider> _hitColliders = new();
 
     [Header("3D Phygics Component")] 
     [SerializeField] private Rigidbody _rigidbody;
-    [SerializeField] private ForceMode _forceModeType = ForceMode.Force;
 
     [Header("UI")]
     protected Slider slider;
@@ -129,8 +122,6 @@ public class Character : MonoBehaviour
 
     private Tween _rotationTween = null;
 
-    public double CHECK_GROUND_DISTANCE = 0.2;
-
     private RaycastHit[] _groundObjs = null;
     private Dictionary<eWallDirection, List<ColliderInfo>> _colliderInfos = new();
     private RaycastHit[] _leftWallObjs = null;
@@ -150,6 +141,11 @@ public class Character : MonoBehaviour
         else
         {
             MakeReverseCurve(_jumpUp, _jumpDown);
+        }
+
+        foreach (var hitCollider in _hitColliders)
+        {
+            hitCollider.SetOwner(this);
         }
     }
 
@@ -765,8 +761,6 @@ public class Character : MonoBehaviour
                 }
             }
         }
-        // if (false == groundHeight.Equals(float.MinValue) && Math.Abs(groundHeight - transform.position.y) < _interpolationHeight)
-        //     SetPositionY(groundHeight);
     }
 
     private Vector3 GetGroundBoxHalfSize()
@@ -822,6 +816,14 @@ public class Character : MonoBehaviour
         if (false == _colliderInfos.ContainsKey(wallDir))
             return false;
         return _colliderInfos[wallDir].Count > 0;
+    }
+
+    public void ActiveAttackColliders(bool enable)
+    {
+        foreach (var hitCollider in _hitColliders)
+        {
+            hitCollider.gameObject.SetActive(enable);
+        }
     }
     
     private Vector3 GetLeftRightWallBoxSize()

@@ -17,6 +17,7 @@ public class LandingState : State
 
     public override void StartState()
     {
+        base.StartState();
         _character.ResetMoveSpeed();
         _character._isGround = true;
         if (null == _animClip)

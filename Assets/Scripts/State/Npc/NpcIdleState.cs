@@ -13,6 +13,7 @@ public class NpcIdleState : State
 
     public override void StartState()
     {
+        base.StartState();
         stopwatch.Reset();
         stopwatch.Start();
     }

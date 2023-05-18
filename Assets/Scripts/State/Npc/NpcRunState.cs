@@ -13,6 +13,7 @@ public class NpcRunState : State
 
     public override void StartState()
     {
+        base.StartState();
         _isJump = false;
 
         _character.SetMoveSpeedToRun();

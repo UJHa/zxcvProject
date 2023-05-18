@@ -12,6 +12,7 @@ public class RunState : State
 
     public override void StartState()
     {
+        base.StartState();
         _character.SetMoveSpeedToRun();
         if (null == _animClip)
             _animClip = Resources.Load<AnimationClip>("Animation/Run");

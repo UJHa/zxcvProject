@@ -33,8 +33,12 @@ public abstract class State
         _eState = eState;
     }
 
-    public abstract void StartState();
+    public virtual void StartState()
+    {
+        _character.ActiveAttackColliders(false);
+    }
     public abstract void UpdateState();
     public abstract void FixedUpdateState();
+
     public abstract void EndState();
 }

@@ -10,7 +10,7 @@ public class DeadState : State
 
     public override void StartState()
     {
-        
+        base.StartState();
     }
 
     public override void FixedUpdateState()
