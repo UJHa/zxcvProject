@@ -3,18 +3,16 @@ using UnityEngine;
 
 public class DamagedState : State
 {
-    private AnimationClip _animClip;
     private AnimancerState _curState;
     public DamagedState(Character character, eState eState) : base(character, eState)
     {
-        _animClip = Resources.Load<AnimationClip>("Animation/Damaged");
     }
 
     public override void StartState()
     {
         base.StartState();
         _animancer.States.Current.Time = 0f;
-        _curState = _animancer.Play(_animClip);
+        _curState = _action.Play();
     }
 
     public override void FixedUpdateState()
@@ -30,7 +28,7 @@ public class DamagedState : State
     {
         if (_character.IsGround())
         {
-            if (_curState.NormalizedTime >= 1f)
+            if (_action.IsFinish())
             {
                 _character.ChangeState(eState.IDLE);
             }

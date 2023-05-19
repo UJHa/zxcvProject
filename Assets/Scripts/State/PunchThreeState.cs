@@ -4,18 +4,16 @@ using UnityEditor;
 
 public class PunchThreeState : AttackState
 {
-    private AnimationClip _animClip;
     private AnimancerState _curState;
 
     public PunchThreeState(Character character, eState eState) : base(character, eState)
     {
-        _animClip = Resources.Load<AnimationClip>("Animation/Lucy_FightFist02_2b_1");
     }
 
     public override void StartState()
     {
         base.StartState();
-        _curState = _animancer.Play(_animClip);
+        _curState = _action.Play();
     }
 
     public override void FixedUpdateState()

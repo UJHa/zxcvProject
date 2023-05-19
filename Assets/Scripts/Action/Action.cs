@@ -7,25 +7,43 @@
 // >> 애니메이션 타입(이후 콤보 가능 액션, 입력 가능 액션, 타격 가능 액션 등...)(개발 전까지는 후순위)
 // >> 다음 애니메이션 이동 시의 fade 시간 여부?(개발 전까지는 후순위)
 
+using Animancer;
 using UnityEngine;
 
 public class Action
 {
-    private readonly string _name;
     private readonly MoveSet _moveSet;
     private readonly KeyCode _inputKey;
     private readonly eState _state;
+    private readonly AnimationClip _animClip;
+    private AnimancerState _curState;
 
-    public Action(string name, KeyCode inputKey, eState state, MoveSet moveSet)
+    public Action(MoveSet moveSet, eState state, KeyCode inputKey, string clipPath)
     {
-        _name = name;
         _moveSet = moveSet;
-        _inputKey = inputKey;
         _state = state;
+        _inputKey = inputKey;
+        _animClip = Resources.Load<AnimationClip>(clipPath);
     }
 
     public eState GetState()
     {
         return _state;
+    }
+
+    public AnimationClip GetClip()
+    {
+        return _animClip;
+    }
+
+    public AnimancerState Play()
+    {
+        _curState = _moveSet.Play(_animClip); 
+        return _curState;
+    }
+
+    public bool IsFinish()
+    {
+        return _curState.NormalizedTime >= 1f;
     }
 }

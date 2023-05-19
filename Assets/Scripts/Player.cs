@@ -10,6 +10,13 @@ public class Player : Character
         StartUI();
 
         _directionVector = Vector3.back;
+        
+        _moveSet.Init(this);
+        _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, "Animation/Lucy_FightFist01_1");
+        _moveSet.RegisterAction(eState.ATTACK2, KeyCode.C, eState.ATTACK, "Animation/Lucy_FightFist01_2");
+        _moveSet.RegisterAction(eState.ATTACK3, KeyCode.C, eState.ATTACK2, "Animation/Lucy_FightFist02_2b_1");
+        _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.IDLE, "Animation/Damaged");
+        _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.DAMAGED, "Animation/Damaged"); // 동일 리소스 호출 시 Resource pool 필요
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
         _stateMap.Add(eState.IDLE, new IdleState(this, eState.IDLE));
@@ -24,15 +31,6 @@ public class Player : Character
         _stateMap.Add(eState.ATTACK3, new PunchThreeState(this, eState.ATTACK3));
         _stateMap.Add(eState.DAMAGED, new DamagedState(this, eState.DAMAGED));
         _stateMap.Add(eState.DEAD, new DeadState(this, eState.DEAD));
-        
-        _moveSet.Init();
-        _moveSet.RegisterAction("Punch1", KeyCode.C, eState.IDLE, eState.ATTACK);
-        _moveSet.RegisterAction("Punch2", KeyCode.C, eState.ATTACK, eState.ATTACK2);
-        _moveSet.RegisterAction("Punch3", KeyCode.C, eState.ATTACK2, eState.ATTACK3);
-        _moveSet.RegisterAction("Damaged", KeyCode.X, eState.IDLE, eState.DAMAGED);
-        _moveSet.RegisterAction("Damaged2", KeyCode.X, eState.DAMAGED, eState.DAMAGED); // damaged랑 같은거임
-        // _moveSet.RegisterAction("Punch2");
-        // _moveSet.RegisterAction("Punch3");
 
         _curState = eState.IDLE;
 

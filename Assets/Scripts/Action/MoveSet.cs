@@ -1,35 +1,40 @@
 using System.Collections.Generic;
+using Animancer;
 using UnityEngine;
 
 // MoveSet Action이 알아야 되는 정보
 // // 
 public class MoveSet
 {
-    private Dictionary<string, Action> _actionMap = new();          // [key:name][value:Action]
+    private Dictionary<eState, Action> _actionMap = new();          // [key:eState][value:Action]
     private Dictionary<string, Action> _inputEnableMap = new();   // [key:curState_enableKeyCode][value:Action]
     // 이 두개는 일단 디버깅용으로 사용할거라 나중에 지우기
     private Dictionary<eState, List<Action>> _inputEnableStateMap = new();   // 현재 eState에서 변환 가능 액션 리스트 
     private Dictionary<KeyCode, List<Action>> _inputKeyMap = new();     // 입력 키 조건의 가능 액션 리스트
+    private AnimancerComponent _animancer;
 
     public MoveSet()
     {
         
     }
 
-    public void Init()
+    public void Init(Character player)
     {
+        _animancer = player.GetComponent<AnimancerComponent>();
     }
     
-    public void RegisterAction(string actionName, KeyCode inputKey, eState enableState, eState actionState)
+    public void RegisterAction(eState actionState, KeyCode inputKey, eState enableState, string clipPath)
     {
-        if (_actionMap.ContainsKey(actionName))
+        if (_actionMap.ContainsKey(actionState))
         {
-            Debug.LogError($"Character contains same action name[{actionName}]");
-            return;
+            Debug.LogError($"[OnlyLog]Character contains same action name[{actionState}]");
+        }
+        else
+        {
+            _actionMap.Add(actionState, new Action(this, actionState, inputKey, clipPath));
         }
 
-        var action = new Action(actionName, inputKey, actionState, this);
-        _actionMap.Add(actionName, action);
+        var action = _actionMap[actionState];
 
         var enableKey = $"{enableState}_{inputKey}";
         if (_inputEnableMap.ContainsKey(enableKey))
@@ -49,9 +54,11 @@ public class MoveSet
         _inputKeyMap[inputKey].Add(action);
     }
 
-    public eState GetCurAction(eState curState, KeyCode inputKey)
+    public Action GetCurAction(eState curState)
     {
-        return eState.RUN;
+        if (false == _actionMap.ContainsKey(curState))
+            return null;
+        return _actionMap[curState];
     }
 
     public eState DetermineNextState(eState curState, KeyCode inputKey)
@@ -63,5 +70,10 @@ public class MoveSet
             return eState.NONE;
         var action = _inputEnableMap[enableKey];
         return action.GetState();
+    }
+
+    public AnimancerState Play(AnimationClip animClip)
+    {
+        return _animancer.Play(animClip);
     }
 }

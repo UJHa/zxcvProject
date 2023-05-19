@@ -24,6 +24,7 @@ public abstract class State
     protected readonly AnimancerComponent _animancer;
     protected readonly eState _eState;
     protected readonly MoveSet _moveSet;
+    protected readonly Action _action;
 
     public State(Character character, eState eState)
     {
@@ -31,6 +32,7 @@ public abstract class State
         this._animancer = _character.GetComponent<AnimancerComponent>();
         _moveSet = _character.GetMoveSet();
         _eState = eState;
+        _action = _moveSet.GetCurAction(_eState);
     }
 
     public virtual void StartState()
