@@ -29,7 +29,7 @@ public class PunchThreeState : AttackState
     {
         if (_character.IsGround())
         {
-            if (_curState.NormalizedTime > 0.4f)
+            if (_action.IsFinish())
             {
                 _character.ChangeState(eState.IDLE);
             }

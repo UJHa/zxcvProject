@@ -32,7 +32,7 @@ public class PunchOneState : AttackState
             var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
             if (eState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
-            else if (_curState.NormalizedTime > 0.7f)
+            else if (_action.IsFinish())
             {
                 _character.ChangeState(eState.IDLE);
             }

@@ -17,13 +17,17 @@ public class Action
     private readonly eState _state;
     private readonly AnimationClip _animClip;
     private AnimancerState _curState;
+    private float _startRate;
+    private float _endRate;
 
-    public Action(MoveSet moveSet, eState state, KeyCode inputKey, string clipPath)
+    public Action(MoveSet moveSet, eState state, KeyCode inputKey, string clipPath, float startRate, float endRate)
     {
         _moveSet = moveSet;
         _state = state;
         _inputKey = inputKey;
         _animClip = Resources.Load<AnimationClip>(clipPath);
+        _startRate = startRate;
+        _endRate = endRate;
     }
 
     public eState GetState()
@@ -38,12 +42,13 @@ public class Action
 
     public AnimancerState Play()
     {
-        _curState = _moveSet.Play(_animClip); 
+        _curState = _moveSet.Play(_animClip);
+        _curState.NormalizedTime = _startRate;
         return _curState;
     }
 
     public bool IsFinish()
     {
-        return _curState.NormalizedTime >= 1f;
+        return _curState.NormalizedTime >= _endRate;
     }
 }
