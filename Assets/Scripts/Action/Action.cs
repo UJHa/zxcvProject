@@ -20,14 +20,14 @@ public class Action
     private float _startRate;
     private float _endRate;
 
-    public Action(MoveSet moveSet, eState state, KeyCode inputKey, string clipPath, float startRate, float endRate)
+    public Action(MoveSet moveSet, eState state, KeyCode inputKey, ActionInfo actionInfo)
     {
         _moveSet = moveSet;
         _state = state;
         _inputKey = inputKey;
-        _animClip = Resources.Load<AnimationClip>(clipPath);
-        _startRate = startRate;
-        _endRate = endRate;
+        _animClip = Resources.Load<AnimationClip>(actionInfo.clipPath);
+        _startRate = actionInfo.startAnimNormTime;
+        _endRate = actionInfo.endAnimNormTime;
     }
 
     public eState GetState()

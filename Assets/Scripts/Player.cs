@@ -12,11 +12,11 @@ public class Player : Character
         _directionVector = Vector3.back;
         
         _moveSet.Init(this);
-        _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, "Animation/Lucy_FightFist01_1", 0f, 0.7f);
-        _moveSet.RegisterAction(eState.ATTACK2, KeyCode.C, eState.ATTACK, "Animation/Lucy_FightFist01_2", 0.1f, 0.5f);
-        _moveSet.RegisterAction(eState.ATTACK3, KeyCode.C, eState.ATTACK2, "Animation/Lucy_FightFist02_2b_1", 0f, 0.4f);
-        _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.IDLE, "Animation/Damaged", 0f, 1f);
-        _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.DAMAGED, "Animation/Damaged", 0f, 1f); // 동일 리소스 호출 시 Resource pool 필요
+        _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, new ActionInfo("Animation/Lucy_FightFist01_1", 0f, 0.7f, ActorHitColliderType.LEFT_HAND, 0.0f, 1.0f));
+        _moveSet.RegisterAction(eState.ATTACK2, KeyCode.C, eState.ATTACK, new ActionInfo("Animation/Lucy_FightFist01_2", 0.1f, 0.5f, ActorHitColliderType.RIGHT_HAND, 0.0f, 1.0f));
+        _moveSet.RegisterAction(eState.ATTACK3, KeyCode.C, eState.ATTACK2, new ActionInfo("Animation/Lucy_FightFist02_2b_1", 0f, 0.4f, ActorHitColliderType.LEFT_HAND, 0.0f, 1.0f));
+        _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.IDLE, new ActionInfo("Animation/Damaged", 0f, 1.0f, ActorHitColliderType.NONE, 0.0f, 1.0f));
+        _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.DAMAGED, new ActionInfo("Animation/Damaged", 0f, 1.0f, ActorHitColliderType.NONE, 0.0f, 1.0f));
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
         _stateMap.Add(eState.IDLE, new IdleState(this, eState.IDLE));

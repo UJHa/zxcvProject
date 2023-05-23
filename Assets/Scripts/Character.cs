@@ -818,11 +818,16 @@ public class Character : MonoBehaviour
         return _colliderInfos[wallDir].Count > 0;
     }
 
-    public void ActiveAttackColliders(bool enable)
+    public void ActiveAttackColliders(bool enable, ActorHitColliderType colliderType = ActorHitColliderType.NONE)
     {
         foreach (var hitCollider in _hitColliders)
         {
-            hitCollider.gameObject.SetActive(enable);
+            if (ActorHitColliderType.NONE == colliderType)
+                hitCollider.gameObject.SetActive(enable);
+            else if (hitCollider.IsSame(colliderType))
+            {
+                hitCollider.gameObject.SetActive(enable);
+            }
         }
     }
     

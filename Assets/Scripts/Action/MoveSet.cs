@@ -3,7 +3,42 @@ using Animancer;
 using UnityEngine;
 
 // MoveSet Action이 알아야 되는 정보
-// // 
+//
+public enum ActorHitColliderType
+{
+    NONE,
+    LEFT_HAND,
+    RIGHT_HAND,
+}
+public struct ActionInfo
+{
+    public string clipPath;
+    public float startAnimNormTime;
+    public float endAnimNormTime;
+    public ActorHitColliderType actorHitColliderType;
+    public float startCollisionNormTime;
+    public float endCollisionNormTime;
+
+    public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime)
+    {
+        this.clipPath = clipPath;
+        this.startAnimNormTime = startAnimNormTime;
+        this.endAnimNormTime = endAnimNormTime;
+        actorHitColliderType = ActorHitColliderType.NONE;
+        startCollisionNormTime = 0;
+        endCollisionNormTime = 0;
+    }
+    
+    public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime, ActorHitColliderType actorHitColliderType, float startCollisionNormTime, float endCollisionNormTime)
+    {
+        this.clipPath = clipPath;
+        this.startAnimNormTime = startAnimNormTime;
+        this.endAnimNormTime = endAnimNormTime;
+        this.actorHitColliderType = actorHitColliderType;
+        this.startCollisionNormTime = startCollisionNormTime;
+        this.endCollisionNormTime = endCollisionNormTime;
+    }
+}
 public class MoveSet
 {
     private Dictionary<eState, Action> _actionMap = new();          // [key:eState][value:Action]
@@ -23,7 +58,7 @@ public class MoveSet
         _animancer = player.GetComponent<AnimancerComponent>();
     }
     
-    public void RegisterAction(eState actionState, KeyCode inputKey, eState enableState, string clipPath, float startRate, float endRate)
+    public void RegisterAction(eState actionState, KeyCode inputKey, eState enableState, ActionInfo actionInfo)
     {
         if (_actionMap.ContainsKey(actionState))
         {
@@ -31,7 +66,7 @@ public class MoveSet
         }
         else
         {
-            _actionMap.Add(actionState, new Action(this, actionState, inputKey, clipPath, startRate, endRate));
+            _actionMap.Add(actionState, new Action(this, actionState, inputKey, actionInfo));
         }
 
         var action = _actionMap[actionState];

@@ -14,6 +14,7 @@ public class PunchThreeState : AttackState
     {
         base.StartState();
         _curState = _action.Play();
+        _character.ActiveAttackColliders(true, ActorHitColliderType.LEFT_HAND);
     }
 
     public override void FixedUpdateState()

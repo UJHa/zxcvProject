@@ -1983,7 +1983,6 @@ MonoBehaviour:
   _prevState: 0
   _curState: 0
   _isGround: 0
-  CHECK_GROUND_DISTANCE: 0.2
   traceTarget: {fileID: 0}
 --- !u!136 &6136724877743868283
 CapsuleCollider:
@@ -2020,6 +2019,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3861058367356855485}
     m_Modifications:
+    - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
+      propertyPath: _colliderType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: _ownCharacter
       value: 
@@ -2097,6 +2100,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3861058367024677563}
     m_Modifications:
+    - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
+      propertyPath: _colliderType
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: _ownCharacter
       value: 

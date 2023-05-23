@@ -16,7 +16,6 @@ public class AttackState : State
 
     public override void StartState()
     {
-        _character.ActiveAttackColliders(true);
     }
 
     public override void FixedUpdateState()
