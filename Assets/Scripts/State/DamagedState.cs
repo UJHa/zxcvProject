@@ -27,7 +27,7 @@ public class DamagedState : State
     {
         if (_character.IsGround())
         {
-            if (_action.IsFinish())
+            if (_action.IsAnimationFinish())
             {
                 _character.ChangeState(eState.IDLE);
             }

@@ -12,9 +12,9 @@ public class Player : Character
         _directionVector = Vector3.back;
         
         _moveSet.Init(this);
-        _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, new ActionInfo("Animation/Lucy_FightFist01_1", 0f, 0.7f, ActorHitColliderType.LEFT_HAND, 0.0f, 1.0f));
-        _moveSet.RegisterAction(eState.ATTACK2, KeyCode.C, eState.ATTACK, new ActionInfo("Animation/Lucy_FightFist01_2", 0.1f, 0.5f, ActorHitColliderType.RIGHT_HAND, 0.0f, 1.0f));
-        _moveSet.RegisterAction(eState.ATTACK3, KeyCode.C, eState.ATTACK2, new ActionInfo("Animation/Lucy_FightFist02_2b_1", 0f, 0.4f, ActorHitColliderType.LEFT_HAND, 0.0f, 1.0f));
+        _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, new ActionInfo("Animation/Lucy_FightFist01_1", 0f, 0.7f, ActorHitColliderType.LEFT_HAND, 0.15f, 0.4f));
+        _moveSet.RegisterAction(eState.ATTACK2, KeyCode.C, eState.ATTACK, new ActionInfo("Animation/Lucy_FightFist01_2", 0.1f, 0.5f, ActorHitColliderType.RIGHT_HAND, 0.0f, 0.3f));
+        _moveSet.RegisterAction(eState.ATTACK3, KeyCode.C, eState.ATTACK2, new ActionInfo("Animation/Lucy_FightFist02_2b_1", 0f, 0.4f, ActorHitColliderType.LEFT_HAND, 0.1f, 0.2f));
         _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.IDLE, new ActionInfo("Animation/Damaged", 0f, 1.0f, ActorHitColliderType.NONE, 0.0f, 1.0f));
         _moveSet.RegisterAction(eState.DAMAGED, KeyCode.X, eState.DAMAGED, new ActionInfo("Animation/Damaged", 0f, 1.0f, ActorHitColliderType.NONE, 0.0f, 1.0f));
 

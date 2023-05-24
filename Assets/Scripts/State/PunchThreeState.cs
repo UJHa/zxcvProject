@@ -14,7 +14,6 @@ public class PunchThreeState : AttackState
     {
         base.StartState();
         _curState = _action.Play();
-        _character.ActiveAttackColliders(true, ActorHitColliderType.LEFT_HAND);
     }
 
     public override void FixedUpdateState()
@@ -30,10 +29,12 @@ public class PunchThreeState : AttackState
     {
         if (_character.IsGround())
         {
-            if (_action.IsFinish())
+            if (_action.IsAnimationFinish())
             {
                 _character.ChangeState(eState.IDLE);
             }
         }
+        bool collisionEnable = _action.IsCollisionEnable();
+        _character.ActiveAttackColliders(collisionEnable, ActorHitColliderType.LEFT_HAND);
     }
 }

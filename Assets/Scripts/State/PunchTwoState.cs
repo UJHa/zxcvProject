@@ -14,7 +14,6 @@ public class PunchTwoState : AttackState
     {
         base.StartState();
         _curState = _action.Play();
-        _character.ActiveAttackColliders(true, ActorHitColliderType.LEFT_HAND);
     }
 
     public override void FixedUpdateState()
@@ -33,17 +32,12 @@ public class PunchTwoState : AttackState
             var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
             if (eState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
-            else if (_action.IsFinish())
+            else if (_action.IsAnimationFinish())
             {
                 _character.ChangeState(eState.IDLE);
             }
         }
-        // if (_animator.GetCurrentAnimatorStateInfo(0).IsName(_animName))
-        // {
-        //     if (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f)
-        //     {
-        //         _character.ChangeState(eState.ATTACK3);
-        //     }
-        // }
+        bool collisionEnable = _action.IsCollisionEnable();
+        _character.ActiveAttackColliders(collisionEnable, ActorHitColliderType.LEFT_HAND);
     }
 }

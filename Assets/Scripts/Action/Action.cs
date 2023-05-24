@@ -19,6 +19,8 @@ public class Action
     private AnimancerState _curState;
     private float _startRate;
     private float _endRate;
+    private float _startCollisionRate;
+    private float _endCollisionRate;
 
     public Action(MoveSet moveSet, eState state, KeyCode inputKey, ActionInfo actionInfo)
     {
@@ -28,6 +30,8 @@ public class Action
         _animClip = Resources.Load<AnimationClip>(actionInfo.clipPath);
         _startRate = actionInfo.startAnimNormTime;
         _endRate = actionInfo.endAnimNormTime;
+        _startCollisionRate = actionInfo.startCollisionNormTime;
+        _endCollisionRate = actionInfo.endCollisionNormTime;
     }
 
     public eState GetState()
@@ -47,8 +51,13 @@ public class Action
         return _curState;
     }
 
-    public bool IsFinish()
+    public bool IsAnimationFinish()
     {
         return _curState.NormalizedTime >= _endRate;
+    }
+    
+    public bool IsCollisionEnable()
+    {
+        return _curState.NormalizedTime >= _startCollisionRate && _curState.NormalizedTime <= _endCollisionRate;
     }
 }
