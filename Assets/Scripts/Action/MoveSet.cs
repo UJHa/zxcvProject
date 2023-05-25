@@ -9,6 +9,8 @@ public enum ActorHitColliderType
     NONE,
     LEFT_HAND,
     RIGHT_HAND,
+    LEFT_FOOT,
+    RIGHT_FOOT
 }
 public struct ActionInfo
 {

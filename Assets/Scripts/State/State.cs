@@ -14,6 +14,8 @@ public enum eState
     ATTACK,
     ATTACK2,
     ATTACK3,
+    ATTACK4,
+    ATTACK5,
     DAMAGED,
     DEAD
 }

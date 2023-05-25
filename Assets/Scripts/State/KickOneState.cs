@@ -2,11 +2,11 @@ using Animancer;
 using UnityEngine;
 using UnityEditor;
 
-public class PunchThreeState : AttackState
+public class KickOneState : AttackState
 {
     private AnimancerState _curState;
 
-    public PunchThreeState(Character character, eState eState) : base(character, eState)
+    public KickOneState(Character character, eState eState) : base(character, eState)
     {
     }
 
@@ -29,12 +29,16 @@ public class PunchThreeState : AttackState
     {
         if (_character.IsGround())
         {
-            if (_action.IsAnimationFinish())
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.X);
+            if (eState.NONE != nextState)
+                _character.ChangeState(nextState, eStateType.INPUT);
+            else if (_action.IsAnimationFinish())
             {
                 _character.ChangeState(eState.IDLE);
             }
+            
             bool collisionEnable = _action.IsCollisionEnable();
-            _character.ActiveAttackColliders(collisionEnable, ActorHitColliderType.LEFT_HAND);
+            _character.ActiveAttackColliders(collisionEnable, ActorHitColliderType.RIGHT_FOOT);
         }
     }
 }
