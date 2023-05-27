@@ -21,6 +21,7 @@ public class Action
     private float _endRate;
     private float _startCollisionRate;
     private float _endCollisionRate;
+    private ActorHitColliderType _hitColliderType;
 
     public Action(MoveSet moveSet, eState state, KeyCode inputKey, ActionInfo actionInfo)
     {
@@ -32,6 +33,7 @@ public class Action
         _endRate = actionInfo.endAnimNormTime;
         _startCollisionRate = actionInfo.startCollisionNormTime;
         _endCollisionRate = actionInfo.endCollisionNormTime;
+        _hitColliderType = actionInfo.actorHitColliderType;
     }
 
     public eState GetState()
@@ -59,5 +61,10 @@ public class Action
     public bool IsCollisionEnable()
     {
         return _curState.NormalizedTime >= _startCollisionRate && _curState.NormalizedTime <= _endCollisionRate;
+    }
+
+    public ActorHitColliderType GetHitColliderType()
+    {
+        return _hitColliderType;
     }
 }
