@@ -1,10 +1,12 @@
 using Animancer;
 using UnityEngine;
+using UnityEditor;
 
-public class DamagedState : State
+public class NormalDamagedState : DamagedState
 {
     private AnimancerState _curState;
-    public DamagedState(Character character, eState eState) : base(character, eState)
+
+    public NormalDamagedState(Character character, eState eState) : base(character, eState)
     {
     }
 

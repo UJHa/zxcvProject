@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class HitCollider : MonoBehaviour
 {
-    [SerializeField] private ActorHitColliderType _colliderType = ActorHitColliderType.NONE;
+    [SerializeField] private AttackPartColliderType _colliderType = AttackPartColliderType.NONE;
     private Character _ownCharacter = null;
+    private AttackType _attackType;
 
     public void SetOwner(Character character)
     {
@@ -17,8 +18,13 @@ public class HitCollider : MonoBehaviour
         return _ownCharacter;
     }
 
-    public bool IsSame(ActorHitColliderType colliderType)
+    public void SetAttackType(AttackType attackType)
     {
-        return colliderType == _colliderType;
+        _attackType = attackType;
+    }
+
+    public AttackType GetAttackType()
+    {
+        return _attackType;
     }
 }

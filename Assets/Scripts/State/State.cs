@@ -17,6 +17,8 @@ public enum eState
     ATTACK4,
     ATTACK5,
     DAMAGED,
+    NORMAL_DAMAGED,
+    AIRBORNE_DAMAGED,
     DEAD
 }
 

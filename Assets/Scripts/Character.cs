@@ -41,6 +41,12 @@ public class ColliderCube
     public Vector3 colliderPos;
     public Vector3 gizmoPos;
 }
+[Serializable]
+public struct AttackPartData
+{
+    public AttackPartColliderType attackPart;
+    public HitCollider hitCollider;
+}
 
 // 엄todo : 대쉬 슬라이드로 언덕 오르기/내리기 테스트 및 구현 >>>> 보류
 // // 대각 바닥 오르기 안되는 버그
@@ -97,7 +103,8 @@ public class Character : MonoBehaviour
     [SerializeField] public float _wallBoxHeight = 1.5f;
     
     [Header("Attack Collider")]
-    [SerializeField] private List<HitCollider> _hitColliders = new();
+    [SerializeField] private List<AttackPartData> _attackPartDatas = new();
+    private Dictionary<AttackPartColliderType, HitCollider> _hitColliderMap = new();
 
     [Header("3D Phygics Component")] 
     [SerializeField] private Rigidbody _rigidbody;
@@ -143,9 +150,11 @@ public class Character : MonoBehaviour
             MakeReverseCurve(_jumpUp, _jumpDown);
         }
 
-        foreach (var hitCollider in _hitColliders)
+        foreach (var partData in _attackPartDatas)
         {
-            hitCollider.SetOwner(this);
+            partData.hitCollider.SetOwner(this);
+            if (false == _hitColliderMap.ContainsKey(partData.attackPart))
+                _hitColliderMap.Add(partData.attackPart, partData.hitCollider);
         }
     }
 
@@ -663,22 +672,40 @@ public class Character : MonoBehaviour
         // 피해 받았을때 진입
         // other : attacker
         // name : defender
-        if (other.name != "AttackCollider")
-            return;
+        if (other.TryGetComponent<HitCollider>(out var hitCollider))
+        {
+            Debug.Log($"[testum][name:{name}]be hit other({other.name})");
+            var attacker = hitCollider.GetOwner();
+            if (attacker != this)
+            {
+                AttackType attackType = hitCollider.GetAttackType();
+                switch (attackType)
+                {
+                    case AttackType.NONE:
+                        break;
+                    case AttackType.NORMAL:
+                        ChangeState(eState.NORMAL_DAMAGED);
+                        break;
+                    case AttackType.AIRBORNE:
+                        ChangeState(eState.AIRBORNE_DAMAGED);
+                        break;
+                }
+            }
+        }
 
-        Character attacker = other.transform.parent.GetComponent<Character>();
-        if (attacker == null)
-        {
-            Debug.Log("Attacker is not character.");
-            return;
-        }
-        
-        _curHp -= attacker.getAttackDamage();
-        if (_curHp <= 0f)
-        {
-            _curHp = 0f;
-            ChangeState(eState.DEAD);
-        }
+        // Character attacker = other.transform.parent.GetComponent<Character>();
+        // if (attacker == null)
+        // {
+        //     Debug.Log("Attacker is not character.");
+        //     return;
+        // }
+        //
+        // _curHp -= attacker.getAttackDamage();
+        // if (_curHp <= 0f)
+        // {
+        //     _curHp = 0f;
+        //     ChangeState(eState.DEAD);
+        // }
     }
 
     public float getAttackDamage()
@@ -818,17 +845,19 @@ public class Character : MonoBehaviour
         return _colliderInfos[wallDir].Count > 0;
     }
 
-    public void ActiveAttackColliders(bool enable, ActorHitColliderType colliderType = ActorHitColliderType.NONE)
+    public void ActiveAttackColliders(bool enable)
     {
-        foreach (var hitCollider in _hitColliders)
+        foreach (var hitCollider in _attackPartDatas)
         {
-            if (ActorHitColliderType.NONE == colliderType)
-                hitCollider.gameObject.SetActive(enable);
-            else if (hitCollider.IsSame(colliderType))
-            {
-                hitCollider.gameObject.SetActive(enable);
-            }
+            hitCollider.hitCollider.gameObject.SetActive(enable);
         }
+    }
+    public void ActiveAttackCollider(bool enable, AttackPartColliderType colliderType, AttackType attackType = AttackType.NORMAL)
+    {
+        if (false == _hitColliderMap.ContainsKey(colliderType))
+            return;
+        _hitColliderMap[colliderType].gameObject.SetActive(enable);
+        _hitColliderMap[colliderType].SetAttackType(attackType);
     }
     
     private Vector3 GetLeftRightWallBoxSize()

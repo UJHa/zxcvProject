@@ -17,23 +17,23 @@ public class Action
     private readonly eState _state;
     private readonly AnimationClip _animClip;
     private AnimancerState _curState;
+    private readonly ActionInfo _actionInfo;
     private float _startRate;
     private float _endRate;
     private float _startCollisionRate;
     private float _endCollisionRate;
-    private ActorHitColliderType _hitColliderType;
 
     public Action(MoveSet moveSet, eState state, KeyCode inputKey, ActionInfo actionInfo)
     {
         _moveSet = moveSet;
         _state = state;
         _inputKey = inputKey;
+        _actionInfo = actionInfo;
         _animClip = Resources.Load<AnimationClip>(actionInfo.clipPath);
         _startRate = actionInfo.startAnimNormTime;
         _endRate = actionInfo.endAnimNormTime;
         _startCollisionRate = actionInfo.startCollisionNormTime;
         _endCollisionRate = actionInfo.endCollisionNormTime;
-        _hitColliderType = actionInfo.actorHitColliderType;
     }
 
     public eState GetState()
@@ -63,8 +63,13 @@ public class Action
         return _curState.NormalizedTime >= _startCollisionRate && _curState.NormalizedTime <= _endCollisionRate;
     }
 
-    public ActorHitColliderType GetHitColliderType()
+    public AttackPartColliderType GetHitColliderType()
     {
-        return _hitColliderType;
+        return _actionInfo.AttackPartColliderType;
+    }
+    
+    public AttackType GetAttackType()
+    {
+        return _actionInfo.attackType;
     }
 }

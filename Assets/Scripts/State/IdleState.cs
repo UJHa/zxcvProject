@@ -77,13 +77,21 @@ public class IdleState : State
             {
                 var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
                 Debug.Log($"[testum]idleChange Test ({nextState})");
-                if (eState.NONE != nextState)
-                    _character.ChangeState(nextState, eStateType.INPUT);
-                else
+                if (eState.NONE == nextState)
                 {
                     var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.X);
                     if (eState.NONE != nextState2)
                         _character.ChangeState(nextState2, eStateType.INPUT);
+                    else
+                    {
+                        var nextState3 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
+                        if (eState.NONE != nextState3)
+                            _character.ChangeState(nextState3, eStateType.INPUT);
+                    }
+                }
+                else
+                {
+                    _character.ChangeState(nextState, eStateType.INPUT);
                 }
             }
         }

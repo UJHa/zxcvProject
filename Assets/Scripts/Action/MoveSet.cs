@@ -4,7 +4,7 @@ using UnityEngine;
 
 // MoveSet Action이 알아야 되는 정보
 //
-public enum ActorHitColliderType
+public enum AttackPartColliderType
 {
     NONE,
     LEFT_HAND,
@@ -12,33 +12,34 @@ public enum ActorHitColliderType
     LEFT_FOOT,
     RIGHT_FOOT
 }
+public enum AttackType
+{
+    NONE,
+    NORMAL,
+    AIRBORNE,
+}
+
 public struct ActionInfo
 {
     public string clipPath;
     public float startAnimNormTime;
     public float endAnimNormTime;
-    public ActorHitColliderType actorHitColliderType;
+    public AttackPartColliderType AttackPartColliderType;
     public float startCollisionNormTime;
     public float endCollisionNormTime;
-
-    public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime)
-    {
-        this.clipPath = clipPath;
-        this.startAnimNormTime = startAnimNormTime;
-        this.endAnimNormTime = endAnimNormTime;
-        actorHitColliderType = ActorHitColliderType.NONE;
-        startCollisionNormTime = 0;
-        endCollisionNormTime = 0;
-    }
+    public AttackType attackType;
     
-    public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime, ActorHitColliderType actorHitColliderType, float startCollisionNormTime, float endCollisionNormTime)
+    public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime,
+        AttackPartColliderType attackPartColliderType, float startCollisionNormTime, float endCollisionNormTime,
+        AttackType attackType)
     {
         this.clipPath = clipPath;
         this.startAnimNormTime = startAnimNormTime;
         this.endAnimNormTime = endAnimNormTime;
-        this.actorHitColliderType = actorHitColliderType;
+        this.AttackPartColliderType = attackPartColliderType;
         this.startCollisionNormTime = startCollisionNormTime;
         this.endCollisionNormTime = endCollisionNormTime;
+        this.attackType = attackType;
     }
 }
 public class MoveSet

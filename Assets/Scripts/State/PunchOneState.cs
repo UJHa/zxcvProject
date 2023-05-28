@@ -38,7 +38,7 @@ public class PunchOneState : AttackState
             }
 
             bool collisionEnable = _action.IsCollisionEnable();
-            _character.ActiveAttackColliders(collisionEnable, _action.GetHitColliderType());
+            _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetAttackType());
         }
     }
 }

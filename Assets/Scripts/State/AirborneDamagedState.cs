@@ -1,10 +1,12 @@
 using Animancer;
 using UnityEngine;
+using UnityEditor;
 
-public class DamagedState : State
+public class AirborneDamagedState : DamagedState
 {
     private AnimancerState _curState;
-    public DamagedState(Character character, eState eState) : base(character, eState)
+
+    public AirborneDamagedState(Character character, eState eState) : base(character, eState)
     {
     }
 

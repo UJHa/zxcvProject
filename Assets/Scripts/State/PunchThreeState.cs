@@ -34,7 +34,7 @@ public class PunchThreeState : AttackState
                 _character.ChangeState(eState.IDLE);
             }
             bool collisionEnable = _action.IsCollisionEnable();
-            _character.ActiveAttackColliders(collisionEnable, _action.GetHitColliderType());
+            _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetAttackType());
         }
     }
 }

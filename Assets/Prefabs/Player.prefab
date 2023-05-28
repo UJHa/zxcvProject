@@ -1978,11 +1978,15 @@ MonoBehaviour:
   _wallBoxThickness: 0.05
   _wallBoxWidth: 0.1
   _wallBoxHeight: 1.5
-  _hitColliders:
-  - {fileID: 7596293611078780404}
-  - {fileID: 3414987712248359516}
-  - {fileID: 9177636827613785345}
-  - {fileID: 5604798778750302970}
+  _attackPartDatas:
+  - attackPart: 1
+    hitCollider: {fileID: 7596293611078780404}
+  - attackPart: 2
+    hitCollider: {fileID: 3414987712248359516}
+  - attackPart: 3
+    hitCollider: {fileID: 9177636827613785345}
+  - attackPart: 4
+    hitCollider: {fileID: 5604798778750302970}
   _rigidbody: {fileID: 6136724877743868229}
   _prevState: 0
   _curState: 0
