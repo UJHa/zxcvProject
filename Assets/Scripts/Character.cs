@@ -45,7 +45,7 @@ public class ColliderCube
 public struct AttackPartData
 {
     public AttackPartColliderType attackPart;
-    public HitCollider hitCollider;
+    public AttackCollider attackCollider;
 }
 
 // 엄todo : 대쉬 슬라이드로 언덕 오르기/내리기 테스트 및 구현 >>>> 보류
@@ -55,9 +55,7 @@ public struct AttackPartData
 // // >> slop 타입 분리 필요
 // // >> 바닥 콜리전 없을 때, 경사용 컬리전으로 다시 체크하는 방식?
 // 엄todo : 공격 기능 개발
-// // - 공격 애니메이션 종료 시간 데이터 제어
-// // - 공격 애니메이션 시 충돌체 활성화 시간 데이터 제어
-// // - 피격 시 동일한 HitCollider 인스턴스일 때 무시 처리
+// // - 피격 시 동일한 AttackCollider 인스턴스일 때 무시 처리
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
@@ -84,6 +82,8 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpUpMaxTimer = 2f;
     [SerializeField] private float _jumpDownMaxTimer = 1f;
 
+    [Header("Hit Collider")]
+    [SerializeField] private HitCollider _hitCollider;
     [Header("Ground Collider")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
     {
@@ -104,7 +104,7 @@ public class Character : MonoBehaviour
     
     [Header("Attack Collider")]
     [SerializeField] private List<AttackPartData> _attackPartDatas = new();
-    private Dictionary<AttackPartColliderType, HitCollider> _hitColliderMap = new();
+    private Dictionary<AttackPartColliderType, AttackCollider> _attackColliderMap = new();
 
     [Header("3D Phygics Component")] 
     [SerializeField] private Rigidbody _rigidbody;
@@ -152,9 +152,9 @@ public class Character : MonoBehaviour
 
         foreach (var partData in _attackPartDatas)
         {
-            partData.hitCollider.SetOwner(this);
-            if (false == _hitColliderMap.ContainsKey(partData.attackPart))
-                _hitColliderMap.Add(partData.attackPart, partData.hitCollider);
+            partData.attackCollider.SetOwner(this);
+            if (false == _attackColliderMap.ContainsKey(partData.attackPart))
+                _attackColliderMap.Add(partData.attackPart, partData.attackCollider);
         }
     }
 
@@ -672,13 +672,13 @@ public class Character : MonoBehaviour
         // 피해 받았을때 진입
         // other : attacker
         // name : defender
-        if (other.TryGetComponent<HitCollider>(out var hitCollider))
+        if (other.TryGetComponent<AttackCollider>(out var attackCollider))
         {
             Debug.Log($"[testum][name:{name}]be hit other({other.name})");
-            var attacker = hitCollider.GetOwner();
+            var attacker = attackCollider.GetOwner();
             if (attacker != this)
             {
-                AttackType attackType = hitCollider.GetAttackType();
+                AttackType attackType = attackCollider.GetAttackType();
                 switch (attackType)
                 {
                     case AttackType.NONE:
@@ -785,6 +785,7 @@ public class Character : MonoBehaviour
                 if (groundHeight < ground.heightPosY)
                 {
                     groundHeight = ground.heightPosY;
+                    transform.position = new Vector3(transform.position.x, groundHeight, transform.position.z);
                 }
             }
         }
@@ -847,17 +848,17 @@ public class Character : MonoBehaviour
 
     public void ActiveAttackColliders(bool enable)
     {
-        foreach (var hitCollider in _attackPartDatas)
+        foreach (var partData in _attackPartDatas)
         {
-            hitCollider.hitCollider.gameObject.SetActive(enable);
+            partData.attackCollider.gameObject.SetActive(enable);
         }
     }
     public void ActiveAttackCollider(bool enable, AttackPartColliderType colliderType, AttackType attackType = AttackType.NORMAL)
     {
-        if (false == _hitColliderMap.ContainsKey(colliderType))
+        if (false == _attackColliderMap.ContainsKey(colliderType))
             return;
-        _hitColliderMap[colliderType].gameObject.SetActive(enable);
-        _hitColliderMap[colliderType].SetAttackType(attackType);
+        _attackColliderMap[colliderType].gameObject.SetActive(enable);
+        _attackColliderMap[colliderType].SetAttackType(attackType);
     }
     
     private Vector3 GetLeftRightWallBoxSize()
