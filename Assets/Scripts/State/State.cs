@@ -19,6 +19,8 @@ public enum eState
     DAMAGED,
     NORMAL_DAMAGED,
     AIRBORNE_DAMAGED,
+    DAMAGED_AIRBORNE,
+    DAMAGED_LANDING,
     DEAD
 }
 

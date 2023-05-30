@@ -2,18 +2,18 @@ using Animancer;
 using UnityEngine;
 using UnityEditor;
 
-public class AirborneDamagedState : DamagedState
+public class DamagedLandingState : DamagedState
 {
     private AnimancerState _curState;
 
-    public AirborneDamagedState(Character character, eState eState) : base(character, eState)
+    public DamagedLandingState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
         base.StartState();
-        _curState = _action.Play();
+        _curState = _action.Play(0.3f);
     }
 
     public override void FixedUpdateState()
@@ -31,7 +31,7 @@ public class AirborneDamagedState : DamagedState
         {
             if (_action.IsAnimationFinish())
             {
-                _character.ChangeState(eState.DAMAGED_AIRBORNE);
+                _character.ChangeState(eState.IDLE);
             }
             else
             {

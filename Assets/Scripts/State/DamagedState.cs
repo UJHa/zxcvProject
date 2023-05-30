@@ -11,7 +11,6 @@ public class DamagedState : State
     public override void StartState()
     {
         base.StartState();
-        _curState = _action.Play();
     }
 
     public override void FixedUpdateState()

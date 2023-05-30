@@ -46,9 +46,9 @@ public class Action
         return _animClip;
     }
 
-    public AnimancerState Play()
+    public AnimancerState Play(float fadeTime = 0f)
     {
-        _curState = _moveSet.Play(_animClip);
+        _curState = _moveSet.Play(_animClip, fadeTime);
         _curState.NormalizedTime = _startRate;
         return _curState;
     }

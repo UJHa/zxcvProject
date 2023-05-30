@@ -110,8 +110,8 @@ public class MoveSet
         return action.GetState();
     }
 
-    public AnimancerState Play(AnimationClip animClip)
+    public AnimancerState Play(AnimationClip animClip, float fadeTime = 0f)
     {
-        return _animancer.Play(animClip);
+        return _animancer.Play(animClip, fadeTime);
     }
 }
