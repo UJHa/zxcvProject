@@ -1,19 +1,15 @@
-using Animancer;
 using UnityEngine;
-using UnityEditor;
 
-public class DamagedLandingState : DamagedState
+public class WakeUpState : State
 {
-    private AnimancerState _curState;
-
-    public DamagedLandingState(Character character, eState eState) : base(character, eState)
+    public WakeUpState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
         base.StartState();
-        _curState = _action.Play(0.3f);
+        _action.Play();
     }
 
     public override void FixedUpdateState()
@@ -31,7 +27,7 @@ public class DamagedLandingState : DamagedState
         {
             if (_action.IsAnimationFinish())
             {
-                _character.ChangeState(eState.WAKE_UP);
+                _character.ChangeState(eState.IDLE);
             }
             else
             {

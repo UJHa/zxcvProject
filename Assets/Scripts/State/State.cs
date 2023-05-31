@@ -21,6 +21,7 @@ public enum eState
     AIRBORNE_DAMAGED,
     DAMAGED_AIRBORNE,
     DAMAGED_LANDING,
+    WAKE_UP,
     DEAD
 }
 
