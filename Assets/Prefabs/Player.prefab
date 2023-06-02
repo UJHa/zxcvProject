@@ -1715,6 +1715,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8128074583374779490}
   - component: {fileID: 3853079798781268304}
+  - component: {fileID: 2001029440010266184}
   m_Layer: 8
   m_Name: HitCollider
   m_TagString: Untagged
@@ -1745,11 +1746,24 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4640015176604795094}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.4, y: 1.8, z: 0.4}
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &2001029440010266184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4640015176604795094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8b534b1974048968668f13081d4a90d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _character: {fileID: 6136724877743868282}
 --- !u!1 &5642997034812241467
 GameObject:
   m_ObjectHideFlags: 0
@@ -1809,6 +1823,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b534b1974048968668f13081d4a90d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _character: {fileID: 0}
 --- !u!1 &6136724877743868280
 GameObject:
   m_ObjectHideFlags: 0

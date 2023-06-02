@@ -669,6 +669,11 @@ public class Character : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // OnHit(other);
+    }
+
+    public void OnHit(Collider other)
+    {
         // 피해 받았을때 진입
         // other : attacker
         // name : defender
@@ -692,7 +697,6 @@ public class Character : MonoBehaviour
                 }
             }
         }
-
         // Character attacker = other.transform.parent.GetComponent<Character>();
         // if (attacker == null)
         // {
