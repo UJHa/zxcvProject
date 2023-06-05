@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AttackCollider : MonoBehaviour
 {
-    [SerializeField] private AttackPartColliderType _colliderType = AttackPartColliderType.NONE;
+    [SerializeField] private AttackRangeType _colliderType = AttackRangeType.NONE;
     private Character _ownCharacter = null;
     private AttackType _attackType;
 

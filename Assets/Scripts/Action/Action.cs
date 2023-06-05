@@ -63,9 +63,9 @@ public class Action
         return _curState.NormalizedTime >= _startCollisionRate && _curState.NormalizedTime <= _endCollisionRate;
     }
 
-    public AttackPartColliderType GetHitColliderType()
+    public AttackRangeType GetHitColliderType()
     {
-        return _actionInfo.AttackPartColliderType;
+        return _actionInfo.AttackRangeType;
     }
     
     public AttackType GetAttackType()

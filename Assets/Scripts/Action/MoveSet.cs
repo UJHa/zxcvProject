@@ -4,13 +4,17 @@ using UnityEngine;
 
 // MoveSet Action이 알아야 되는 정보
 //
-public enum AttackPartColliderType
+public enum AttackRangeType
 {
     NONE,
     LEFT_HAND,
     RIGHT_HAND,
     LEFT_FOOT,
-    RIGHT_FOOT
+    RIGHT_FOOT,
+    PUNCH_A,
+    PUNCH_B,
+    KICK_A,
+    KICK_B
 }
 public enum AttackType
 {
@@ -24,19 +28,19 @@ public struct ActionInfo
     public string clipPath;
     public float startAnimNormTime;
     public float endAnimNormTime;
-    public AttackPartColliderType AttackPartColliderType;
+    public AttackRangeType AttackRangeType;
     public float startCollisionNormTime;
     public float endCollisionNormTime;
     public AttackType attackType;
     
     public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime,
-        AttackPartColliderType attackPartColliderType, float startCollisionNormTime, float endCollisionNormTime,
+        AttackRangeType attackRangeType, float startCollisionNormTime, float endCollisionNormTime,
         AttackType attackType)
     {
         this.clipPath = clipPath;
         this.startAnimNormTime = startAnimNormTime;
         this.endAnimNormTime = endAnimNormTime;
-        this.AttackPartColliderType = attackPartColliderType;
+        this.AttackRangeType = attackRangeType;
         this.startCollisionNormTime = startCollisionNormTime;
         this.endCollisionNormTime = endCollisionNormTime;
         this.attackType = attackType;

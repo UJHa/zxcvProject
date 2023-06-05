@@ -44,7 +44,7 @@ public class ColliderCube
 [Serializable]
 public struct AttackPartData
 {
-    public AttackPartColliderType attackPart;
+    public AttackRangeType attackPart;
     public AttackCollider attackCollider;
 }
 
@@ -104,7 +104,7 @@ public class Character : MonoBehaviour
     
     [Header("Attack Collider")]
     [SerializeField] private List<AttackPartData> _attackPartDatas = new();
-    private Dictionary<AttackPartColliderType, AttackCollider> _attackColliderMap = new();
+    private Dictionary<AttackRangeType, AttackCollider> _attackColliderMap = new();
 
     [Header("3D Phygics Component")] 
     [SerializeField] private Rigidbody _rigidbody;
@@ -857,7 +857,7 @@ public class Character : MonoBehaviour
             partData.attackCollider.gameObject.SetActive(enable);
         }
     }
-    public void ActiveAttackCollider(bool enable, AttackPartColliderType colliderType, AttackType attackType = AttackType.NORMAL)
+    public void ActiveAttackCollider(bool enable, AttackRangeType colliderType, AttackType attackType = AttackType.NORMAL)
     {
         if (false == _attackColliderMap.ContainsKey(colliderType))
             return;
