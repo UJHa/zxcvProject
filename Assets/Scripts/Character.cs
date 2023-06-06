@@ -560,14 +560,14 @@ public class Character : MonoBehaviour
         return new[] { vector, Quaternion.Euler(0, 45, 0) * vector, Quaternion.Euler(0, -45, 0) * vector };
     }
 
-    public void SetDirectionByVector3(Vector3 argVector)
+    public void SetDirectionByVector3(Vector3 argVector, float rotateTime = 0.1f)
     {
         _directionVector = argVector;
         var euler = GetEuler(_directionVector);
         if (null != _rotationTween)
             _rotationTween.Kill();
         var rot = GetRotation(_directionVector);
-        _rotationTween = transform.DORotateQuaternion(rot, 0.1f);
+        _rotationTween = transform.DORotateQuaternion(rot, rotateTime);
         // transform.eulerAngles = euler;
     }
 
@@ -712,6 +712,9 @@ public class Character : MonoBehaviour
                         }
                         break;
                     case AttackType.AIRBORNE:
+                        // 방향을 때린 상대의 방향으로 회전시키기
+                        Vector3 vector = attacker.transform.position - transform.position;
+                        SetDirectionByVector3(vector);
                         ChangeState(eState.AIRBORNE_DAMAGED);
                         break;
                 }
