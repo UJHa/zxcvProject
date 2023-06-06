@@ -13,6 +13,8 @@ public class AirborneDamagedState : DamagedState
     public override void StartState()
     {
         base.StartState();
+        _character.ActiveHitCollider(false, HitColliderType.STAND);
+        _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _curState = _action.Play();
     }
 
@@ -31,7 +33,7 @@ public class AirborneDamagedState : DamagedState
         {
             if (_action.IsAnimationFinish())
             {
-                _character.ChangeState(eState.DAMAGED_AIRBORNE);
+                _character.ChangeState(eState.DAMAGED_AIRBORNE_LOOP);
             }
             else
             {

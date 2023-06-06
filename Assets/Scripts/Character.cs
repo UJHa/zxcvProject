@@ -81,9 +81,7 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpMaxHeight = 2f;
     [SerializeField] private float _jumpUpMaxTimer = 2f;
     [SerializeField] private float _jumpDownMaxTimer = 1f;
-
-    [Header("Hit Collider")]
-    [SerializeField] private HitCollider _hitCollider;
+    
     [Header("Ground Collider")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
     {
@@ -101,6 +99,10 @@ public class Character : MonoBehaviour
     [SerializeField] public float _wallBoxThickness = 0.05f;
     [SerializeField] public float _wallBoxWidth = 0.1f;
     [SerializeField] public float _wallBoxHeight = 1.5f;
+    
+    [Header("Hit Collider")]
+    [SerializeField] private List<HitCollider> _hitColliders = new();
+    private Dictionary<HitColliderType, HitCollider> _hitColliderMap = new();
     
     [Header("Attack Collider")]
     [SerializeField] private List<AttackPartData> _attackPartDatas = new();
@@ -155,6 +157,16 @@ public class Character : MonoBehaviour
             partData.attackCollider.SetOwner(this);
             if (false == _attackColliderMap.ContainsKey(partData.attackPart))
                 _attackColliderMap.Add(partData.attackPart, partData.attackCollider);
+        }
+
+        foreach (var hitCollider in _hitColliders)
+        {
+            var hitColliderType = hitCollider.GetHitType();
+            if (false == _hitColliderMap.ContainsKey(hitColliderType))
+            {
+                hitCollider.gameObject.SetActive(false);
+                _hitColliderMap.Add(hitCollider.GetHitType(), hitCollider);
+            }
         }
     }
 
@@ -689,7 +701,15 @@ public class Character : MonoBehaviour
                     case AttackType.NONE:
                         break;
                     case AttackType.NORMAL:
-                        ChangeState(eState.NORMAL_DAMAGED);
+                        // 엄todo: isGround 및 피격 여부로 체크 변경하기
+                        if (_curState == eState.AIRBORNE_DAMAGED
+                            || _curState == eState.DAMAGED_AIRBORNE_LOOP
+                            || _curState == eState.DAMAGED_LANDING)
+                            ChangeState(eState.AIRBORNE_DAMAGED);
+                        else
+                        {
+                            ChangeState(eState.NORMAL_DAMAGED);
+                        }
                         break;
                     case AttackType.AIRBORNE:
                         ChangeState(eState.AIRBORNE_DAMAGED);
@@ -782,11 +802,16 @@ public class Character : MonoBehaviour
         var rayObjs = _groundObjs;
         if (null == rayObjs)
             return;
+        if (rayObjs.Length > 1)
+            Debug.Log($"[testum]curState({_curState}) rayObj count({rayObjs.Length})");
         foreach (var rayObj in rayObjs)
         {
             if (rayObj.transform.TryGetComponent<Ground>(out var ground))
             {
-                if (groundHeight < ground.heightPosY)
+                if (rayObjs.Length > 1)
+                    Debug.Log($"[testum]curState({_curState}) rayObj height({ground.heightPosY}) curHeightPosY({transform.position})");
+                var changeHeightPosY = ground.heightPosY - transform.position.y;
+                if (groundHeight < ground.heightPosY && changeHeightPosY < 0.2f)
                 {
                     groundHeight = ground.heightPosY;
                     transform.position = new Vector3(transform.position.x, groundHeight, transform.position.z);
@@ -863,6 +888,13 @@ public class Character : MonoBehaviour
             return;
         _attackColliderMap[colliderType].gameObject.SetActive(enable);
         _attackColliderMap[colliderType].SetAttackType(attackType);
+    }
+    
+    public void ActiveHitCollider(bool enable, HitColliderType colliderType)
+    {
+        if (false == _hitColliderMap.ContainsKey(colliderType))
+            return;
+        _hitColliderMap[colliderType].gameObject.SetActive(enable);
     }
     
     private Vector3 GetLeftRightWallBoxSize()

@@ -19,7 +19,7 @@ public enum eState
     DAMAGED,
     NORMAL_DAMAGED,
     AIRBORNE_DAMAGED,
-    DAMAGED_AIRBORNE,
+    DAMAGED_AIRBORNE_LOOP,
     DAMAGED_LANDING,
     WAKE_UP,
     DEAD
@@ -45,6 +45,7 @@ public abstract class State
     public virtual void StartState()
     {
         _character.ActiveAttackColliders(false);
+        _character.ActiveHitCollider(true, HitColliderType.STAND);
     }
     public abstract void UpdateState();
     public abstract void FixedUpdateState();

@@ -21,8 +21,8 @@ public class Player : Character
         _moveSet.RegisterAction(eState.ATTACK5, KeyCode.X, eState.ATTACK4, new ActionInfo("Animation/Lucy_Kick12_Root", 0f, 0.35f, AttackRangeType.KICK_A, 0.15f, 0.18f, AttackType.NORMAL));
         _moveSet.RegisterAction(eState.NORMAL_DAMAGED, KeyCode.Z, eState.IDLE, new ActionInfo("Animation/Damaged", 0f, 1.0f, AttackRangeType.NONE, 0.0f, 1.0f, AttackType.NONE));
         _moveSet.RegisterAction(eState.AIRBORNE_DAMAGED, KeyCode.Z, eState.IDLE, new ActionInfo("Animation/DamageAir_Start", 0f, 0.5f, AttackRangeType.NONE, 0.0f, 1.0f, AttackType.NONE));
-        _moveSet.RegisterAction(eState.DAMAGED_AIRBORNE, KeyCode.None, eState.AIRBORNE_DAMAGED, new ActionInfo("Animation/DamageAir_Fall", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, AttackType.NONE));
-        _moveSet.RegisterAction(eState.DAMAGED_LANDING, KeyCode.None, eState.DAMAGED_AIRBORNE, new ActionInfo("Animation/DamageAir_End_Light", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, AttackType.NONE));
+        _moveSet.RegisterAction(eState.DAMAGED_AIRBORNE_LOOP, KeyCode.None, eState.AIRBORNE_DAMAGED, new ActionInfo("Animation/DamageAir_Fall", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, AttackType.NONE));
+        _moveSet.RegisterAction(eState.DAMAGED_LANDING, KeyCode.None, eState.DAMAGED_AIRBORNE_LOOP, new ActionInfo("Animation/DamageAir_End_Light", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, AttackType.NONE));
         _moveSet.RegisterAction(eState.WAKE_UP, KeyCode.None, eState.DAMAGED_LANDING, new ActionInfo("Animation/LyingBack_WakeUp", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, AttackType.NONE));
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
@@ -40,7 +40,7 @@ public class Player : Character
         _stateMap.Add(eState.ATTACK5, new KickTwoState(this, eState.ATTACK5));
         _stateMap.Add(eState.NORMAL_DAMAGED, new NormalDamagedState(this, eState.NORMAL_DAMAGED));
         _stateMap.Add(eState.AIRBORNE_DAMAGED, new AirborneDamagedState(this, eState.AIRBORNE_DAMAGED));
-        _stateMap.Add(eState.DAMAGED_AIRBORNE, new DamagedAirborneState(this, eState.DAMAGED_AIRBORNE));
+        _stateMap.Add(eState.DAMAGED_AIRBORNE_LOOP, new DamagedAirborneLoopState(this, eState.DAMAGED_AIRBORNE_LOOP));
         _stateMap.Add(eState.DAMAGED_LANDING, new DamagedLandingState(this, eState.DAMAGED_LANDING));
         _stateMap.Add(eState.WAKE_UP, new WakeUpState(this, eState.WAKE_UP));
         _stateMap.Add(eState.DEAD, new DeadState(this, eState.DEAD));

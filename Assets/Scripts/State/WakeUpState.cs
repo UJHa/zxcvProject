@@ -9,6 +9,8 @@ public class WakeUpState : State
     public override void StartState()
     {
         base.StartState();
+        _character.ActiveHitCollider(false, HitColliderType.STAND);
+        _character.ActiveHitCollider(false, HitColliderType.AIRBORNE);
         _action.Play();
     }
 

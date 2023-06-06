@@ -16,6 +16,7 @@ public class AttackState : State
 
     public override void StartState()
     {
+        base.StartState();
     }
 
     public override void FixedUpdateState()

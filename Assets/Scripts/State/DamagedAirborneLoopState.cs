@@ -2,17 +2,19 @@ using Animancer;
 using UnityEngine;
 using UnityEditor;
 
-public class DamagedAirborneState : DamagedState
+public class DamagedAirborneLoopState : DamagedState
 {
     private AnimancerState _curState;
 
-    public DamagedAirborneState(Character character, eState eState) : base(character, eState)
+    public DamagedAirborneLoopState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
         base.StartState();
+        _character.ActiveHitCollider(false, HitColliderType.STAND);
+        _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _curState = _action.Play(1f);
     }
 
