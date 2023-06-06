@@ -802,14 +802,10 @@ public class Character : MonoBehaviour
         var rayObjs = _groundObjs;
         if (null == rayObjs)
             return;
-        if (rayObjs.Length > 1)
-            Debug.Log($"[testum]curState({_curState}) rayObj count({rayObjs.Length})");
         foreach (var rayObj in rayObjs)
         {
             if (rayObj.transform.TryGetComponent<Ground>(out var ground))
             {
-                if (rayObjs.Length > 1)
-                    Debug.Log($"[testum]curState({_curState}) rayObj height({ground.heightPosY}) curHeightPosY({transform.position})");
                 var changeHeightPosY = ground.heightPosY - transform.position.y;
                 if (groundHeight < ground.heightPosY && changeHeightPosY < 0.2f)
                 {
