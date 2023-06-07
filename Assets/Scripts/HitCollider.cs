@@ -14,8 +14,15 @@ public class HitCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (_hitColliderType == HitColliderType.AIRBORNE)
+            Debug.Log($"[testum]trigger! mine({name}) other({other})");
         if (null != _character)
-            _character.OnHit(other);
+        {
+            if (other.TryGetComponent<AttackCollider>(out var attackCollider))
+                _character.OnHit(other);
+            else if (other.TryGetComponent<Ground>(out var ground) && _hitColliderType == HitColliderType.AIRBORNE)
+                _character.OnAirborneLanding(ground);
+        }
     }
 
     public HitColliderType GetHitType()

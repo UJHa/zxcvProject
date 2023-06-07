@@ -1775,9 +1775,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8609314709148684879}
   - component: {fileID: 4908576605617514587}
-  - component: {fileID: 347694475394852125}
+  - component: {fileID: 8654561347069784603}
+  - component: {fileID: 2707670309046875429}
   m_Layer: 8
-  m_Name: BodyHitCollider
+  m_Name: AirborneHitCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1812,7 +1813,20 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &347694475394852125
+--- !u!65 &8654561347069784603
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5642997034812241467}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 0.4, y: 0.4, z: 0.4}
+  m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &2707670309046875429
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1824,8 +1838,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b534b1974048968668f13081d4a90d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hitColliderType: 0
-  _character: {fileID: 0}
+  _hitColliderType: 1
+  _character: {fileID: 6136724877743868282}
 --- !u!1 &5790358877147444695
 GameObject:
   m_ObjectHideFlags: 0
@@ -2084,7 +2098,7 @@ MonoBehaviour:
   _wallBoxHeight: 1.5
   _hitColliders:
   - {fileID: 2001029440010266184}
-  - {fileID: 4247170915019164319}
+  - {fileID: 2707670309046875429}
   _attackPartDatas:
   - attackPart: 1
     attackCollider: {fileID: 7596293611078780404}
@@ -2500,7 +2514,7 @@ GameObject:
   - component: {fileID: 6908075276689501135}
   - component: {fileID: 4247170915019164319}
   m_Layer: 8
-  m_Name: AirborneHitCollider
+  m_Name: AirborneHitCollider_temp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

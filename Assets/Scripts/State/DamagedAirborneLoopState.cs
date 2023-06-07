@@ -16,6 +16,7 @@ public class DamagedAirborneLoopState : DamagedState
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _curState = _action.Play(1f);
+        // _curState.Speed = 0.1f;
     }
 
     public override void FixedUpdateState()
@@ -29,18 +30,16 @@ public class DamagedAirborneLoopState : DamagedState
 
     public override void UpdateState()
     {
-        if (_character.IsGround())
+        if (_action.IsAnimationFinish())
         {
-            if (_action.IsAnimationFinish())
-            {
-                _character.ChangeState(eState.DAMAGED_LANDING);
-            }
-            else
-            {
-                var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
-                if (eState.NONE != nextState2 && _eState == nextState2)
-                    _animancer.States.Current.Time = 0f;
-            }
+            // _character.ChangeState(eState.DAMAGED_LANDING);
+            _animancer.States.Current.Time = 0f;
+        }
+        else
+        {
+            var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
+            if (eState.NONE != nextState2 && _eState == nextState2)
+                _animancer.States.Current.Time = 0f;
         }
     }
 }

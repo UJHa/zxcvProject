@@ -600,7 +600,7 @@ public class Character : MonoBehaviour
 
     public void ChangeState(eState state, eStateType stateType = eStateType.NONE)
     {
-        Debug.Log($"[testState]State Change prev({_curState}) cur({state})");
+        Debug.Log($"[testState]State Change prev({_curState}) cur({state}) count({_changeStates.Count})");
         // _curState = state;
         _changeStates.Add(new StateInfo()
         {
@@ -733,6 +733,18 @@ public class Character : MonoBehaviour
         //     _curHp = 0f;
         //     ChangeState(eState.DEAD);
         // }
+    }
+
+    public void OnAirborneLanding(Ground ground)
+    {
+        if (null == ground)
+        {
+            Debug.LogError("Landing component is not Ground!");
+            return;
+        }
+        Debug.Log($"[testum]name");
+        if (_curState != eState.DAMAGED_LANDING)
+            ChangeState(eState.DAMAGED_LANDING);
     }
 
     public float getAttackDamage()
