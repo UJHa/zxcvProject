@@ -580,6 +580,11 @@ public class Character : MonoBehaviour
     {
         return _jumpUpMaxTimer;
     }
+
+    public float GetJumpDownMaxTimer()
+    {
+        return _jumpDownMaxTimer;
+    }
     
     public Rigidbody GetRigidbody()
     {
