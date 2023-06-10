@@ -76,7 +76,6 @@ public class IdleState : State
             else
             {
                 var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
-                Debug.Log($"[testum]idleChange Test ({nextState})");
                 if (eState.NONE == nextState)
                 {
                     var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.X);
