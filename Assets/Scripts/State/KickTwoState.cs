@@ -35,7 +35,7 @@ public class KickTwoState : AttackState
             }
             
             bool collisionEnable = _action.IsCollisionEnable();
-            _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetAttackType());
+            _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
         }
     }
 }

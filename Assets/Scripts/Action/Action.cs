@@ -52,6 +52,11 @@ public class Action
         _curState.NormalizedTime = _startRate;
         return _curState;
     }
+    
+    public void Reset()
+    {
+        _curState.NormalizedTime = _startRate;
+    }
 
     public bool IsAnimationFinish()
     {
@@ -68,8 +73,8 @@ public class Action
         return _actionInfo.AttackRangeType;
     }
     
-    public AttackType GetAttackType()
+    public AttackInfo GetaAttackInfo()
     {
-        return _actionInfo.attackType;
+        return _actionInfo.attackInfo;
     }
 }

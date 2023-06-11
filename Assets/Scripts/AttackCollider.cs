@@ -4,7 +4,7 @@ public class AttackCollider : MonoBehaviour
 {
     [SerializeField] private AttackRangeType _colliderType = AttackRangeType.NONE;
     private Character _ownCharacter = null;
-    private AttackType _attackType;
+    private AttackInfo _attackInfo;
 
     public void SetOwner(Character character)
     {
@@ -18,13 +18,13 @@ public class AttackCollider : MonoBehaviour
         return _ownCharacter;
     }
 
-    public void SetAttackType(AttackType attackType)
+    public void SetAttackInfo(AttackInfo attackInfo)
     {
-        _attackType = attackType;
+        _attackInfo = attackInfo;
     }
 
-    public AttackType GetAttackType()
+    public AttackInfo GetAttackInfo()
     {
-        return _attackType;
+        return _attackInfo;
     }
 }

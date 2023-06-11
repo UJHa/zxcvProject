@@ -24,16 +24,9 @@ public class DamagedAirborneLoopState : DamagedState
 
     public override void FixedUpdateState()
     {
-        // if (_action.IsAnimationFinish())
-        // {
-        //     _character.ChangeState(eState.DAMAGED_AIRBORNE_LOOP);
-        // }
-        // else
-        {
-            _jumpTimer += Time.fixedDeltaTime;
-            _moveVelocity.y = _character.GetJumpDownVelocity(_jumpTimer);
-            _character.GetRigidbody().velocity = _moveVelocity;
-        }
+        _jumpTimer += Time.fixedDeltaTime;
+        _moveVelocity.y = _character.GetJumpDownVelocity(_jumpTimer);
+        _character.GetRigidbody().velocity = _moveVelocity;
         Debug.Log($"[damagedown]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
@@ -47,7 +40,7 @@ public class DamagedAirborneLoopState : DamagedState
         if (_action.IsAnimationFinish())
         {
             // _character.ChangeState(eState.DAMAGED_LANDING);
-            _animancer.States.Current.Time = 0f;
+            _action.Reset();
         }
         else
         {

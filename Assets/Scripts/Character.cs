@@ -23,6 +23,24 @@ public class ColliderInfo
     public eWallDirection colliderType;
 }
 
+public class AttackInfo
+{
+    public AttackType attackType;
+    public float attackHeight;
+    
+    public AttackInfo()
+    {
+        attackType = AttackType.NONE;
+        attackHeight = 0f;
+    }
+
+    public AttackInfo(AttackType attackType, float attackHeight)
+    {
+        this.attackType = attackType;
+        this.attackHeight = attackHeight;
+    }
+}
+
 public enum eWallDirection
 {
     LEFT,
@@ -140,6 +158,8 @@ public class Character : MonoBehaviour
 
     protected MoveSet _moveSet = new();
     protected AnimancerComponent _animancer;
+
+    protected float _attackedMaxHeight = 0f;
     
     private void Awake()
     {
@@ -203,6 +223,16 @@ public class Character : MonoBehaviour
             Debug.Log($"i({i}) time({origin[i].time}) value({origin[i].value})");
             reverse.AddKey(maxX-origin[i].time, maxY-origin[i].value);
         }
+    }
+    
+    public float GetDamagedUpVelocity(float deltatime)
+    {
+        if (deltatime <= 0f)
+            return 0f;
+        var prevTime = deltatime - Time.fixedDeltaTime;
+        float dx = deltatime - prevTime;
+        float dy = _jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime);
+        return dy / dx * _attackedMaxHeight;
     }
 
     public float GetJumpUpVelocity(float deltatime)
@@ -361,6 +391,11 @@ public class Character : MonoBehaviour
             //     Gizmos.DrawWireCube(wallRightPos, wallBoxLeftRight);
             // }
         }
+    }
+
+    public float GetAttackedMaxHeight()
+    {
+        return _attackedMaxHeight;
     }
 
     // Update is called once per frame
@@ -700,7 +735,9 @@ public class Character : MonoBehaviour
             var attacker = attackCollider.GetOwner();
             if (attacker != this)
             {
-                AttackType attackType = attackCollider.GetAttackType();
+                AttackInfo attackInfo = attackCollider.GetAttackInfo();
+                AttackType attackType = attackInfo.attackType;
+                _attackedMaxHeight = attackInfo.attackHeight;
                 switch (attackType)
                 {
                     case AttackType.NONE:
@@ -718,6 +755,7 @@ public class Character : MonoBehaviour
                     case AttackType.AIRBORNE:
                         // 방향을 때린 상대의 방향으로 회전시키기
                         Vector3 vector = attacker.transform.position - transform.position;
+                        vector.y = 0;
                         SetDirectionByVector3(vector);
                         ChangeState(eState.AIRBORNE_DAMAGED);
                         break;
@@ -751,7 +789,7 @@ public class Character : MonoBehaviour
             ChangeState(eState.DAMAGED_LANDING);
     }
 
-    public float getAttackDamage()
+    public float GetAttackDamage()
     {
         return _attackPower;
     }
@@ -815,7 +853,7 @@ public class Character : MonoBehaviour
         transform1.position = new Vector3(pos.x, groundHeight, pos.z);
     }
 
-    public void UpdateGroundHeight()
+    public void UpdateGroundHeight(bool forceUpdate = false)
     {
         float groundHeight = float.MinValue;
         var rayObjs = _groundObjs;
@@ -826,7 +864,7 @@ public class Character : MonoBehaviour
             if (rayObj.transform.TryGetComponent<Ground>(out var ground))
             {
                 var changeHeightPosY = ground.heightPosY - transform.position.y;
-                if (groundHeight < ground.heightPosY && changeHeightPosY < 0.2f)
+                if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
                 {
                     groundHeight = ground.heightPosY;
                     transform.position = new Vector3(transform.position.x, groundHeight, transform.position.z);
@@ -897,12 +935,12 @@ public class Character : MonoBehaviour
             partData.attackCollider.gameObject.SetActive(enable);
         }
     }
-    public void ActiveAttackCollider(bool enable, AttackRangeType colliderType, AttackType attackType = AttackType.NORMAL)
+    public void ActiveAttackCollider(bool enable, AttackRangeType colliderType, AttackInfo attackInfo)
     {
         if (false == _attackColliderMap.ContainsKey(colliderType))
             return;
         _attackColliderMap[colliderType].gameObject.SetActive(enable);
-        _attackColliderMap[colliderType].SetAttackType(attackType);
+        _attackColliderMap[colliderType].SetAttackInfo(attackInfo);
     }
     
     public void ActiveHitCollider(bool enable, HitColliderType colliderType)

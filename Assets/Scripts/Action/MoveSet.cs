@@ -31,11 +31,12 @@ public struct ActionInfo
     public AttackRangeType AttackRangeType;
     public float startCollisionNormTime;
     public float endCollisionNormTime;
-    public AttackType attackType;
+    // public AttackType attackType;
+    public AttackInfo attackInfo;
     
     public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime,
         AttackRangeType attackRangeType, float startCollisionNormTime, float endCollisionNormTime,
-        AttackType attackType)
+        AttackInfo attackInfo)
     {
         this.clipPath = clipPath;
         this.startAnimNormTime = startAnimNormTime;
@@ -43,7 +44,7 @@ public struct ActionInfo
         this.AttackRangeType = attackRangeType;
         this.startCollisionNormTime = startCollisionNormTime;
         this.endCollisionNormTime = endCollisionNormTime;
-        this.attackType = attackType;
+        this.attackInfo = attackInfo;
     }
 }
 public class MoveSet

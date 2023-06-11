@@ -1,19 +1,15 @@
 using System;
 using Animancer;
+using Animancer.Examples.AnimatorControllers.GameKit;
 using UnityEngine;
 using UnityEditor;
 
-public enum AirborneState
-{
-    UP,
-    DOWN,
-}
 public class AirborneDamagedState : DamagedState
 {
     private float _jumpTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
     private AnimancerState _curState;
-    private AirborneState _airborneState = AirborneState.UP;
+    private float _maxUpHeight = 0f;
 
     public AirborneDamagedState(Character character, eState eState) : base(character, eState)
     {
@@ -25,43 +21,25 @@ public class AirborneDamagedState : DamagedState
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _curState = _action.Play();
+        _maxUpHeight = _character.transform.position.y + _character.GetAttackedMaxHeight();
+        Debug.Log($"[testum]_maxUpHeight({_maxUpHeight})");
         _jumpTimer = 0f;
-        _airborneState = AirborneState.UP;
     }
 
     public override void FixedUpdateState()
     {
-        switch (_airborneState)
+        if (_character.transform.position.y >= _maxUpHeight)
         {
-            case AirborneState.UP:
-                if (_jumpTimer >= _character.GetJumpUpMaxTimer())
-                {
-                    Debug.Log($"[testlog] damage up update fin?");
-                    _jumpTimer = 0f;
-                    _airborneState = AirborneState.DOWN;
-                }
-                else
-                {
-                    _jumpTimer += Time.fixedDeltaTime;
-                    _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer);
-                    _character.GetRigidbody().velocity = _moveVelocity;
-                }
-                Debug.Log($"[damageup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
-                break;
-            case AirborneState.DOWN:
-                if (_action.IsAnimationFinish())
-                {
-                    _character.ChangeState(eState.DAMAGED_AIRBORNE_LOOP);
-                }
-                else
-                {
-                    _jumpTimer += Time.fixedDeltaTime;
-                    _moveVelocity.y = _character.GetJumpDownVelocity(_jumpTimer);
-                    _character.GetRigidbody().velocity = _moveVelocity;
-                }
-                Debug.Log($"[damagedown]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
-                break;
+            Debug.Log($"[testlog] damage up update fin?");
+            _character.ChangeState(eState.DAMAGED_AIRBORNE_LOOP);
         }
+        else
+        {
+            _jumpTimer += Time.fixedDeltaTime;
+            _moveVelocity.y = _character.GetDamagedUpVelocity(_jumpTimer);
+            _character.GetRigidbody().velocity = _moveVelocity;
+        }
+        Debug.Log($"[damageup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
     public override void EndState()

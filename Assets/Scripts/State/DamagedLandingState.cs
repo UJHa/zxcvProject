@@ -17,6 +17,7 @@ public class DamagedLandingState : DamagedState
         _character.ActiveHitCollider(false, HitColliderType.AIRBORNE);
         _curState = _action.Play(0.3f);
         _character.GetRigidbody().velocity = Vector3.zero;
+        _character.UpdateGroundHeight(true);
     }
 
     public override void FixedUpdateState()
