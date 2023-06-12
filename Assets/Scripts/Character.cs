@@ -29,6 +29,7 @@ public class AttackInfo
 {
     public AttackType attackType;
     public float attackHeight;
+    public float airborneUpTime;
     
     public AttackInfo()
     {
@@ -36,10 +37,11 @@ public class AttackInfo
         attackHeight = 0f;
     }
 
-    public AttackInfo(AttackType attackType, float attackHeight)
+    public AttackInfo(AttackType attackType, float attackHeight, float airborneUpTime)
     {
         this.attackType = attackType;
         this.attackHeight = attackHeight;
+        this.airborneUpTime = airborneUpTime;
     }
 }
 
@@ -162,6 +164,7 @@ public class Character : MonoBehaviour
     protected AnimancerComponent _animancer;
 
     protected float _attackedMaxHeight = 0f;
+    protected float _airborneUpTime = 0f;
     
     private void Awake()
     {
@@ -228,14 +231,14 @@ public class Character : MonoBehaviour
     }
     
     // 엄todo : 높이, 시간 모두 제어 필요(현재 높이만 제어하고 시간을 그대로 1f 써서 높이 수치가 낮아질 경우 빠르게 떨어지지 않음)
-    public float GetDamagedUpVelocity(float deltatime, float maxTime = 1f)
+    public float GetDamagedUpVelocity(float deltatime)
     {
         if (deltatime <= 0f)
             return 0f;
         var prevTime = deltatime - Time.fixedDeltaTime;
         float dx = deltatime - prevTime;
-        float dy = _jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime);
-        return dy / dx * _attackedMaxHeight * maxTime;
+        float dy = (_jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime)) / _airborneUpTime;
+        return dy / dx * _attackedMaxHeight;
     }
 
     public float GetJumpUpVelocity(float deltatime)
@@ -399,6 +402,12 @@ public class Character : MonoBehaviour
     public float GetAttackedMaxHeight()
     {
         return _attackedMaxHeight;
+    }
+    
+    public void ClearAttackInfoData()
+    {
+        _attackedMaxHeight = 0f;
+        _airborneUpTime = 0f;
     }
 
     // Update is called once per frame
@@ -749,6 +758,7 @@ public class Character : MonoBehaviour
                 AttackInfo attackInfo = attackCollider.GetAttackInfo();
                 AttackType attackType = attackInfo.attackType;
                 _attackedMaxHeight = attackInfo.attackHeight;
+                _airborneUpTime = attackInfo.airborneUpTime;
                 switch (attackType)
                 {
                     case AttackType.NONE:

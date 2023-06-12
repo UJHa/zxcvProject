@@ -20,6 +20,7 @@ public class DamagedAirborneLoopState : DamagedState
         _curState = _action.Play(1f);
         _jumpTimer = 0f;
         // _curState.Speed = 0.1f;
+        _character.ClearAttackInfoData();
     }
 
     public override void FixedUpdateState()
