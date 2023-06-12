@@ -11,10 +11,12 @@ public class StateInfo
     public eStateType stateType;
 }
 
+// int 값으로 더 클 수록 더 강제하여 실행하도록 State 룰 설정
 public enum eStateType
 {
-    INPUT,
     NONE,
+    DAMAGE_LANDING,
+    INPUT,
 }
 
 public class ColliderInfo
@@ -225,14 +227,15 @@ public class Character : MonoBehaviour
         }
     }
     
-    public float GetDamagedUpVelocity(float deltatime)
+    // 엄todo : 높이, 시간 모두 제어 필요(현재 높이만 제어하고 시간을 그대로 1f 써서 높이 수치가 낮아질 경우 빠르게 떨어지지 않음)
+    public float GetDamagedUpVelocity(float deltatime, float maxTime = 1f)
     {
         if (deltatime <= 0f)
             return 0f;
         var prevTime = deltatime - Time.fixedDeltaTime;
         float dx = deltatime - prevTime;
         float dy = _jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime);
-        return dy / dx * _attackedMaxHeight;
+        return dy / dx * _attackedMaxHeight * maxTime;
     }
 
     public float GetJumpUpVelocity(float deltatime)
@@ -434,13 +437,21 @@ public class Character : MonoBehaviour
 
     private eState SelectNextState()
     {
+        int layer = (int)eStateType.NONE;
+        List<eState> enableStates = new();
         foreach (var stateInfo in _changeStates)
         {
-            if (stateInfo.stateType == eStateType.INPUT)
-                return stateInfo.state;
+            if ((int)stateInfo.stateType == layer)
+                enableStates.Add(stateInfo.state);
+            else if ((int)stateInfo.stateType > layer)
+            {
+                layer = (int)stateInfo.stateType;
+                enableStates.Clear();
+                enableStates.Add(stateInfo.state);
+            }
         }
 
-        return _changeStates[0].state;
+        return enableStates[0];
     }
 
     public eState GetPrevState()
@@ -746,7 +757,7 @@ public class Character : MonoBehaviour
                         // 엄todo: isGround 및 피격 여부로 체크 변경하기
                         if (_curState == eState.AIRBORNE_DAMAGED
                             || _curState == eState.DAMAGED_AIRBORNE_LOOP)
-                            ChangeState(eState.DAMAGED_AIRBORNE_LOOP);
+                            ChangeState(eState.AIRBORNE_DAMAGED);
                         else
                         {
                             ChangeState(eState.NORMAL_DAMAGED);
@@ -786,7 +797,7 @@ public class Character : MonoBehaviour
         }
         Debug.Log($"[testum]name");
         if (_curState != eState.DAMAGED_LANDING)
-            ChangeState(eState.DAMAGED_LANDING);
+            ChangeState(eState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
     }
 
     public float GetAttackDamage()

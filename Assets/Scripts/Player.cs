@@ -20,7 +20,7 @@ public class Player : Character
         _moveSet.RegisterAction(eState.ATTACK4, KeyCode.X, eState.IDLE, new ActionInfo("Animation/Lucy_Kick13_Root", 0f, 0.5f, AttackRangeType.KICK_B, 0.25f, 0.3f, new(AttackType.NORMAL, 0.1f)));
         _moveSet.RegisterAction(eState.ATTACK5, KeyCode.X, eState.ATTACK4, new ActionInfo("Animation/Lucy_Kick12_Root", 0f, 0.35f, AttackRangeType.KICK_A, 0.15f, 0.18f, new(AttackType.NORMAL, 0.1f)));
         _moveSet.RegisterAction(eState.NORMAL_DAMAGED, KeyCode.Z, eState.IDLE, new ActionInfo("Animation/Damaged", 0f, 1.0f, AttackRangeType.NONE, 0.0f, 1.0f, new()));
-        _moveSet.RegisterAction(eState.AIRBORNE_DAMAGED, KeyCode.Z, eState.IDLE, new ActionInfo("Animation/DamageAir_Start", 0f, 0.5f, AttackRangeType.NONE, 0.0f, 1.0f, new()));
+        _moveSet.RegisterAction(eState.AIRBORNE_DAMAGED, KeyCode.Z, eState.IDLE, new ActionInfo("Animation/DamageAir_Start", 0f, 0.6f, AttackRangeType.NONE, 0.0f, 1.0f, new()));
         _moveSet.RegisterAction(eState.DAMAGED_AIRBORNE_LOOP, KeyCode.Z, eState.AIRBORNE_DAMAGED, new ActionInfo("Animation/DamageAir_Fall", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, new()));
         _moveSet.RegisterAction(eState.DAMAGED_LANDING, KeyCode.None, eState.DAMAGED_AIRBORNE_LOOP, new ActionInfo("Animation/DamageAir_End_Light", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, new()));
         _moveSet.RegisterAction(eState.WAKE_UP, KeyCode.None, eState.DAMAGED_LANDING, new ActionInfo("Animation/LyingBack_WakeUp", 0f, 1f, AttackRangeType.NONE, 0.0f, 1.0f, new()));

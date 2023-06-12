@@ -1,12 +1,11 @@
 using System;
 using Animancer;
-using Animancer.Examples.AnimatorControllers.GameKit;
 using UnityEngine;
 using UnityEditor;
 
 public class AirborneDamagedState : DamagedState
 {
-    private float _jumpTimer = 0f;
+    private float _upMoveTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
     private AnimancerState _curState;
     private float _maxUpHeight = 0f;
@@ -23,7 +22,7 @@ public class AirborneDamagedState : DamagedState
         _curState = _action.Play();
         _maxUpHeight = _character.transform.position.y + _character.GetAttackedMaxHeight();
         Debug.Log($"[testum]_maxUpHeight({_maxUpHeight})");
-        _jumpTimer = 0f;
+        _upMoveTimer = 0f;
     }
 
     public override void FixedUpdateState()
@@ -35,11 +34,11 @@ public class AirborneDamagedState : DamagedState
         }
         else
         {
-            _jumpTimer += Time.fixedDeltaTime;
-            _moveVelocity.y = _character.GetDamagedUpVelocity(_jumpTimer);
+            _upMoveTimer += Time.fixedDeltaTime;
+            _moveVelocity.y = _character.GetDamagedUpVelocity(_upMoveTimer, 1f);
             _character.GetRigidbody().velocity = _moveVelocity;
         }
-        Debug.Log($"[damageup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
+        Debug.Log($"[damageup]timer({_upMoveTimer}) GetVelocity({_character.GetJumpUpVelocity(_upMoveTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
     public override void EndState()
