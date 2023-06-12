@@ -1,6 +1,5 @@
 using System;
 using Animancer;
-using Animancer.Examples.AnimatorControllers.GameKit;
 using UnityEngine;
 using UnityEditor;
 
