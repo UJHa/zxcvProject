@@ -23,6 +23,7 @@ public class AirborneDamagedState : DamagedState
         _maxUpHeight = _character.transform.position.y + _character.GetAttackedMaxHeight();
         Debug.Log($"[testum]_maxUpHeight({_maxUpHeight})");
         _upMoveTimer = 0f;
+        _character._isGround = false;
     }
 
     public override void FixedUpdateState()

@@ -18,6 +18,7 @@ public class DamagedLandingState : DamagedState
         _curState = _action.Play(0.3f);
         _character.GetRigidbody().velocity = Vector3.zero;
         _character.UpdateGroundHeight(true);
+        _character._isGround = true;
     }
 
     public override void FixedUpdateState()

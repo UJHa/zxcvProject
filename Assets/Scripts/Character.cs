@@ -76,8 +76,7 @@ public struct AttackPartData
 // // 대각 바닥 내리기 기능 개발
 // // >> slop 타입 분리 필요
 // // >> 바닥 콜리전 없을 때, 경사용 컬리전으로 다시 체크하는 방식?
-// 엄todo : 공격 기능 개발
-// // - 피격 시 동일한 AttackCollider 인스턴스일 때 무시 처리
+// 피격 시 동일한 AttackCollider 인스턴스일 때 무시 처리
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
@@ -230,7 +229,6 @@ public class Character : MonoBehaviour
         }
     }
     
-    // 엄todo : 높이, 시간 모두 제어 필요(현재 높이만 제어하고 시간을 그대로 1f 써서 높이 수치가 낮아질 경우 빠르게 떨어지지 않음)
     public float GetDamagedUpVelocity(float deltatime)
     {
         if (deltatime <= 0f)
