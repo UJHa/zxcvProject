@@ -763,8 +763,7 @@ public class Character : MonoBehaviour
                         break;
                     case AttackType.NORMAL:
                         // 엄todo: isGround 및 피격 여부로 체크 변경하기
-                        if (_curState == eState.AIRBORNE_DAMAGED
-                            || _curState == eState.DAMAGED_AIRBORNE_LOOP)
+                        if (false == _isGround)
                             ChangeState(eState.AIRBORNE_DAMAGED);
                         else
                         {
