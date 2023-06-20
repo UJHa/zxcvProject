@@ -1965,6 +1965,7 @@ GameObject:
   - component: {fileID: 6136724877743868283}
   - component: {fileID: 3647786310916378707}
   - component: {fileID: 1194379238202812944}
+  - component: {fileID: 8452509664134834605}
   m_Layer: 8
   m_Name: AnimEditPlayer
   m_TagString: Untagged
@@ -2018,7 +2019,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6136724877743868280}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
   m_Name: 
@@ -2169,6 +2170,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &8452509664134834605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6136724877743868280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61e49401c18d4a6ebe151a5a74b11df8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6368804854139467821
 GameObject:
   m_ObjectHideFlags: 0
