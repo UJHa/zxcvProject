@@ -1,11 +1,14 @@
 using System;
 using Animancer;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MoveSetCharacter : MonoBehaviour
 {
-    private AnimancerComponent _animancer;
-    private AnimationClip _curClip;
+    private AnimancerComponent _animancer = null;
+    private AnimationClip _curClip = null;
+    private AnimancerState _curState = null;
+    public Slider _slider;
     private void Awake()
     {
         _animancer = GetComponent<AnimancerComponent>();
@@ -15,6 +18,11 @@ public class MoveSetCharacter : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.C))
-            _animancer.Play(_curClip);
+        {
+            _curState = _animancer.Play(_curClip);
+            _curState.Time = 0f;
+        }
+        if (null != _slider && null != _curState)
+            _slider.value = _curState.NormalizedTime;
     }
 }
