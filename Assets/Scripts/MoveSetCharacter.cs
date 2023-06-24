@@ -31,7 +31,7 @@ public class MoveSetCharacter : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.V))
         {
-            _curState.IsPlaying = false;
+            _curState.IsPlaying = !_curState.IsPlaying;
         }
 
         UpdateSlider();
@@ -44,10 +44,22 @@ public class MoveSetCharacter : MonoBehaviour
             return;
         if (null == _slider)
             return;
-        if (_curState.IsPlayingAndNotEnding())
-            _slider.value = _curState.NormalizedTime;
+        if (_slider.maxValue < _curState.NormalizedTime)
+        {
+            // pass
+            _slider.value = _slider.maxValue;
+            _curState.IsPlaying = false;
+            _curState.NormalizedTime = _slider.maxValue;
+        }
+        else if (_slider.minValue > _curState.NormalizedTime)
+        {
+            // pass
+            _slider.value = _slider.minValue;
+        }
         else
-            _curState.NormalizedTime = _slider.value;
+        {
+            _slider.value = _curState.NormalizedTime;
+        }
     }
 
     private void UpdateText()
@@ -56,11 +68,7 @@ public class MoveSetCharacter : MonoBehaviour
             return;
         if (null == _curStateTxt)
             return;
-        if (_curState.IsStopped)
-            _curStateTxt.text = "IsStopped";
-        else if (_curState.IsLooping)
-            _curStateTxt.text = "IsLooping";
-        else if (_curState.IsPlayingAndNotEnding())
+        if (_curState.IsPlayingAndNotEnding())
             _curStateTxt.text = "IsPlayingAndNotEnding";
         else
             _curStateTxt.text = "IsNone";
