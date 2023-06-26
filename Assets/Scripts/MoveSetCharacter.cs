@@ -24,8 +24,28 @@ public class MoveSetCharacter : MonoBehaviour
         oneFrameTime = 1f / testFrame;
     }
 
+    private float _startMousePosX = 0f;
+    private Vector3 _startRot = new();
+
     private void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log($"[testum]mousePos({Input.mousePosition})");
+            _startMousePosX = Input.mousePosition.x;
+            _startRot = transform.eulerAngles;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            Debug.Log($"[testum]mousePos({Input.mousePosition})");
+        }
+        else if (Input.GetMouseButton(0))
+        {
+            var movePosX = _startMousePosX - Input.mousePosition.x;
+            Debug.Log($"[testum]mousePos({Input.mousePosition}) movePosX({movePosX})");
+            transform.eulerAngles = _startRot + new Vector3(0f, movePosX, 0f);
+        }
+        
         if (Input.GetKeyDown(KeyCode.X))
         {
             _curState.Time = 0f;
