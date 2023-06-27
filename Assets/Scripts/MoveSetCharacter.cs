@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 // 엄todo: 기능 개발 요구사항
 // 캐릭터 회전이 가능하도록 수정하기
+// >> 추가 작업 : slider와 같은 UI는 추가 레이어 관리 UIManager 만들기(마우스 홀드와 UI가 겹칠때 처리)
 // 충돌체 붙일 수 있도록 세팅 가져오기
 // 캐릭터의 로직에 있는 데이터를 상위 Manager로 관리하기
 public class MoveSetCharacter : MonoBehaviour
