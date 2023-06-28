@@ -61,7 +61,7 @@ public class MoveSet
         
     }
 
-    public void Init(Character player)
+    public void Init(GameObject player)
     {
         _animancer = player.GetComponent<AnimancerComponent>();
     }
@@ -97,7 +97,7 @@ public class MoveSet
         _inputKeyMap[inputKey].Add(action);
     }
 
-    public Action GetCurAction(eState curState)
+    public Action GetAction(eState curState)
     {
         if (false == _actionMap.ContainsKey(curState))
             return null;
@@ -115,8 +115,22 @@ public class MoveSet
         return action.GetState();
     }
 
+    // action 내부에서 호출
     public AnimancerState Play(AnimationClip animClip, float fadeTime = 0f)
     {
         return _animancer.Play(animClip, fadeTime);
+    }
+    
+    // MoveSet 상위(캐릭터)에서 호출
+    // fadeTime을 Animation 정보에 넣어서 관리하기
+    public AnimancerState Play(eState actionState)
+    {
+        if (false == _actionMap.ContainsKey(actionState))
+        {
+            Debug.LogError($"Fail Play! actionState({actionState})");
+            return null;
+        }
+        
+        return _actionMap[actionState].Play();
     }
 }

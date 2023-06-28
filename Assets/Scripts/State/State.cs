@@ -39,7 +39,7 @@ public abstract class State
         this._animancer = _character.GetComponent<AnimancerComponent>();
         _moveSet = _character.GetMoveSet();
         _eState = eState;
-        _action = _moveSet.GetCurAction(_eState);
+        _action = _moveSet.GetAction(_eState);
     }
 
     public virtual void StartState()

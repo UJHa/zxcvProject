@@ -11,7 +11,7 @@ public class Player : Character
 
         _directionVector = Vector3.back;
         
-        _moveSet.Init(this);
+        _moveSet.Init(gameObject);
         // Punch
         _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, new ActionInfo("Animation/Lucy_FightFist01_1", 0f, 0.7f, AttackRangeType.PUNCH_A, 0.15f, 0.4f, new(AttackType.NORMAL, 0.1f , 0.1f)));
         _moveSet.RegisterAction(eState.ATTACK2, KeyCode.C, eState.ATTACK, new ActionInfo("Animation/Lucy_FightFist01_2", 0.1f, 0.5f, AttackRangeType.PUNCH_A, 0.0f, 0.3f, new(AttackType.NORMAL, 0.1f, 0.1f)));
