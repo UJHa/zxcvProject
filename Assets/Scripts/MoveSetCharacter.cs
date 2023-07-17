@@ -24,6 +24,8 @@ public class MoveSetCharacter : MonoBehaviour
     
     private MoveSet _moveSet = new();
     private Action _action = null;
+
+    private bool _isSliderHold = false;
     private void Awake()
     {
         oneFrameTime = 1f / testFrame;
@@ -42,23 +44,26 @@ public class MoveSetCharacter : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (false == _isSliderHold)
         {
-            Debug.Log($"[testum]mousePos({Input.mousePosition})");
-            _startMousePosX = Input.mousePosition.x;
-            _startRot = transform.eulerAngles;
+            if (Input.GetMouseButtonDown(0))
+            {
+                // Debug.Log($"[testum]mousePos({Input.mousePosition})");
+                _startMousePosX = Input.mousePosition.x;
+                _startRot = transform.eulerAngles;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                // Debug.Log($"[testum]mousePos({Input.mousePosition})");
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                var movePosX = _startMousePosX - Input.mousePosition.x;
+                // Debug.Log($"[testum]mousePos({Input.mousePosition}) movePosX({movePosX})");
+                transform.eulerAngles = _startRot + new Vector3(0f, movePosX, 0f);
+            }
         }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            Debug.Log($"[testum]mousePos({Input.mousePosition})");
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            var movePosX = _startMousePosX - Input.mousePosition.x;
-            Debug.Log($"[testum]mousePos({Input.mousePosition}) movePosX({movePosX})");
-            transform.eulerAngles = _startRot + new Vector3(0f, movePosX, 0f);
-        }
-        
+
         if (Input.GetKeyDown(KeyCode.X))
         {
             _action.Reset();
@@ -77,6 +82,18 @@ public class MoveSetCharacter : MonoBehaviour
 
         UpdateSlider();
         UpdateText();
+    }
+
+    public void SliderOnPointerDown()
+    {
+        Debug.Log($"[testum]SliderOnPointerDown");
+        _isSliderHold = true;
+    }
+    
+    public void SliderOnPointerUp()
+    {
+        Debug.Log($"[testum]SliderOnPointerUp");
+        _isSliderHold = false;
     }
 
     // 뇌 정리되면 여기 코드 개선 필요
