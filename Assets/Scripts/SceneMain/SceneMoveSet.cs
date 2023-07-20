@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utils;
 
 namespace SceneMain
 {
@@ -29,6 +30,7 @@ namespace SceneMain
                 Debug.Log($"[testum]uiManager({_uiManager}) fail");
             }
 
+            _uiManager.CreateUI("Prefabs/UI/AnimPlayerPage", UILayerType.LayerNormal);
         }
 
         private UIManager LoadUIManager()
