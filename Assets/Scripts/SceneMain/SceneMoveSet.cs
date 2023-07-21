@@ -19,7 +19,7 @@ namespace SceneMain
                     Debug.Log($"[testum]canvas find success!");
                 }
             }
-
+            
             _uiManager = LoadUIManager();
             if (null != _uiManager)
             {
@@ -29,8 +29,12 @@ namespace SceneMain
             {
                 Debug.Log($"[testum]uiManager({_uiManager}) fail");
             }
-
+            
+            // 필요 UI 명세별 생성
             _uiManager.CreateUI("Prefabs/UI/AnimPlayerPage", UILayerType.LayerNormal);
+            
+            // Character 명세별 생성(일단 1개)
+            var moveSetCharacter = CreateCharacter();
         }
 
         private UIManager LoadUIManager()
@@ -50,6 +54,16 @@ namespace SceneMain
                 return null;
         
             return uiMgr;
+        }
+
+        private MoveSetCharacter CreateCharacter()
+        {
+            var loadPrefab = Resources.Load<GameObject>("Prefabs/Character/MoveSetCharacter");
+            var characterObj = Instantiate(loadPrefab);
+            if (characterObj.TryGetComponent<MoveSetCharacter>(out var moveSetCharacter))
+                return moveSetCharacter;
+            else
+                return null;
         }
     }
 }
