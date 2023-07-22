@@ -1,3 +1,4 @@
+using UI;
 using UnityEngine;
 using Utils;
 
@@ -5,8 +6,12 @@ namespace SceneMain
 {
     public class SceneMoveSet : MonoBehaviour
     {
+        private int testFrame = 120;
+        private float oneFrameTime;
+        
         private Canvas _canvas = null;
         private UIManager _uiManager = null;
+        private MoveSetCharacter _moveSetCharacter;
         private void Awake()
         {
             var canvasObj = GameObject.Find("Canvas");
@@ -19,7 +24,13 @@ namespace SceneMain
                     Debug.Log($"[testum]canvas find success!");
                 }
             }
-            
+
+            float animStartTime = 0f;
+            float animEndTime = 1f;
+
+            // Character 명세별 생성(일단 1개)
+            _moveSetCharacter = CreateCharacter();
+
             _uiManager = LoadUIManager();
             if (null != _uiManager)
             {
@@ -30,11 +41,11 @@ namespace SceneMain
                 Debug.Log($"[testum]uiManager({_uiManager}) fail");
             }
             
-            // 필요 UI 명세별 생성
-            _uiManager.CreateUI("Prefabs/UI/AnimPlayerPage", UILayerType.LayerNormal);
+            _moveSetCharacter.Init(animStartTime, animEndTime);
             
-            // Character 명세별 생성(일단 1개)
-            var moveSetCharacter = CreateCharacter();
+            // 필요 UI 명세별 생성
+            _uiManager.animPlayerPage = _uiManager.CreateUI<UIAnimPlayerPage>("Prefabs/UI/AnimPlayerPage", UILayerType.LayerNormal);
+            _uiManager.animPlayerPage.Init(_moveSetCharacter, animStartTime, animEndTime);
         }
 
         private UIManager LoadUIManager()

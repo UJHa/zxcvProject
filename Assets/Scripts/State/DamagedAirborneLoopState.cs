@@ -41,7 +41,7 @@ public class DamagedAirborneLoopState : DamagedState
         if (_action.IsAnimationFinish())
         {
             // _character.ChangeState(eState.DAMAGED_LANDING);
-            _action.Reset();
+            _action.GoToFirstFrame();
         }
         else
         {

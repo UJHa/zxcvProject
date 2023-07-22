@@ -3,6 +3,7 @@ using Animancer;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 
 // 엄todo: 기능 개발 요구사항
 // 캐릭터 회전이 가능하도록 수정하기
@@ -14,29 +15,21 @@ using UnityEngine.UI;
 // 캐릭터의 로직에 있는 데이터를 상위 Manager로 관리하기
 public class MoveSetCharacter : MonoBehaviour
 {
-    private int testFrame = 120;
-    private float oneFrameTime;
     private AnimancerState _curState = null;
-    public Slider _slider;
     public TextMeshProUGUI _curStateTxt;
-    private float _minValue = 0.0f;
-    private float _maxValue = 1f;
     
     private MoveSet _moveSet = new();
     private Action _action = null;
-
-    private bool _isSliderHold = false;
     private void Awake()
     {
-        oneFrameTime = 1f / testFrame;
-        
         _moveSet.Init(gameObject);
-        // _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, new ActionInfo("Animation/Lucy_FightFist01_1", 0f, 0.7f, AttackRangeType.PUNCH_A, 0.15f, 0.4f, new(AttackType.NORMAL, 0.1f , 0.1f)));
-        _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.ATTACK, new ActionInfo("Animation/Lucy_FightFist01_2", _minValue, _maxValue, AttackRangeType.PUNCH_A, 0.0f, 0.3f, new(AttackType.NORMAL, 0.1f, 0.1f)));
-        _slider.minValue = _minValue;
-        _slider.maxValue = _maxValue;
+    }
+    
+    public void Init(float animStartTime, float animEndTime)
+    {
+        _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.ATTACK, new ActionInfo("Animation/Lucy_FightFist01_2", animStartTime, animEndTime, AttackRangeType.PUNCH_A, 0.0f, 0.3f, new(AttackType.NORMAL, 0.1f, 0.1f)));
         _action = _moveSet.GetAction(eState.ATTACK);
-        _slider.value = _minValue;
+        _curState = _moveSet.Play(eState.ATTACK);
     }
 
     private float _startMousePosX = 0f;
@@ -44,7 +37,7 @@ public class MoveSetCharacter : MonoBehaviour
 
     private void Update()
     {
-        if (false == _isSliderHold)
+        if (false == UmUtil.IsSliderHold())
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -66,12 +59,12 @@ public class MoveSetCharacter : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            _action.Reset();
+            _action.GoToFirstFrame();
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
             if (null != _curState)
-                _action.Reset();
+                _action.GoToFirstFrame();
             _curState = _moveSet.Play(eState.ATTACK);
         }
 
@@ -79,51 +72,38 @@ public class MoveSetCharacter : MonoBehaviour
         {
             _curState.IsPlaying = !_curState.IsPlaying;
         }
-
-        UpdateSlider();
         UpdateText();
     }
 
-    public void SliderOnPointerDown()
+    public bool IsPlaying()
     {
-        Debug.Log($"[testum]SliderOnPointerDown");
-        _isSliderHold = true;
-    }
-    
-    public void SliderOnPointerUp()
-    {
-        Debug.Log($"[testum]SliderOnPointerUp");
-        _isSliderHold = false;
+        return _curState.IsPlaying;
     }
 
-    // 뇌 정리되면 여기 코드 개선 필요
-    private void UpdateSlider()
+    public bool IsPlayFinish()
     {
-        if (null == _curState)
-            return;
-        if (null == _slider)
-            return;
-        if (_curState.Length - _curState.Time < oneFrameTime)
-        {
-            if (false == _action.IsAnimationFinish())
-            {
-                _slider.value = _slider.maxValue;
-                _curState.IsPlaying = false;
-                _curState.NormalizedTime = _slider.maxValue;
-            }
-            else
-                _curState.NormalizedTime = _slider.value;
-            // Debug.Log($"[testum]log1 _curNormValue({_curState.NormalizedTime}) curTimeValue({_curState.Time}) totalTime({_curState.Length})");
-        }
-        else
-        {
-            if (false == _action.IsAnimationFinish() && _curState.IsPlaying)
-                _slider.value = (_curState.NormalizedTime - _minValue) / (_maxValue - _minValue);
-            else
-                _curState.NormalizedTime = _slider.value;
-            
-            // Debug.Log($"[testum]log2 _curNormValue({_curState.NormalizedTime}) curTimeValue({_curState.Time}) totalTime({_curState.Length}) test({_curState.Length - _curState.Time})");
-        }
+        return _curState.Length - _curState.Time < UmUtil.GetOnFrameTime();
+    }
+
+    public void UpdateStateTime(float normTime)
+    {
+        _curState.NormalizedTime = normTime;
+    }
+
+    public void PlayFinish()
+    {
+        _curState.IsPlaying = false;
+        _action.GoToEndFrame();
+    }
+
+    public float GetAnimRate()
+    {
+        return _action.GetCurPlayRate();
+    }
+    
+    public bool IsAnimRateFinish()
+    {
+        return _action.IsAnimationFinish();
     }
 
     private void UpdateText()

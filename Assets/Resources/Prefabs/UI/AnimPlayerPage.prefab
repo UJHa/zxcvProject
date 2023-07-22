@@ -109,9 +109,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 3750648320288086779}
-          m_TargetAssemblyTypeName: MoveSetCharacter, Assembly-CSharp
-          m_MethodName: 
+        - m_Target: {fileID: -4251373972884174773}
+          m_TargetAssemblyTypeName: UI.UIAnimPlayerPage, Assembly-CSharp
+          m_MethodName: SliderOnPointerDown
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -125,9 +125,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 3750648320288086779}
-          m_TargetAssemblyTypeName: MoveSetCharacter, Assembly-CSharp
-          m_MethodName: 
+        - m_Target: {fileID: -4251373972884174773}
+          m_TargetAssemblyTypeName: UI.UIAnimPlayerPage, Assembly-CSharp
+          m_MethodName: SliderOnPointerUp
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -598,6 +598,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5891219515449830499}
+  - component: {fileID: -4251373972884174773}
   m_Layer: 5
   m_Name: AnimPlayerPage
   m_TagString: Untagged
@@ -627,3 +628,16 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &-4251373972884174773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7023408668128146906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75a0ef8626c742da9e0f20d815956fca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _slider: {fileID: 3750648320288086725}

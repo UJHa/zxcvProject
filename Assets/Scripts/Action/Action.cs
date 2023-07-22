@@ -53,9 +53,24 @@ public class Action
         return _curState;
     }
     
-    public void Reset()
+    public void GoToFirstFrame()
     {
         _curState.NormalizedTime = _startRate;
+    }
+    
+    public void GoToEndFrame()
+    {
+        _curState.NormalizedTime = _endRate;
+    }
+    
+    public float GetCurPlayRate()
+    {
+        return (_curState.NormalizedTime - _startRate) / GetRateLength();
+    }
+
+    public float GetRateLength()
+    {
+        return _endRate - _startRate;
     }
 
     public bool IsAnimationFinish()

@@ -300,6 +300,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AnimEditPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 6136724877743868280, guid: 8fb0d6cfcc3c404459a4cf05a8311116, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8452509664134834605, guid: 8fb0d6cfcc3c404459a4cf05a8311116, type: 3}
       propertyPath: _slider
       value: 
