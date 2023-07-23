@@ -55,24 +55,28 @@ public class MoveSetCharacter : MonoBehaviour
                 // Debug.Log($"[testum]mousePos({Input.mousePosition}) movePosX({movePosX})");
                 transform.eulerAngles = _startRot + new Vector3(0f, movePosX, 0f);
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            _action.GoToFirstFrame();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (null != _curState)
+            
+            if (Input.GetKeyDown(KeyCode.X))
+            {
                 _action.GoToFirstFrame();
-            _curState = _moveSet.Play(eState.ATTACK);
-        }
+            }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                if (null != _curState)
+                    _action.GoToFirstFrame();
+                PlayAnim();
+            }
 
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            _curState.IsPlaying = !_curState.IsPlaying;
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                _curState.IsPlaying = !_curState.IsPlaying;
+            }
         }
-        UpdateText();
+    }
+
+    public void PlayAnim()
+    {
+        _curState = _moveSet.Play(eState.ATTACK);
     }
 
     public bool IsPlaying()
@@ -104,17 +108,5 @@ public class MoveSetCharacter : MonoBehaviour
     public bool IsAnimRateFinish()
     {
         return _action.IsAnimationFinish();
-    }
-
-    private void UpdateText()
-    {
-        if (null == _curState)
-            return;
-        if (null == _curStateTxt)
-            return;
-        if (_curState.IsPlayingAndNotEnding())
-            _curStateTxt.text = "IsPlayingAndNotEnding";
-        else
-            _curStateTxt.text = "IsNone";
     }
 }
