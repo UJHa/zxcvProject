@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,9 +15,14 @@ namespace UI
 {
     public class UIAnimPlayerPage : MonoBehaviour
     {
+        // 엄todo : 나중에 Resources나 특정 디렉토리의 파일 리스트를 가져오도록 개발 필요
+        [Header("Test Anim Datas")]
+        [SerializeField] private List<string> _animInfos = new();
         [Header("UI State")]
         [SerializeField] private AnimEditState _animEditState;
-        
+        [Header("UI object")]
+        [SerializeField] private ScrollRect _scrollRect;
+        [SerializeField] private Button _infoBtnPrefab;
         [SerializeField] private Slider _slider;
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
@@ -27,6 +33,19 @@ namespace UI
         public void Init(MoveSetCharacter moveSetCharacter, float minValue, float maxValue)
         {
             _moveSetCharacter = moveSetCharacter;
+            foreach (var animInfo in _animInfos)
+            {
+                Debug.Log($"[testum]animInfo({animInfo})");
+                var btnObj = Instantiate(_infoBtnPrefab, _scrollRect.content);
+                btnObj.name = animInfo;
+                if (btnObj.transform.Find("Text (TMP)").TryGetComponent<TextMeshProUGUI>(out var textObj))
+                    textObj.text = animInfo;
+                btnObj.onClick.AddListener(() =>
+                {
+                    Debug.Log($"[testum]Click button name({btnObj.name})");
+                });
+            }
+
             _slider.minValue = minValue;
             _slider.maxValue = maxValue;
             _slider.value = minValue;
