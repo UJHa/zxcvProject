@@ -4,22 +4,33 @@ zxcv 키 사용 게임 제작
 # 현재 조작법
     - 이동 : 방향키
     - 점프 : V
-    - 공격 : C
+    - 주먹 공격 : C>C>C
+    - 발차기 공격 : X>X
+
+# 현재 개발 중인 Scene
+    - DevScene
+    - MoveSetScene
 
 # 구현된 State
-    - 기본(Idle)
-    - 걷기(Walk)
-    - 달리기(Run)
-    - 뛰기(Jump)
+    - 기본 상태 모션(eState.IDLE)
+    - 걷기 모션(eState.WALK)
+    - 달리기 모션(eState.RUN)
+    - 달리기 급정지 모션(eState.RUNSTOP)
+    - 점프 상승 모션(eState.JUMP_UP)
+    - 점프 하강 모션(eState.JUMP_DOWN)
+    - 착지 모션(eState.LANDING)
+    - 주먹 콤보1 모션(eState.ATTACK)
+    - 주먹 콤보2 모션(eState.ATTACK2)
+    - 주먹 콤보3 모션(eState.ATTACK3)
+    - 발차기 콤보1 모션(eState.ATTACK4)
+    - 발차기 콤보2 모션(eState.ATTACK5)
+    - 기상 피격 모션(eState.NORMAL_DAMAGED)
+    - 에어본 공격 피격 모션(eState.AIRBORNE_DAMAGED)
+    - 에어본 피격 도중 재피격 모션(eState.DAMAGED_AIRBORNE_LOOP)
+    - 에어본 피격도중 바닥 충돌 모션(eState.DAMAGED_LANDING)
+    - 기상 모션(eState.WAKE_UP)
+    - 죽음 모션(eState.DEAD)
 
-# 현재 Animator
-![image](https://user-images.githubusercontent.com/22016754/148173679-bcb94876-6aaa-4cf1-a87d-41dc2872529c.png)
-
-# 현재 시나리오
-    - 플레이어가 적 모두 처지 시 성공 UI 활성화
-    - 플레이어가 사망 시 실패 UI 활성화
-
-# 추가한 UI
-    - 각 캐릭터의 HP Slider 추가
-    - 적 인원 수를 체크하는 안내 UI 추가
-    - 게임 클리어 시 상태 및 다시하기 버튼 UI 추가
+# 현재 진행 중인 작업
+    - MoveSetScene을 통한 캐릭터 무브셋 툴 개발
+![img.png](img.png)
