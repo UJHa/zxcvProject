@@ -22,7 +22,7 @@ namespace UI
         [SerializeField] private AnimEditState _animEditState;
         [Header("UI object")]
         [SerializeField] private ScrollRect _scrollRect;
-        [SerializeField] private Button _infoBtnPrefab;
+        [SerializeField] private UIButton _infoBtnPrefab;
         [SerializeField] private Slider _slider;
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
@@ -38,8 +38,7 @@ namespace UI
                 Debug.Log($"[testum]animInfo({animInfo})");
                 var btnObj = Instantiate(_infoBtnPrefab, _scrollRect.content);
                 btnObj.name = animInfo;
-                if (btnObj.transform.Find("Text (TMP)").TryGetComponent<TextMeshProUGUI>(out var textObj))
-                    textObj.text = animInfo;
+                btnObj.SetText(animInfo);
                 btnObj.onClick.AddListener(() =>
                 {
                     Debug.Log($"[testum]Click button name({btnObj.name})");

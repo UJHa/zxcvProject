@@ -827,7 +827,7 @@ MonoBehaviour:
   - Animation/LyingBack_WakeUp
   _animEditState: 0
   _scrollRect: {fileID: 8183246212241961898}
-  _infoBtnPrefab: {fileID: 3663258204802113199, guid: a9cda0e8691f2524d8e1fc40144e3b2c, type: 3}
+  _infoBtnPrefab: {fileID: 3205228000375677299, guid: a9cda0e8691f2524d8e1fc40144e3b2c, type: 3}
   _slider: {fileID: 3750648320288086725}
   _curStateTxt: {fileID: 3750648321745526230}
   _play: {fileID: 8839258213036865917}
