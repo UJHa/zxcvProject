@@ -122,7 +122,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  _text: {fileID: 0}
 --- !u!1 &8427235250605607574
 GameObject:
   m_ObjectHideFlags: 0

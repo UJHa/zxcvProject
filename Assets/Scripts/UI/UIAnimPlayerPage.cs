@@ -33,17 +33,20 @@ namespace UI
         public void Init(MoveSetCharacter moveSetCharacter, float minValue, float maxValue)
         {
             _moveSetCharacter = moveSetCharacter;
+            var prefabName = _infoBtnPrefab.name;
             foreach (var animInfo in _animInfos)
             {
                 Debug.Log($"[testum]animInfo({animInfo})");
+                _infoBtnPrefab.name = animInfo;
                 var btnObj = Instantiate(_infoBtnPrefab, _scrollRect.content);
-                btnObj.name = animInfo;
                 btnObj.SetText(animInfo);
                 btnObj.onClick.AddListener(() =>
                 {
                     Debug.Log($"[testum]Click button name({btnObj.name})");
                 });
             }
+
+            _infoBtnPrefab.name = prefabName;
 
             _slider.minValue = minValue;
             _slider.maxValue = maxValue;

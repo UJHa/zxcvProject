@@ -72,6 +72,10 @@ public class MoveSetCharacter : MonoBehaviour
                 _curState.IsPlaying = !_curState.IsPlaying;
             }
         }
+        else
+        {
+            _curState.IsPlaying = false;
+        }
     }
 
     public void PlayAnim()
