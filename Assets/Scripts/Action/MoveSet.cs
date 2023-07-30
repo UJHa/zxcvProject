@@ -74,7 +74,7 @@ public class MoveSet
         }
         else
         {
-            _actionMap.Add(actionState, new Action(this, actionState, inputKey, actionInfo));
+            _actionMap.Add(actionState, new Action(_animancer, actionState, inputKey, actionInfo));
         }
 
         var action = _actionMap[actionState];
@@ -113,12 +113,6 @@ public class MoveSet
             return eState.NONE;
         var action = _inputEnableMap[enableKey];
         return action.GetState();
-    }
-
-    // action 내부에서 호출
-    public AnimancerState Play(AnimationClip animClip, float fadeTime = 0f)
-    {
-        return _animancer.Play(animClip, fadeTime);
     }
     
     // MoveSet 상위(캐릭터)에서 호출

@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class Action
 {
-    private readonly MoveSet _moveSet;
+    private readonly AnimancerComponent _animancer;
     private readonly KeyCode _inputKey;
     private readonly eState _state;
     private readonly AnimationClip _animClip;
@@ -23,9 +23,9 @@ public class Action
     private float _startCollisionRate;
     private float _endCollisionRate;
 
-    public Action(MoveSet moveSet, eState state, KeyCode inputKey, ActionInfo actionInfo)
+    public Action(AnimancerComponent animancer, eState state, KeyCode inputKey, ActionInfo actionInfo)
     {
-        _moveSet = moveSet;
+        _animancer = animancer;
         _state = state;
         _inputKey = inputKey;
         _actionInfo = actionInfo;
@@ -48,7 +48,7 @@ public class Action
 
     public AnimancerState Play(float fadeTime = 0f)
     {
-        _curState = _moveSet.Play(_animClip, fadeTime);
+        _curState = _animancer.Play(_animClip, fadeTime);
         _curState.NormalizedTime = _startRate;
         return _curState;
     }

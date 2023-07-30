@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Utils;
 
@@ -43,6 +44,7 @@ namespace UI
                 btnObj.onClick.AddListener(() =>
                 {
                     Debug.Log($"[testum]Click button name({btnObj.name})");
+                    _moveSetCharacter.ChangeAction(animInfo, 0f, 1f);
                 });
             }
 
@@ -51,11 +53,27 @@ namespace UI
             _slider.minValue = minValue;
             _slider.maxValue = maxValue;
             _slider.value = minValue;
+
+            if (_slider.TryGetComponent<EventTrigger>(out var trigger))
+            {
+                {
+                    EventTrigger.Entry entry = new();
+                    entry.eventID = EventTriggerType.PointerDown;
+                    entry.callback.AddListener(SliderOnPointerDown);
+                    trigger.triggers.Add(entry);
+                }
+                {
+                    EventTrigger.Entry entry = new();
+                    entry.eventID = EventTriggerType.PointerUp;
+                    entry.callback.AddListener(SliderOnPointerUp);
+                    trigger.triggers.Add(entry);
+                }
+            }
             
             _play.onClick.AddListener(() =>
             {
                 _moveSetCharacter.PlayAnim();
-                _animEditState = AnimEditState.Play;
+                SetAnimEditState(AnimEditState.Play);
             });
         }
         
@@ -71,7 +89,7 @@ namespace UI
                 return;
             if (_moveSetCharacter.IsPlayFinish())
             {
-                _animEditState = AnimEditState.Stop;
+                SetAnimEditState(AnimEditState.Stop);
                 if (false == _moveSetCharacter.IsAnimRateFinish())
                 {
                     _slider.value = _slider.maxValue;
@@ -99,18 +117,23 @@ namespace UI
             _curStateTxt.text = _animEditState.ToString();
         }
 
+        public void SetAnimEditState(AnimEditState editState)
+        {
+            _animEditState = editState;
+        }
+
         private void OnDestroy()
         {
             _play.onClick.RemoveAllListeners();
         }
 
-        public void SliderOnPointerDown()
+        private void SliderOnPointerDown(BaseEventData argData)
         {
             Debug.Log($"[testum]SliderOnPointerDown");
             UmUtil.SetSliderHold(true);
         }
     
-        public void SliderOnPointerUp()
+        private void SliderOnPointerUp(BaseEventData argData)
         {
             Debug.Log($"[testum]SliderOnPointerUp");
             UmUtil.SetSliderHold(false);
