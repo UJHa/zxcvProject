@@ -26,6 +26,15 @@ namespace UI
             _menuList.Add("Start Pin");
             _menuList.Add("End Pin");
         }
+        
+        public void Init(float minValue, float maxValue)
+        {
+            _slider = GetComponent<Slider>();
+            
+            _slider.minValue = minValue;
+            _slider.maxValue = maxValue;
+            _slider.value = minValue;
+        }
 
         public void Test()
         {
@@ -35,6 +44,21 @@ namespace UI
         public List<string> GetMenuList()
         {
             return _menuList;
+        }
+
+        public void SetValue(float argValue)
+        {
+            _slider.value = argValue;
+        }
+        
+        public float GetValue()
+        {
+            return _slider.value;
+        }
+
+        public float GetMaxValue()
+        {
+            return _slider.maxValue;
         }
     }
 }

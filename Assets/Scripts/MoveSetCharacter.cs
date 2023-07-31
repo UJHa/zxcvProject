@@ -41,39 +41,45 @@ public class MoveSetCharacter : MonoBehaviour
 
     private void Update()
     {
-        if (false == UmUtil.IsSliderHold())
+        if (UIManager.Instance.IsRaycastUI())
+            return;
+        if (UmUtil.IsSliderHold())
+            return;
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                // Debug.Log($"[testum]mousePos({Input.mousePosition})");
-                _startMousePosX = Input.mousePosition.x;
-                _startRot = transform.eulerAngles;
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                // Debug.Log($"[testum]mousePos({Input.mousePosition})");
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                var movePosX = _startMousePosX - Input.mousePosition.x;
-                // Debug.Log($"[testum]mousePos({Input.mousePosition}) movePosX({movePosX})");
-                transform.eulerAngles = _startRot + new Vector3(0f, movePosX, 0f);
-            }
+            // Debug.Log($"[testum]mousePos({Input.mousePosition})");
+            _startMousePosX = Input.mousePosition.x;
+            _startRot = transform.eulerAngles;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            // Debug.Log($"[testum]mousePos({Input.mousePosition})");
+        }
+        else if (Input.GetMouseButton(0))
+        {
+            var movePosX = _startMousePosX - Input.mousePosition.x;
+            // Debug.Log($"[testum]mousePos({Input.mousePosition}) movePosX({movePosX})");
+            transform.eulerAngles = _startRot + new Vector3(0f, movePosX, 0f);
+        }
             
-            if (Input.GetKeyDown(KeyCode.X))
-            {
-                _action.GoToFirstFrame();
-            }
-
-            if (Input.GetKeyDown(KeyCode.V))
-            {
-                _curState.IsPlaying = !_curState.IsPlaying;
-            }
-        }
-        else
+        if (Input.GetKeyDown(KeyCode.X))
         {
-            PauseAnim();
+            _action.GoToFirstFrame();
         }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            _curState.IsPlaying = !_curState.IsPlaying;
+        }
+        // // 엄todo : UI 레이어 Raycast 통한 무시처리로 변경하기
+        // if (false == UmUtil.IsSliderHold())
+        // {
+        //     
+        // }
+        // else
+        // {
+        //     PauseAnim();
+        // }
     }
 
     public void PlayAnim()

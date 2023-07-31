@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Utils
 {
@@ -61,6 +62,48 @@ namespace Utils
             }
 
             return ui;
+        }
+
+        private void Update()
+        {
+            UpdateClick();
+        }
+        
+        private void UpdateClick()
+        {
+            if (Input.GetMouseButtonUp(1))
+            {
+                var results = GetEventSystemRaycastResults();
+                if (results.Count > 0)
+                {
+                    if (results[0].gameObject.TryGetComponent<UIWidget>(out var widget))
+                    {
+                        var obj = widget.GetOwner();
+                        if (obj.TryGetComponent<UISlider>(out var slider))
+                        {
+                            List<string> menuList = slider.GetMenuList();
+                            UIManager.Instance.contextMenuPopup.SetupMenus(menuList);
+                            Debug.Log($"[testum]Raycast result on");
+                            UIManager.Instance.contextMenuPopup.Show();
+                        }
+                    }
+                }
+            }
+        }
+        
+        public List<RaycastResult> GetEventSystemRaycastResults()
+        {
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = Input.mousePosition;
+            List<RaycastResult> raysastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, raysastResults);
+            return raysastResults;
+        }
+
+        public bool IsRaycastUI()
+        {
+            var results = GetEventSystemRaycastResults();
+            return results.Count > 0;
         }
     }
 }

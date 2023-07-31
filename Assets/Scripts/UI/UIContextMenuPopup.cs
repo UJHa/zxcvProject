@@ -63,7 +63,12 @@ namespace UI
             foreach (var contextName in menuList)
             {
                 var btnObj = Instantiate(_menuButton, transform);
+                btnObj.Init();
                 btnObj.SetText(contextName);
+                btnObj.onClick.AddListener(() =>
+                {
+                    
+                });
                 _menuBtnList.Add(btnObj);
             }
         }

@@ -24,7 +24,7 @@ namespace UI
         [Header("UI object")]
         [SerializeField] private ScrollRect _scrollRect;
         [SerializeField] private UIButton _infoBtnPrefab;
-        [SerializeField] private Slider _slider;
+        [SerializeField] private UISlider _slider;
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
 
@@ -40,6 +40,7 @@ namespace UI
                 Debug.Log($"[testum]animInfo({animInfo})");
                 _infoBtnPrefab.name = animInfo;
                 var btnObj = Instantiate(_infoBtnPrefab, _scrollRect.content);
+                btnObj.Init();
                 btnObj.SetText(animInfo);
                 btnObj.onClick.AddListener(() =>
                 {
@@ -50,9 +51,7 @@ namespace UI
 
             _infoBtnPrefab.name = prefabName;
 
-            _slider.minValue = minValue;
-            _slider.maxValue = maxValue;
-            _slider.value = minValue;
+            _slider.Init(minValue, maxValue);
 
             if (_slider.TryGetComponent<EventTrigger>(out var trigger))
             {
@@ -115,19 +114,19 @@ namespace UI
                 SetAnimEditState(AnimEditState.Stop);
                 if (false == _moveSetCharacter.IsAnimRateFinish())
                 {
-                    _slider.value = _slider.maxValue;
+                    _slider.SetValue(_slider.GetMaxValue());
                     _moveSetCharacter.PlayFinish();
                 }
                 else
-                    _moveSetCharacter.UpdateStateTime(_slider.value);
+                    _moveSetCharacter.UpdateStateTime(_slider.GetValue());
                 // Debug.Log($"[testum]log1 _curNormValue({_curState.NormalizedTime}) curTimeValue({_curState.Time}) totalTime({_curState.Length})");
             }
             else
             {
                 if (false == _moveSetCharacter.IsAnimRateFinish() && _moveSetCharacter.IsPlaying())
-                    _slider.value = _moveSetCharacter.GetAnimRate();
+                    _slider.SetValue(_moveSetCharacter.GetAnimRate());
                 else
-                    _moveSetCharacter.UpdateStateTime(_slider.value);
+                    _moveSetCharacter.UpdateStateTime(_slider.GetValue());
 
                 // Debug.Log($"[testum]log2 _curNormValue({_curState.NormalizedTime}) curTimeValue({_curState.Time}) totalTime({_curState.Length}) test({_curState.Length - _curState.Time})");
             }
@@ -144,7 +143,7 @@ namespace UI
         {
             if (Input.GetMouseButtonUp(1))
             {
-                var results = GetEventSystemRaycastResults();
+                var results = UIManager.Instance.GetEventSystemRaycastResults();
                 if (results.Count > 0)
                 {
                     if (results[0].gameObject.TryGetComponent<UIWidget>(out var widget))
@@ -160,22 +159,13 @@ namespace UI
                     }
                 }
             }
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonDown(0))
             {
-                var results = GetEventSystemRaycastResults();
-                if (results.Count == 0)
+                if (false == UIManager.Instance.IsRaycastUI())
                 {
                     UIManager.Instance.contextMenuPopup.Hide();
                 }
             }
-        }
-        private List<RaycastResult> GetEventSystemRaycastResults()
-        {
-            PointerEventData eventData = new PointerEventData(EventSystem.current);
-            eventData.position = Input.mousePosition;
-            List<RaycastResult> raysastResults = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, raysastResults);
-            return raysastResults;
         }
 
         public void SetAnimEditState(AnimEditState editState)
