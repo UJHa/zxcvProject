@@ -68,19 +68,42 @@ namespace UI
                     entry.callback.AddListener(SliderOnPointerUp);
                     trigger.triggers.Add(entry);
                 }
+                {
+                    EventTrigger.Entry entry = new();
+                    entry.eventID = EventTriggerType.PointerClick;
+                    entry.callback.AddListener(SliderOnPointerClick);
+                    trigger.triggers.Add(entry);
+                }
             }
             
             _play.onClick.AddListener(() =>
             {
+                PlayAnimUI();
+            });
+        }
+
+        private void PlayAnimUI()
+        {
+            if (_moveSetCharacter.IsPlaying())
+            {
+                _moveSetCharacter.PauseAnim();
+            }
+            else
+            {
                 _moveSetCharacter.PlayAnim();
                 SetAnimEditState(AnimEditState.Play);
-            });
+            }
         }
         
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                PlayAnimUI();
+            }
             UpdateSlider();
             UpdateText();
+            UpdateClick();
         }
 
         private void UpdateSlider()
@@ -116,6 +139,44 @@ namespace UI
                 return;
             _curStateTxt.text = _animEditState.ToString();
         }
+        
+        private void UpdateClick()
+        {
+            if (Input.GetMouseButtonUp(1))
+            {
+                var results = GetEventSystemRaycastResults();
+                if (results.Count > 0)
+                {
+                    if (results[0].gameObject.TryGetComponent<UIWidget>(out var widget))
+                    {
+                        var obj = widget.GetOwner();
+                        if (obj.TryGetComponent<UISlider>(out var slider))
+                        {
+                            List<string> menuList = slider.GetMenuList();
+                            UIManager.Instance.contextMenuPopup.SetupMenus(menuList);
+                            Debug.Log($"[testum]Raycast result on");
+                            UIManager.Instance.contextMenuPopup.Show();
+                        }
+                    }
+                }
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                var results = GetEventSystemRaycastResults();
+                if (results.Count == 0)
+                {
+                    UIManager.Instance.contextMenuPopup.Hide();
+                }
+            }
+        }
+        private List<RaycastResult> GetEventSystemRaycastResults()
+        {
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = Input.mousePosition;
+            List<RaycastResult> raysastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, raysastResults);
+            return raysastResults;
+        }
 
         public void SetAnimEditState(AnimEditState editState)
         {
@@ -136,6 +197,13 @@ namespace UI
         private void SliderOnPointerUp(BaseEventData argData)
         {
             Debug.Log($"[testum]SliderOnPointerUp");
+            UmUtil.SetSliderHold(false);
+        }
+        
+        private void SliderOnPointerClick(BaseEventData argData)
+        {
+            Debug.Log($"[testum]argData({argData.selectedObject})");
+            Debug.Log($"[testum]SliderOnPointerClick");
             UmUtil.SetSliderHold(false);
         }
     }

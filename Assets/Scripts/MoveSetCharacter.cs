@@ -31,9 +31,9 @@ public class MoveSetCharacter : MonoBehaviour
         ActionInfo actionInfo = new(clipName, animStartTime, animEndTime, AttackRangeType.NONE,
             0.0f, 0.3f, null);
         _action = new Action(_animancer, eState.NONE, KeyCode.None, actionInfo);
-        _curState = _action.Play();
-        _action.GoToFirstFrame();
-        _curState.IsPlaying = false;
+        _curState = _action.PlayOnly();
+        // _action.GoToFirstFrame();
+        PauseAnim();
     }
 
     private float _startMousePosX = 0f;
@@ -64,12 +64,6 @@ public class MoveSetCharacter : MonoBehaviour
             {
                 _action.GoToFirstFrame();
             }
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                if (null != _curState)
-                    _action.GoToFirstFrame();
-                PlayAnim();
-            }
 
             if (Input.GetKeyDown(KeyCode.V))
             {
@@ -78,13 +72,20 @@ public class MoveSetCharacter : MonoBehaviour
         }
         else
         {
-            _curState.IsPlaying = false;
+            PauseAnim();
         }
     }
 
     public void PlayAnim()
     {
-        _curState = _action.Play();
+        if (IsPlayFinish())
+            _action.GoToFirstFrame();
+        _curState = _action.PlayOnly();
+    }
+
+    public void PauseAnim()
+    {
+        _curState.IsPlaying = false;
     }
 
     public bool IsPlaying()
@@ -104,7 +105,7 @@ public class MoveSetCharacter : MonoBehaviour
 
     public void PlayFinish()
     {
-        _curState.IsPlaying = false;
+        PauseAnim();
         _action.GoToEndFrame();
     }
 

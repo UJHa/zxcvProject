@@ -8,6 +8,7 @@ namespace Utils
     public partial class UIManager
     {
         public UIAnimPlayerPage animPlayerPage;
+        public UIContextMenuPopup contextMenuPopup;
     }
 }
 

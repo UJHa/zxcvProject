@@ -53,6 +53,12 @@ public class Action
         return _curState;
     }
     
+    public AnimancerState PlayOnly()
+    {
+        _curState = _animancer.Play(_animClip);
+        return _curState;
+    }
+    
     public void GoToFirstFrame()
     {
         _curState.NormalizedTime = _startRate;
