@@ -28,6 +28,9 @@ namespace UI
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
 
+        private Image _pinStart = null;
+        private Image _pinEnd = null;
+
         // 엄todo UI와 연결 의존도 낮추기 위해 제거되어야 한다.
         private MoveSetCharacter _moveSetCharacter;
         
@@ -102,7 +105,6 @@ namespace UI
             }
             UpdateSlider();
             UpdateText();
-            UpdateClick();
         }
 
         private void UpdateSlider()
@@ -138,35 +140,6 @@ namespace UI
                 return;
             _curStateTxt.text = _animEditState.ToString();
         }
-        
-        private void UpdateClick()
-        {
-            if (Input.GetMouseButtonUp(1))
-            {
-                var results = UIManager.Instance.GetEventSystemRaycastResults();
-                if (results.Count > 0)
-                {
-                    if (results[0].gameObject.TryGetComponent<UIWidget>(out var widget))
-                    {
-                        var obj = widget.GetOwner();
-                        if (obj.TryGetComponent<UISlider>(out var slider))
-                        {
-                            List<string> menuList = slider.GetMenuList();
-                            UIManager.Instance.contextMenuPopup.SetupMenus(menuList);
-                            Debug.Log($"[testum]Raycast result on");
-                            UIManager.Instance.contextMenuPopup.Show();
-                        }
-                    }
-                }
-            }
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (false == UIManager.Instance.IsRaycastUI())
-                {
-                    UIManager.Instance.contextMenuPopup.Hide();
-                }
-            }
-        }
 
         public void SetAnimEditState(AnimEditState editState)
         {
@@ -195,6 +168,36 @@ namespace UI
             Debug.Log($"[testum]argData({argData.selectedObject})");
             Debug.Log($"[testum]SliderOnPointerClick");
             UmUtil.SetSliderHold(false);
+        }
+
+        public void StartPin()
+        {
+            if (null == _pinStart)
+            {
+                var pinObj = Resources.Load<Image>("Prefabs/UI/PinStart");
+                _pinStart = Instantiate(pinObj, transform);
+            }
+            
+            if (_pinStart.TryGetComponent<RectTransform>(out var rfm))
+            {
+                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
+            }
+            UIManager.Instance.contextMenuPopup.Hide();
+        }
+
+        public void EndPin()
+        {
+            if (null == _pinEnd)
+            {
+                var pinObj = Resources.Load<Image>("Prefabs/UI/PinEnd");
+                _pinEnd = Instantiate(pinObj, transform);
+            }
+            
+            if (_pinEnd.TryGetComponent<RectTransform>(out var rfm))
+            {
+                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
+            }
+            UIManager.Instance.contextMenuPopup.Hide();
         }
     }
 }

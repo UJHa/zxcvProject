@@ -57,17 +57,17 @@ namespace UI
             gameObject.SetActive(false);
         }
 
-        public void SetupMenus(List<string> menuList)
+        public void SetupMenus(List<MenuAction> menuList)
         {
             DestroyMenus();
-            foreach (var contextName in menuList)
+            foreach (var menu in menuList)
             {
                 var btnObj = Instantiate(_menuButton, transform);
                 btnObj.Init();
-                btnObj.SetText(contextName);
+                btnObj.SetText(menu.btnName);
                 btnObj.onClick.AddListener(() =>
                 {
-                    
+                    menu.btnAction?.Invoke();
                 });
                 _menuBtnList.Add(btnObj);
             }

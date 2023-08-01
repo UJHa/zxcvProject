@@ -71,7 +71,14 @@ namespace Utils
         
         private void UpdateClick()
         {
-            if (Input.GetMouseButtonUp(1))
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (false == IsRaycastUI())
+                {
+                    contextMenuPopup.Hide();
+                }
+            }
+            else if (Input.GetMouseButtonUp(1))
             {
                 var results = GetEventSystemRaycastResults();
                 if (results.Count > 0)
@@ -81,10 +88,10 @@ namespace Utils
                         var obj = widget.GetOwner();
                         if (obj.TryGetComponent<UISlider>(out var slider))
                         {
-                            List<string> menuList = slider.GetMenuList();
-                            UIManager.Instance.contextMenuPopup.SetupMenus(menuList);
+                            List<MenuAction> menuList = slider.GetMenuList();
+                            contextMenuPopup.SetupMenus(menuList);
                             Debug.Log($"[testum]Raycast result on");
-                            UIManager.Instance.contextMenuPopup.Show();
+                            contextMenuPopup.Show();
                         }
                     }
                 }

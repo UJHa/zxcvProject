@@ -2,6 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
+
+public struct MenuAction
+{
+    public string btnName;
+    public System.Action btnAction;
+}
 
 namespace UI
 {
@@ -10,7 +17,7 @@ namespace UI
         private Slider _slider;
         private UIWidget _background;
         
-        private List<string> _menuList = new();
+        private List<MenuAction> _menuList = new();
 
         private void Awake()
         {
@@ -22,9 +29,6 @@ namespace UI
                         widget.SetOwner(gameObject);
                 }
             }
-            
-            _menuList.Add("Start Pin");
-            _menuList.Add("End Pin");
         }
         
         public void Init(float minValue, float maxValue)
@@ -34,6 +38,17 @@ namespace UI
             _slider.minValue = minValue;
             _slider.maxValue = maxValue;
             _slider.value = minValue;
+            
+            _menuList.Add(new MenuAction
+            {
+                btnName = "Start Pin",
+                btnAction = UIManager.Instance.animPlayerPage.StartPin
+            });
+            _menuList.Add(new MenuAction
+            {
+                btnName = "End Pin",
+                btnAction = UIManager.Instance.animPlayerPage.EndPin
+            });
         }
 
         public void Test()
@@ -41,7 +56,7 @@ namespace UI
             
         }
 
-        public List<string> GetMenuList()
+        public List<MenuAction> GetMenuList()
         {
             return _menuList;
         }
