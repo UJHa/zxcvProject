@@ -27,6 +27,7 @@ namespace UI
         [SerializeField] private UISlider _slider;
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
+        [SerializeField] private Button _playPin;
 
         private Image _pinStart = null;
         private Image _pinEnd = null;
@@ -82,6 +83,11 @@ namespace UI
             {
                 PlayAnimUI();
             });
+            
+            _playPin.onClick.AddListener(() =>
+            {
+                PlayPinAnim();
+            });
         }
 
         private void PlayAnimUI()
@@ -95,6 +101,12 @@ namespace UI
                 _moveSetCharacter.PlayAnim();
                 SetAnimEditState(AnimEditState.Play);
             }
+        }
+        
+        private void PlayPinAnim()
+        {
+            _moveSetCharacter.PlayPinAnim();
+            SetAnimEditState(AnimEditState.Play);
         }
         
         private void Update()
@@ -183,6 +195,9 @@ namespace UI
                 rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
             }
             UIManager.Instance.contextMenuPopup.Hide();
+            Debug.Log($"[startpin] position({_pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
+            Debug.Log($"[startpin] sliderPos({_slider.transform.position}) sliderPos({_slider.GetComponent<RectTransform>().anchoredPosition})");
+            _moveSetCharacter.SetActionStartRate(0f);
         }
 
         public void EndPin()
@@ -198,6 +213,7 @@ namespace UI
                 rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
             }
             UIManager.Instance.contextMenuPopup.Hide();
+            _moveSetCharacter.SetActionEndRate(1f);
         }
     }
 }

@@ -58,6 +58,16 @@ public class Action
         _curState = _animancer.Play(_animClip);
         return _curState;
     }
+
+    public void SetStartRate(float argRate)
+    {
+        _startRate = argRate;
+    }
+    
+    public void SetEndRate(float argRate)
+    {
+        _endRate = argRate;
+    }
     
     public void GoToFirstFrame()
     {

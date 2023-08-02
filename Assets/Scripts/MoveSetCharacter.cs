@@ -89,6 +89,13 @@ public class MoveSetCharacter : MonoBehaviour
         _curState = _action.PlayOnly();
     }
 
+    public void PlayPinAnim()
+    {
+        if (IsPlayFinish())
+            _action.GoToFirstFrame();
+        _curState = _action.PlayOnly();
+    }
+
     public void PauseAnim()
     {
         _curState.IsPlaying = false;
@@ -123,5 +130,15 @@ public class MoveSetCharacter : MonoBehaviour
     public bool IsAnimRateFinish()
     {
         return _action.IsAnimationFinish();
+    }
+
+    public void SetActionStartRate(float argRate)
+    {
+        _action.SetStartRate(argRate);
+    }
+    
+    public void SetActionEndRate(float argRate)
+    {
+        _action.SetEndRate(argRate);
     }
 }
