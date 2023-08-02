@@ -84,14 +84,14 @@ public class MoveSetCharacter : MonoBehaviour
 
     public void PlayAnim()
     {
-        if (IsPlayFinish())
+        if (IsAnimRateFinish())
             _action.GoToFirstFrame();
         _curState = _action.PlayOnly();
     }
 
     public void PlayPinAnim()
     {
-        if (IsPlayFinish())
+        if (IsAnimRateFinish())
             _action.GoToFirstFrame();
         _curState = _action.PlayOnly();
     }
@@ -104,11 +104,6 @@ public class MoveSetCharacter : MonoBehaviour
     public bool IsPlaying()
     {
         return _curState.IsPlaying;
-    }
-
-    public bool IsPlayFinish()
-    {
-        return _curState.Length - _curState.Time < UmUtil.GetOnFrameTime();
     }
 
     public void UpdateStateTime(float normTime)
@@ -125,6 +120,11 @@ public class MoveSetCharacter : MonoBehaviour
     public float GetAnimRate()
     {
         return _action.GetCurPlayRate();
+    }
+    
+    public float GetFinishAnimRate()
+    {
+        return _action.GetEndRate();
     }
     
     public bool IsAnimRateFinish()

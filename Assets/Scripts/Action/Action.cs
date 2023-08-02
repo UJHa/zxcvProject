@@ -79,7 +79,18 @@ public class Action
         _curState.NormalizedTime = _endRate;
     }
     
+    public float GetEndRate()
+    {
+        return _endRate;
+    }
+    
     public float GetCurPlayRate()
+    {
+        return _curState.NormalizedTime;
+    }
+    
+    // action 길이 기반 현재 비율 반환(미사용)
+    public float GetLengthRate()
     {
         return (_curState.NormalizedTime - _startRate) / GetRateLength();
     }

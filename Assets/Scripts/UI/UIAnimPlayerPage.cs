@@ -28,6 +28,9 @@ namespace UI
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
         [SerializeField] private Button _playPin;
+        [Header("UI Pin Rate")]
+        [SerializeField] private float _startRate = 0f;
+        [SerializeField] private float _endRate = 1f;
 
         private Image _pinStart = null;
         private Image _pinEnd = null;
@@ -94,10 +97,13 @@ namespace UI
         {
             if (_moveSetCharacter.IsPlaying())
             {
+                SetAnimEditState(AnimEditState.Stop);
                 _moveSetCharacter.PauseAnim();
             }
             else
             {
+                _moveSetCharacter.SetActionStartRate(0f);
+                _moveSetCharacter.SetActionEndRate(1f);
                 _moveSetCharacter.PlayAnim();
                 SetAnimEditState(AnimEditState.Play);
             }
@@ -105,8 +111,18 @@ namespace UI
         
         private void PlayPinAnim()
         {
-            _moveSetCharacter.PlayPinAnim();
-            SetAnimEditState(AnimEditState.Play);
+            if (_moveSetCharacter.IsPlaying())
+            {
+                SetAnimEditState(AnimEditState.Stop);
+                _moveSetCharacter.PauseAnim();
+            }
+            else
+            {
+                _moveSetCharacter.SetActionStartRate(_startRate);
+                _moveSetCharacter.SetActionEndRate(_endRate);
+                _moveSetCharacter.PlayPinAnim();
+                SetAnimEditState(AnimEditState.Play);
+            }
         }
         
         private void Update()
@@ -123,26 +139,21 @@ namespace UI
         {
             if (null == _slider)
                 return;
-            if (_moveSetCharacter.IsPlayFinish())
+            if (UmUtil.IsSliderHold())
             {
                 SetAnimEditState(AnimEditState.Stop);
-                if (false == _moveSetCharacter.IsAnimRateFinish())
+                _moveSetCharacter.PauseAnim();
+                _moveSetCharacter.UpdateStateTime(_slider.GetValue());
+            }
+            else if (_moveSetCharacter.IsPlaying())
+            {
+                _slider.SetValue(_moveSetCharacter.GetAnimRate());
+                if (_moveSetCharacter.IsAnimRateFinish())
                 {
-                    _slider.SetValue(_slider.GetMaxValue());
+                    SetAnimEditState(AnimEditState.Stop);
+                    _slider.SetValue(_moveSetCharacter.GetFinishAnimRate());
                     _moveSetCharacter.PlayFinish();
                 }
-                else
-                    _moveSetCharacter.UpdateStateTime(_slider.GetValue());
-                // Debug.Log($"[testum]log1 _curNormValue({_curState.NormalizedTime}) curTimeValue({_curState.Time}) totalTime({_curState.Length})");
-            }
-            else
-            {
-                if (false == _moveSetCharacter.IsAnimRateFinish() && _moveSetCharacter.IsPlaying())
-                    _slider.SetValue(_moveSetCharacter.GetAnimRate());
-                else
-                    _moveSetCharacter.UpdateStateTime(_slider.GetValue());
-
-                // Debug.Log($"[testum]log2 _curNormValue({_curState.NormalizedTime}) curTimeValue({_curState.Time}) totalTime({_curState.Length}) test({_curState.Length - _curState.Time})");
             }
         }
         
@@ -196,8 +207,9 @@ namespace UI
             }
             UIManager.Instance.contextMenuPopup.Hide();
             Debug.Log($"[startpin] position({_pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
-            Debug.Log($"[startpin] sliderPos({_slider.transform.position}) sliderPos({_slider.GetComponent<RectTransform>().anchoredPosition})");
-            _moveSetCharacter.SetActionStartRate(0f);
+            _startRate = GetPositionToSliderRate(rfm.anchoredPosition.x);
+            Debug.Log($"[startpin] startRate({_startRate})");
+            _moveSetCharacter.SetActionStartRate(_startRate);
         }
 
         public void EndPin()
@@ -213,7 +225,22 @@ namespace UI
                 rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
             }
             UIManager.Instance.contextMenuPopup.Hide();
-            _moveSetCharacter.SetActionEndRate(1f);
+            _endRate = GetPositionToSliderRate(rfm.anchoredPosition.x);
+            Debug.Log($"[endpin] endRate({_endRate})");
+            _moveSetCharacter.SetActionEndRate(_endRate);
+        }
+
+        private float GetPositionToSliderRate(float posX)
+        {
+            Vector3[] worldCorners = new Vector3[4];
+            _slider.GetComponent<RectTransform>().GetWorldCorners(worldCorners);
+            // for (var i = 0; i < 4; i++)
+            // {
+            //     Debug.Log("[startpin]World Corner " + i + " : " + worldCorners[i]);
+            // }
+            float width = worldCorners[2].x - worldCorners[0].x;
+            float pinWidth = posX - worldCorners[0].x;
+            return pinWidth / width;
         }
     }
 }
