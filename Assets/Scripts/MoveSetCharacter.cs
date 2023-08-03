@@ -132,6 +132,12 @@ public class MoveSetCharacter : MonoBehaviour
         return _action.IsAnimationFinish();
     }
 
+    public void ExportCurAction()
+    {
+        Debug.Log("Export!");
+        _action.Export();
+    }
+
     public void SetActionStartRate(float argRate)
     {
         _action.SetStartRate(argRate);

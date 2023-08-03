@@ -28,6 +28,7 @@ namespace UI
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
         [SerializeField] private Button _playPin;
+        [SerializeField] private Button _exportBtn;
         [Header("UI Pin Rate")]
         [SerializeField] private float _startRate = 0f;
         [SerializeField] private float _endRate = 1f;
@@ -91,6 +92,11 @@ namespace UI
             {
                 PlayPinAnim();
             });
+            
+            _exportBtn.onClick.AddListener(() =>
+            {
+                ExportAction();
+            });
         }
 
         private void PlayAnimUI()
@@ -123,6 +129,11 @@ namespace UI
                 _moveSetCharacter.PlayPinAnim();
                 SetAnimEditState(AnimEditState.Play);
             }
+        }
+        
+        private void ExportAction()
+        {
+            _moveSetCharacter.ExportCurAction();
         }
         
         private void Update()

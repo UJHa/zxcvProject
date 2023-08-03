@@ -7,8 +7,17 @@
 // >> 애니메이션 타입(이후 콤보 가능 액션, 입력 가능 액션, 타격 가능 액션 등...)(개발 전까지는 후순위)
 // >> 다음 애니메이션 이동 시의 fade 시간 여부?(개발 전까지는 후순위)
 
+using System.IO;
 using Animancer;
 using UnityEngine;
+
+[System.Serializable]
+public class ExportAction
+{
+    public string clipName;
+    public float startRate;
+    public float endRate;
+}
 
 public class Action
 {
@@ -118,5 +127,22 @@ public class Action
     public AttackInfo GetaAttackInfo()
     {
         return _actionInfo.attackInfo;
+    }
+
+    public void Export()
+    {
+        ExportAction exportAction = new()
+        {
+            clipName = _animClip.name,
+            startRate = _startRate,
+            endRate = _endRate
+        };
+        Debug.Log($"Application.dataPath({Application.dataPath})");
+        // ToJson을 사용하면 JSON형태로 포멧팅된 문자열이 생성된다  
+        string jsonData = JsonUtility.ToJson(exportAction);
+        // 데이터를 저장할 경로 지정
+        string path = Path.Combine(Application.dataPath, "action.json");
+        // 파일 생성 및 저장
+        File.WriteAllText(path, jsonData);
     }
 }
