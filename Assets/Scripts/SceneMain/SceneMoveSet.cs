@@ -49,6 +49,9 @@ namespace SceneMain
             
             _uiManager.contextMenuPopup = _uiManager.CreateUI<UIContextMenuPopup>("Prefabs/UI/Common/ContextMenuPopup", UILayerType.LayerPopup);
             _uiManager.contextMenuPopup.Init();
+            
+            _uiManager.animCustomWindow = _uiManager.CreateUI<UILayoutWindow>("Prefabs/UI/AnimCustomLayout", UILayerType.LayerNormal);
+            _uiManager.animCustomWindow.Init();
         }
 
         private UIManager LoadUIManager()

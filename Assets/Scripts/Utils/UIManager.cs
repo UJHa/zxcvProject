@@ -10,6 +10,7 @@ namespace Utils
     {
         public UIAnimPlayerPage animPlayerPage;
         public UIContextMenuPopup contextMenuPopup;
+        public UILayoutWindow animCustomWindow;
     }
 }
 

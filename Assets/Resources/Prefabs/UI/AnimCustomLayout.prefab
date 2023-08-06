@@ -88,8 +88,9 @@ GameObject:
   - component: {fileID: 6187707296365977410}
   - component: {fileID: 7755951252005041058}
   - component: {fileID: 849622757043208145}
+  - component: {fileID: -8710298946445997932}
   m_Layer: 5
-  m_Name: AnimCustomUI
+  m_Name: AnimCustomLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,6 +180,18 @@ MonoBehaviour:
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!114 &-8710298946445997932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2825415157917866272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6981a806f64eb4806a8d545b7b4108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3609625744230596665
 GameObject:
   m_ObjectHideFlags: 0
