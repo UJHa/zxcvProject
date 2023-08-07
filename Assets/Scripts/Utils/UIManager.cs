@@ -16,6 +16,32 @@ namespace Utils
 
 namespace Utils
 {
+    public enum AnchorPresetType
+    {
+        TOP_LEFT,
+        TOP_CENTER,
+        TOP_RIGHT,
+        MIDDLE_LEFT,
+        MIDDLE_CENTER,
+        MIDDLE_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_CENTER,
+        BOTTOM_RIGHT,
+        VERT_STRETCH_LEFT,
+        VERT_STRETCH_CENTER,
+        VERT_STRETCH_RIGHT,
+        HOR_STRETCH_TOP,
+        HOR_STRETCH_MIDDLE,
+        HOR_STRETCH_BOTTOM,
+        STRETCH_ALL
+    }
+
+    public class AnchorVector
+    {
+        public Vector2 AnchorMin;
+        public Vector2 AnchorMax;
+    }
+    
     public enum UILayerType
     {
         LayerNormal,
@@ -27,8 +53,9 @@ namespace Utils
         private static UIManager instance = null;
         public static UIManager Instance => instance;
         private Dictionary<UILayerType, GameObject> _layerParents = new();
-        
-        
+        private Dictionary<AnchorPresetType, AnchorVector> _anchorVectors = new();
+
+
         private void Awake()
         {
             if (instance)
@@ -44,6 +71,92 @@ namespace Utils
                 if (Enum.TryParse<UILayerType>(tfm.name, out var uiLayerType))
                     _layerParents[uiLayerType] = tfm.gameObject;
             }
+
+            InitAnchors();
+        }
+
+        private void InitAnchors()
+        {
+            _anchorVectors.Add(AnchorPresetType.TOP_LEFT, new()
+            {
+                AnchorMin = new(0f,1f),
+                AnchorMax = new(0f,1f)
+            });
+            _anchorVectors.Add(AnchorPresetType.TOP_CENTER, new()
+            {
+                AnchorMin = new(0.5f,1f),
+                AnchorMax = new(0.5f,1f)
+            });
+            _anchorVectors.Add(AnchorPresetType.TOP_RIGHT, new()
+            {
+                AnchorMin = new(1f,1f),
+                AnchorMax = new(1f,1f)
+            });
+            _anchorVectors.Add(AnchorPresetType.MIDDLE_LEFT, new()
+            {
+                AnchorMin = new(0f,0.5f),
+                AnchorMax = new(0f,0.5f)
+            });
+            _anchorVectors.Add(AnchorPresetType.MIDDLE_CENTER, new()
+            {
+                AnchorMin = new(0.5f,0.5f),
+                AnchorMax = new(0.5f,0.5f)
+            });
+            _anchorVectors.Add(AnchorPresetType.MIDDLE_RIGHT, new()
+            {
+                AnchorMin = new(1f,0.5f),
+                AnchorMax = new(1f,0.5f)
+            });
+            _anchorVectors.Add(AnchorPresetType.BOTTOM_LEFT, new()
+            {
+                AnchorMin = new(0f,0f),
+                AnchorMax = new(0f,0f)
+            });
+            _anchorVectors.Add(AnchorPresetType.BOTTOM_CENTER, new()
+            {
+                AnchorMin = new(0.5f,0f),
+                AnchorMax = new(0.5f,0f)
+            });
+            _anchorVectors.Add(AnchorPresetType.BOTTOM_RIGHT, new()
+            {
+                AnchorMin = new(1f,0f),
+                AnchorMax = new(1f,0f)
+            });
+            _anchorVectors.Add(AnchorPresetType.VERT_STRETCH_LEFT, new()
+            {
+                AnchorMin = new(0f,0f),
+                AnchorMax = new(0f,1f)
+            });
+            _anchorVectors.Add(AnchorPresetType.VERT_STRETCH_CENTER, new()
+            {
+                AnchorMin = new(0.5f,0f),
+                AnchorMax = new(0.5f,1f)
+            });
+            _anchorVectors.Add(AnchorPresetType.VERT_STRETCH_RIGHT, new()
+            {
+                AnchorMin = new(1f,0f),
+                AnchorMax = new(1f,1f)
+            });
+            _anchorVectors.Add(AnchorPresetType.HOR_STRETCH_TOP, new()
+            {
+                AnchorMin = new(0f,1f),
+                AnchorMax = new(1f,1f)
+            });
+            _anchorVectors.Add(AnchorPresetType.HOR_STRETCH_MIDDLE, new()
+            {
+                AnchorMin = new(0f,0.5f),
+                AnchorMax = new(1f,0.5f)
+            });
+            _anchorVectors.Add(AnchorPresetType.HOR_STRETCH_BOTTOM, new()
+            {
+                AnchorMin = new(0f,0f),
+                AnchorMax = new(1f,0f)
+            });
+            _anchorVectors.Add(AnchorPresetType.STRETCH_ALL, new()
+            {
+                AnchorMin = new(0f,0f),
+                AnchorMax = new(1f,1f)
+            });
         }
 
         public T CreateUI<T>(string prefabPath, UILayerType layerType)
@@ -112,6 +225,11 @@ namespace Utils
         {
             var results = GetEventSystemRaycastResults();
             return results.Count > 0;
+        }
+
+        public AnchorVector GetAnchorVector(AnchorPresetType presetType)
+        {
+            return _anchorVectors[presetType];
         }
     }
 }
