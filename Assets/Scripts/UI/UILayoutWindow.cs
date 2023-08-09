@@ -24,7 +24,16 @@ namespace UI
             var bottomCenter = UIManager.Instance.GetAnchorVector(AnchorPresetType.BOTTOM_CENTER);
             _rectTransform.anchorMin = bottomCenter.AnchorMin;
             _rectTransform.anchorMax = bottomCenter.AnchorMax;
-            _rectTransform.sizeDelta = new(1920, 500);
+            _rectTransform.sizeDelta = new(1920, 300);
+            _rectTransform.pivot = new(0.5f, 0f);
+            var sliderObj = Resources.Load<UISlider>("Prefabs/UI/Common/UISlider");
+            if (sliderObj.TryGetComponent<RectTransform>(out var sliderRect))
+            {
+                var bottomStretch = UIManager.Instance.GetAnchorVector(AnchorPresetType.HOR_STRETCH_BOTTOM);
+                sliderRect.anchorMin = bottomStretch.AnchorMin;
+                sliderRect.anchorMax = bottomStretch.AnchorMax;
+            }
+            var animSlider = Instantiate(sliderObj, _scrollRect.content);
         }
     }
 }
