@@ -1,3 +1,6 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+
 namespace Utils
 {
     public class UmUtil
@@ -22,6 +25,25 @@ namespace Utils
         public static bool IsSliderHold()
         {
             return _isSliderHold;
+        }
+        
+        public static void SliderOnPointerDown(BaseEventData argData)
+        {
+            Debug.Log($"[testum]SliderOnPointerDown");
+            UmUtil.SetSliderHold(true);
+        }
+    
+        public static void SliderOnPointerUp(BaseEventData argData)
+        {
+            Debug.Log($"[testum]SliderOnPointerUp");
+            UmUtil.SetSliderHold(false);
+        }
+        
+        public static void SliderOnPointerClick(BaseEventData argData)
+        {
+            Debug.Log($"[testum]argData({argData.selectedObject})");
+            Debug.Log($"[testum]SliderOnPointerClick");
+            UmUtil.SetSliderHold(false);
         }
     }
 }

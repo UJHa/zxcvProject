@@ -78,6 +78,16 @@ public class Action
         _endRate = argRate;
     }
     
+    public float GetStartRate()
+    {
+        return _startRate;
+    }
+    
+    public float GetEndRate()
+    {
+        return _endRate;
+    }
+    
     public void GoToFirstFrame()
     {
         _curState.NormalizedTime = _startRate;
@@ -86,11 +96,6 @@ public class Action
     public void GoToEndFrame()
     {
         _curState.NormalizedTime = _endRate;
-    }
-    
-    public float GetEndRate()
-    {
-        return _endRate;
     }
     
     public float GetCurPlayRate()

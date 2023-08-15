@@ -39,7 +39,7 @@ namespace UI
         // 엄todo UI와 연결 의존도 낮추기 위해 제거되어야 한다.
         private MoveSetCharacter _moveSetCharacter;
         
-        public void Init(MoveSetCharacter moveSetCharacter, float minValue, float maxValue)
+        public void Init(MoveSetCharacter moveSetCharacter)
         {
             _moveSetCharacter = moveSetCharacter;
             var prefabName = _infoBtnPrefab.name;
@@ -59,26 +59,26 @@ namespace UI
 
             _infoBtnPrefab.name = prefabName;
 
-            _slider.Init(minValue, maxValue);
+            _slider.Init(moveSetCharacter.GetStartAnimRate(), moveSetCharacter.GetEndAnimRate());
 
             if (_slider.TryGetComponent<EventTrigger>(out var trigger))
             {
                 {
                     EventTrigger.Entry entry = new();
                     entry.eventID = EventTriggerType.PointerDown;
-                    entry.callback.AddListener(SliderOnPointerDown);
+                    entry.callback.AddListener(UmUtil.SliderOnPointerDown);
                     trigger.triggers.Add(entry);
                 }
                 {
                     EventTrigger.Entry entry = new();
                     entry.eventID = EventTriggerType.PointerUp;
-                    entry.callback.AddListener(SliderOnPointerUp);
+                    entry.callback.AddListener(UmUtil.SliderOnPointerUp);
                     trigger.triggers.Add(entry);
                 }
                 {
                     EventTrigger.Entry entry = new();
                     entry.eventID = EventTriggerType.PointerClick;
-                    entry.callback.AddListener(SliderOnPointerClick);
+                    entry.callback.AddListener(UmUtil.SliderOnPointerClick);
                     trigger.triggers.Add(entry);
                 }
             }
@@ -162,7 +162,7 @@ namespace UI
                 if (_moveSetCharacter.IsAnimRateFinish())
                 {
                     SetAnimEditState(AnimEditState.Stop);
-                    _slider.SetValue(_moveSetCharacter.GetFinishAnimRate());
+                    _slider.SetValue(_moveSetCharacter.GetEndAnimRate());
                     _moveSetCharacter.PlayFinish();
                 }
             }
@@ -183,25 +183,6 @@ namespace UI
         private void OnDestroy()
         {
             _play.onClick.RemoveAllListeners();
-        }
-
-        private void SliderOnPointerDown(BaseEventData argData)
-        {
-            Debug.Log($"[testum]SliderOnPointerDown");
-            UmUtil.SetSliderHold(true);
-        }
-    
-        private void SliderOnPointerUp(BaseEventData argData)
-        {
-            Debug.Log($"[testum]SliderOnPointerUp");
-            UmUtil.SetSliderHold(false);
-        }
-        
-        private void SliderOnPointerClick(BaseEventData argData)
-        {
-            Debug.Log($"[testum]argData({argData.selectedObject})");
-            Debug.Log($"[testum]SliderOnPointerClick");
-            UmUtil.SetSliderHold(false);
         }
 
         public void StartPin()

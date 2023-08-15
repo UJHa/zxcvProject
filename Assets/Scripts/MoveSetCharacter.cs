@@ -122,7 +122,12 @@ public class MoveSetCharacter : MonoBehaviour
         return _action.GetCurPlayRate();
     }
     
-    public float GetFinishAnimRate()
+    public float GetStartAnimRate()
+    {
+        return _action.GetStartRate();
+    }
+    
+    public float GetEndAnimRate()
     {
         return _action.GetEndRate();
     }

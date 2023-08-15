@@ -45,13 +45,13 @@ namespace SceneMain
             
             // 필요 UI 명세별 생성
             _uiManager.animPlayerPage = _uiManager.CreateUI<UIAnimPlayerPage>("Prefabs/UI/AnimPlayerPage", UILayerType.LayerNormal);
-            _uiManager.animPlayerPage.Init(_moveSetCharacter, animStartTime, animEndTime);
+            _uiManager.animPlayerPage.Init(_moveSetCharacter);
             
             _uiManager.contextMenuPopup = _uiManager.CreateUI<UIContextMenuPopup>("Prefabs/UI/Common/ContextMenuPopup", UILayerType.LayerPopup);
             _uiManager.contextMenuPopup.Init();
             
             _uiManager.animCustomWindow = _uiManager.CreateUI<UILayoutWindow>("Prefabs/UI/AnimCustomLayout", UILayerType.LayerNormal);
-            _uiManager.animCustomWindow.Init();
+            _uiManager.animCustomWindow.Init(_moveSetCharacter);
         }
 
         private UIManager LoadUIManager()
