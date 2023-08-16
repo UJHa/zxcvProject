@@ -98,3 +98,6 @@ Desktop.ini
 # Ignore Resource Example files
 [Ee]xample/
 [Ee]xamples/
+# External Resource Directories ignore files
+[Aa]ssets/AssetRecourses*
+[Aa]ssets/Plugins*
