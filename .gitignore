@@ -99,5 +99,5 @@ Desktop.ini
 [Ee]xample/
 [Ee]xamples/
 # External Resource Directories ignore folder files
-[Aa]ssets/AssetRecourses/
+[Aa]ssets/ExternalRecourses/
 [Aa]ssets/Plugins/
