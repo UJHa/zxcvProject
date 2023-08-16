@@ -92,5 +92,36 @@ namespace UI
                 }
             }
         }
+        
+        public void StartPin()
+        {
+            var pinStart = UIManager.Instance.CreateUI<Image>("Prefabs/UI/PinStart", UILayerType.LayerPopup);
+            
+            if (pinStart.TryGetComponent<RectTransform>(out var rfm))
+            {
+                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
+            }
+            UIManager.Instance.contextMenuPopup.Hide();
+            var startRate = UIManager.Instance.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
+            Debug.Log($"[startpin] position({pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
+            Debug.Log($"[startpin] startRate({startRate})");
+            // _startRate = GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
+            _moveSetCharacter.SetActionStartRate(startRate);
+        }
+
+        public void EndPin()
+        {
+            var pinEnd = UIManager.Instance.CreateUI<Image>("Prefabs/UI/PinEnd", UILayerType.LayerPopup);
+            
+            if (pinEnd.TryGetComponent<RectTransform>(out var rfm))
+            {
+                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
+            }
+            UIManager.Instance.contextMenuPopup.Hide();
+            var endRate = UIManager.Instance.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
+            Debug.Log($"[endpin] endRate({endRate})");
+            // _endRate = GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
+            _moveSetCharacter.SetActionEndRate(endRate);
+        }
     }
 }

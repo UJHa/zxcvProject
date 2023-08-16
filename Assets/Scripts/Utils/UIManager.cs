@@ -53,6 +53,7 @@ namespace Utils
         private static UIManager instance = null;
         public static UIManager Instance => instance;
         private Dictionary<UILayerType, GameObject> _layerParents = new();
+        private Dictionary<string, GameObject> _uiPrefabs = new();
         private Dictionary<AnchorPresetType, AnchorVector> _anchorVectors = new();
 
 
@@ -159,16 +160,27 @@ namespace Utils
             });
         }
 
+        // 엄todo : path로 UI 오브젝트 리소스 관리하기 
         public T CreateUI<T>(string prefabPath, UILayerType layerType)
         {
-            var uiPrefab = Resources.Load<GameObject>(prefabPath);
             if (false == _layerParents.ContainsKey(layerType))
             {
                 Debug.LogError($"CreateUI failed! Not Contain UILayerType({layerType})");
                 return default;
             }
 
-            var uiObj = Instantiate(uiPrefab, _layerParents[layerType].transform);
+            GameObject uiObj = null;
+            if (_uiPrefabs.ContainsKey(prefabPath))
+            {
+                uiObj = _uiPrefabs[prefabPath];
+            }
+            else
+            {
+                var uiPrefab = Resources.Load<GameObject>(prefabPath);
+                uiObj = Instantiate(uiPrefab, _layerParents[layerType].transform);
+                _uiPrefabs.Add(prefabPath, uiObj);
+            }
+            
             if (false == uiObj.TryGetComponent<T>(out T ui))
             {
                 Debug.LogError($"CreateUI failed! Not Contain UILayerType({layerType})");

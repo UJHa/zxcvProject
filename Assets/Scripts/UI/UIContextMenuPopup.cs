@@ -72,5 +72,18 @@ namespace UI
                 _menuBtnList.Add(btnObj);
             }
         }
+        
+        public float GetPositionToSliderRate(UISlider slider, float posX)
+        {
+            Vector3[] worldCorners = new Vector3[4];
+            slider.GetComponent<RectTransform>().GetWorldCorners(worldCorners);
+            // for (var i = 0; i < 4; i++)
+            // {
+            //     Debug.Log("[startpin]World Corner " + i + " : " + worldCorners[i]);
+            // }
+            float width = worldCorners[2].x - worldCorners[0].x;
+            float pinWidth = posX - worldCorners[0].x;
+            return pinWidth / width;
+        }
     }
 }

@@ -124,8 +124,6 @@ namespace UI
             }
             else
             {
-                _moveSetCharacter.SetActionStartRate(_startRate);
-                _moveSetCharacter.SetActionEndRate(_endRate);
                 _moveSetCharacter.PlayPinAnim();
                 SetAnimEditState(AnimEditState.Play);
             }
@@ -183,56 +181,6 @@ namespace UI
         private void OnDestroy()
         {
             _play.onClick.RemoveAllListeners();
-        }
-
-        public void StartPin()
-        {
-            if (null == _pinStart)
-            {
-                var pinObj = Resources.Load<Image>("Prefabs/UI/PinStart");
-                _pinStart = Instantiate(pinObj, transform);
-            }
-            
-            if (_pinStart.TryGetComponent<RectTransform>(out var rfm))
-            {
-                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
-            }
-            UIManager.Instance.contextMenuPopup.Hide();
-            Debug.Log($"[startpin] position({_pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
-            _startRate = GetPositionToSliderRate(rfm.anchoredPosition.x);
-            Debug.Log($"[startpin] startRate({_startRate})");
-            _moveSetCharacter.SetActionStartRate(_startRate);
-        }
-
-        public void EndPin()
-        {
-            if (null == _pinEnd)
-            {
-                var pinObj = Resources.Load<Image>("Prefabs/UI/PinEnd");
-                _pinEnd = Instantiate(pinObj, transform);
-            }
-            
-            if (_pinEnd.TryGetComponent<RectTransform>(out var rfm))
-            {
-                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
-            }
-            UIManager.Instance.contextMenuPopup.Hide();
-            _endRate = GetPositionToSliderRate(rfm.anchoredPosition.x);
-            Debug.Log($"[endpin] endRate({_endRate})");
-            _moveSetCharacter.SetActionEndRate(_endRate);
-        }
-
-        private float GetPositionToSliderRate(float posX)
-        {
-            Vector3[] worldCorners = new Vector3[4];
-            _slider.GetComponent<RectTransform>().GetWorldCorners(worldCorners);
-            // for (var i = 0; i < 4; i++)
-            // {
-            //     Debug.Log("[startpin]World Corner " + i + " : " + worldCorners[i]);
-            // }
-            float width = worldCorners[2].x - worldCorners[0].x;
-            float pinWidth = posX - worldCorners[0].x;
-            return pinWidth / width;
         }
     }
 }
