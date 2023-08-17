@@ -26,11 +26,8 @@ public class Action
     private readonly eState _state;
     private readonly AnimationClip _animClip;
     private AnimancerState _curState;
-    private readonly ActionInfo _actionInfo;
-    private float _startRate;
-    private float _endRate;
-    private float _startCollisionRate;
-    private float _endCollisionRate;
+    private ActionInfo _actionInfo;
+    private AttackInfo _attackInfo;
 
     public Action(AnimancerComponent animancer, eState state, KeyCode inputKey, ActionInfo actionInfo)
     {
@@ -38,11 +35,12 @@ public class Action
         _state = state;
         _inputKey = inputKey;
         _actionInfo = actionInfo;
-        _animClip = Resources.Load<AnimationClip>(actionInfo.clipPath);
-        _startRate = actionInfo.startAnimNormTime;
-        _endRate = actionInfo.endAnimNormTime;
-        _startCollisionRate = actionInfo.startCollisionNormTime;
-        _endCollisionRate = actionInfo.endCollisionNormTime;
+        _animClip = Resources.Load<AnimationClip>(actionInfo.GetClipPath());
+    }
+    
+    public void CreateAttackInfo(AttackRangeType attackRangeType, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    {
+        _attackInfo = new(attackRangeType, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
     }
 
     public eState GetState()
@@ -58,7 +56,7 @@ public class Action
     public AnimancerState Play(float fadeTime = 0f)
     {
         _curState = _animancer.Play(_animClip, fadeTime);
-        _curState.NormalizedTime = _startRate;
+        _curState.NormalizedTime = _actionInfo.GetStartRate();
         return _curState;
     }
     
@@ -70,32 +68,32 @@ public class Action
 
     public void SetStartRate(float argRate)
     {
-        _startRate = argRate;
+        _actionInfo.SetStartRate(argRate);
     }
     
     public void SetEndRate(float argRate)
     {
-        _endRate = argRate;
+        _actionInfo.SetEndRate(argRate);
     }
     
     public float GetStartRate()
     {
-        return _startRate;
+        return _actionInfo.GetStartRate();
     }
     
     public float GetEndRate()
     {
-        return _endRate;
+        return _actionInfo.GetEndRate();
     }
     
     public void GoToFirstFrame()
     {
-        _curState.NormalizedTime = _startRate;
+        _curState.NormalizedTime = _actionInfo.GetStartRate();
     }
     
     public void GoToEndFrame()
     {
-        _curState.NormalizedTime = _endRate;
+        _curState.NormalizedTime = _actionInfo.GetEndRate();
     }
     
     public float GetCurPlayRate()
@@ -106,32 +104,27 @@ public class Action
     // action 길이 기반 현재 비율 반환(미사용)
     public float GetLengthRate()
     {
-        return (_curState.NormalizedTime - _startRate) / GetRateLength();
-    }
-
-    public float GetRateLength()
-    {
-        return _endRate - _startRate;
+        return (_curState.NormalizedTime - _actionInfo.GetStartRate()) / _actionInfo.GetRateLength();
     }
 
     public bool IsAnimationFinish()
     {
-        return _curState.NormalizedTime >= _endRate;
+        return _curState.NormalizedTime >= _actionInfo.GetEndRate();
     }
     
     public bool IsCollisionEnable()
     {
-        return _curState.NormalizedTime >= _startCollisionRate && _curState.NormalizedTime <= _endCollisionRate;
+        return _curState.NormalizedTime >= _attackInfo.GetStartRate() && _curState.NormalizedTime <= _attackInfo.GetEndRate();
     }
 
     public AttackRangeType GetHitColliderType()
     {
-        return _actionInfo.AttackRangeType;
+        return _attackInfo.GetRangeType();
     }
     
     public AttackInfo GetaAttackInfo()
     {
-        return _actionInfo.attackInfo;
+        return _attackInfo;
     }
 
     public void Export()
@@ -139,8 +132,8 @@ public class Action
         ExportAction exportAction = new()
         {
             clipName = _animClip.name,
-            startRate = _startRate,
-            endRate = _endRate
+            startRate = _actionInfo.GetStartRate(),
+            endRate = _actionInfo.GetEndRate()
         };
         Debug.Log($"Application.dataPath({Application.dataPath})");
         // ToJson을 사용하면 JSON형태로 포멧팅된 문자열이 생성된다  
@@ -149,5 +142,10 @@ public class Action
         string path = Path.Combine(Application.dataPath, "action.json");
         // 파일 생성 및 저장
         File.WriteAllText(path, jsonData);
+    }
+
+    public ActionType GetActionType()
+    {
+        return _actionInfo.GetActionType();
     }
 }

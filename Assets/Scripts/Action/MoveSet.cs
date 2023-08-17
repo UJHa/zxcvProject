@@ -3,7 +3,13 @@ using Animancer;
 using UnityEngine;
 
 // MoveSet Action이 알아야 되는 정보
-//
+public enum ActionType
+{
+    NONE,
+    ATTACK,
+    DEFENCE,
+}
+
 public enum AttackRangeType
 {
     NONE,
@@ -23,30 +29,6 @@ public enum AttackType
     AIRBORNE,
 }
 
-public struct ActionInfo
-{
-    public string clipPath;
-    public float startAnimNormTime;
-    public float endAnimNormTime;
-    public AttackRangeType AttackRangeType;
-    public float startCollisionNormTime;
-    public float endCollisionNormTime;
-    // public AttackType attackType;
-    public AttackInfo attackInfo;
-    
-    public ActionInfo(string clipPath, float startAnimNormTime, float endAnimNormTime,
-        AttackRangeType attackRangeType, float startCollisionNormTime, float endCollisionNormTime,
-        AttackInfo attackInfo)
-    {
-        this.clipPath = clipPath;
-        this.startAnimNormTime = startAnimNormTime;
-        this.endAnimNormTime = endAnimNormTime;
-        this.AttackRangeType = attackRangeType;
-        this.startCollisionNormTime = startCollisionNormTime;
-        this.endCollisionNormTime = endCollisionNormTime;
-        this.attackInfo = attackInfo;
-    }
-}
 public class MoveSet
 {
     private Dictionary<eState, Action> _actionMap = new();          // [key:eState][value:Action]

@@ -25,26 +25,6 @@ public class ColliderInfo
     public eWallDirection colliderType;
 }
 
-public class AttackInfo
-{
-    public AttackType attackType;
-    public float attackHeight;
-    public float airborneUpTime;
-    
-    public AttackInfo()
-    {
-        attackType = AttackType.NONE;
-        attackHeight = 0f;
-    }
-
-    public AttackInfo(AttackType attackType, float attackHeight, float airborneUpTime)
-    {
-        this.attackType = attackType;
-        this.attackHeight = attackHeight;
-        this.airborneUpTime = airborneUpTime;
-    }
-}
-
 public enum eWallDirection
 {
     LEFT,
@@ -754,7 +734,7 @@ public class Character : MonoBehaviour
             if (attacker != this)
             {
                 AttackInfo attackInfo = attackCollider.GetAttackInfo();
-                AttackType attackType = attackInfo.attackType;
+                AttackType attackType = attackInfo.GetAttackType();
                 _attackedMaxHeight = attackInfo.attackHeight;
                 _airborneUpTime = attackInfo.airborneUpTime;
                 switch (attackType)

@@ -28,8 +28,7 @@ public class MoveSetCharacter : MonoBehaviour
 
     public void ChangeAction(string clipName, float animStartTime, float animEndTime)
     {
-        ActionInfo actionInfo = new(clipName, animStartTime, animEndTime, AttackRangeType.NONE,
-            0.0f, 0.3f, null);
+        ActionInfo actionInfo = new(ActionType.NONE, clipName, animStartTime, animEndTime);
         _action = new Action(_animancer, eState.NONE, KeyCode.None, actionInfo);
         _curState = _action.PlayOnly();
         // _action.GoToFirstFrame();
