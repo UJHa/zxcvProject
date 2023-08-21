@@ -63,6 +63,11 @@ public class Character : MonoBehaviour
     [Header("Stats")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _attackPower = 30f;
+    [SerializeField] private float _hp = 5f;
+    [SerializeField] private float _mp = 5f;
+    [SerializeField] private float _strength = 5f;
+    [SerializeField] private float _agility = 5f;
+    [SerializeField] private float _intellect = 5f;
     
     [Header("[ Anim CrossFadeTime ]")]
     [SerializeField] public float jumpUpStart = 0.07f;
