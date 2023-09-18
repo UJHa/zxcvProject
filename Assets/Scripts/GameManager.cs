@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,18 +13,23 @@ public class GameManager : MonoBehaviour
             return instance;
         }
     }
-    private void Awake()
+    public static bool IsExistInstance = false;
+    
+    public static void CreateInstance()
     {
-        if (instance)
+        if (null != Instance)
         {
-            Destroy(this.gameObject);
+            Debug.LogError($"InputManager 존재합니다!");
         }
 
-        instance = this;
+        var loadPrefab = Resources.Load<GameManager>("Prefabs/Manager/GameManager");
+        instance = Instantiate(loadPrefab);
+        instance.transform.SetAsFirstSibling();
+        IsExistInstance = true;
     }
 
     public Camera camera;
-    public GameObject player;
+    [FormerlySerializedAs("player")] public GameObject mainPlayer;
     public Vector3 adjust_pos = new Vector3(0.0f, 0.1f, 4.0f);
     [SerializeField]
     private Canvas canvas;
@@ -33,11 +39,14 @@ public class GameManager : MonoBehaviour
     private int totalCount = 0;
     private string clearText = "성공";
 
-    void Start()
+    public void Init()
     {
         InputManager.CreateInstance();
         InputManager.Instance.Init();
-        
+    }
+
+    void Start()
+    {
         foreach(NonPlayer enemy in GameObject.FindObjectsOfType<NonPlayer>())
         {
             enemies.Add(enemy);
@@ -49,7 +58,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (camera)
-            camera.transform.position = player.transform.position + adjust_pos;
+            camera.transform.position = mainPlayer.transform.position + adjust_pos;
         
         if (InputManager.IsExistInstance)
             InputManager.Instance.Update();
@@ -102,4 +111,9 @@ public class GameManager : MonoBehaviour
     }
 
     public Vector3 GetPlayerUIPos() => playerPos;
+
+    public void SetMainPlayer()
+    {
+        mainPlayer = FindObjectOfType<Player>().gameObject;
+    }
 }

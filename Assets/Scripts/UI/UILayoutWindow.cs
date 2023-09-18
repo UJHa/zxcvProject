@@ -8,6 +8,7 @@ namespace UI
 {
     public class UILayoutWindow : MonoBehaviour
     {
+        private UIManagerTool _uiManager;
         private RectTransform _rectTransform;
         private ScrollRect _scrollRect;
 
@@ -16,6 +17,7 @@ namespace UI
         [SerializeField] private UISlider _slider;
         public void Init(MoveSetCharacter moveSetCharacter)
         {
+            _uiManager = UIManagerTool.Instance;
             _moveSetCharacter = moveSetCharacter;
             if (TryGetComponent<RectTransform>(out var rectTransform))
                 _rectTransform = rectTransform;
@@ -28,7 +30,7 @@ namespace UI
             }
 
             // window 구성 세팅 작업
-            var bottomCenter = UIManager.Instance.GetAnchorVector(AnchorPresetType.BOTTOM_CENTER);
+            var bottomCenter = UIManagerTool.Instance.GetAnchorVector(AnchorPresetType.BOTTOM_CENTER);
             _rectTransform.anchorMin = bottomCenter.AnchorMin;
             _rectTransform.anchorMax = bottomCenter.AnchorMax;
             _rectTransform.sizeDelta = new(1920, 300);
@@ -36,7 +38,7 @@ namespace UI
             var sliderObj = Resources.Load<UISlider>("Prefabs/UI/Common/UISlider");
             if (sliderObj.TryGetComponent<RectTransform>(out var sliderRect))
             {
-                var bottomStretch = UIManager.Instance.GetAnchorVector(AnchorPresetType.HOR_STRETCH_BOTTOM);
+                var bottomStretch = UIManagerTool.Instance.GetAnchorVector(AnchorPresetType.HOR_STRETCH_BOTTOM);
                 sliderRect.anchorMin = bottomStretch.AnchorMin;
                 sliderRect.anchorMax = bottomStretch.AnchorMax;
             }
@@ -95,14 +97,14 @@ namespace UI
         
         public void StartPin()
         {
-            var pinStart = UIManager.Instance.CreateUI<Image>("Prefabs/UI/PinStart", UILayerType.LayerPopup);
+            var pinStart = _uiManager.CreateUI<Image>("Prefabs/UI/PinStart", UILayerType.LayerPopup);
             
             if (pinStart.TryGetComponent<RectTransform>(out var rfm))
             {
-                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
+                rfm.anchoredPosition = _uiManager.contextMenuPopup.transform.position;
             }
-            UIManager.Instance.contextMenuPopup.Hide();
-            var startRate = UIManager.Instance.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
+            _uiManager.contextMenuPopup.Hide();
+            var startRate = _uiManager.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
             Debug.Log($"[startpin] position({pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
             Debug.Log($"[startpin] startRate({startRate})");
             // _startRate = GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
@@ -111,14 +113,14 @@ namespace UI
 
         public void EndPin()
         {
-            var pinEnd = UIManager.Instance.CreateUI<Image>("Prefabs/UI/PinEnd", UILayerType.LayerPopup);
+            var pinEnd = _uiManager.CreateUI<Image>("Prefabs/UI/PinEnd", UILayerType.LayerPopup);
             
             if (pinEnd.TryGetComponent<RectTransform>(out var rfm))
             {
-                rfm.anchoredPosition = UIManager.Instance.contextMenuPopup.transform.position;
+                rfm.anchoredPosition = _uiManager.contextMenuPopup.transform.position;
             }
-            UIManager.Instance.contextMenuPopup.Hide();
-            var endRate = UIManager.Instance.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
+            _uiManager.contextMenuPopup.Hide();
+            var endRate = _uiManager.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
             Debug.Log($"[endpin] endRate({endRate})");
             // _endRate = GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
             _moveSetCharacter.SetActionEndRate(endRate);

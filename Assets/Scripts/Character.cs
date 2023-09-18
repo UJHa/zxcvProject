@@ -4,6 +4,7 @@ using Animancer;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 
 public class StateInfo
 {
@@ -63,11 +64,11 @@ public class Character : MonoBehaviour
     [Header("Stats")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _attackPower = 30f;
-    [SerializeField] private float _hp = 5f;
-    [SerializeField] private float _mp = 5f;
-    [SerializeField] private float _strength = 5f;
-    [SerializeField] private float _agility = 5f;
-    [SerializeField] private float _intellect = 5f;
+    [SerializeField] protected float _hp = 5f;
+    [SerializeField] protected float _mp = 5f;
+    [SerializeField] protected float _strength = 5f;
+    [SerializeField] protected float _agility = 5f;
+    [SerializeField] protected float _intellect = 5f;
     
     [Header("[ Anim CrossFadeTime ]")]
     [SerializeField] public float jumpUpStart = 0.07f;
@@ -177,6 +178,23 @@ public class Character : MonoBehaviour
                 _hitColliderMap.Add(hitCollider.GetHitType(), hitCollider);
             }
         }
+
+        InitStats();
+    }
+
+    protected virtual void InitStats()
+    {
+        _hp = 5f;
+        _mp = 5f;
+        _strength = 5f;
+        _agility = 5f;
+        _intellect = 5f;
+        CalculateStats();
+    }
+
+    public void CalculateStats()
+    {
+        // stats 변경에 따른 데이터 연산용 함수
     }
 
     private void MakeFixedDeltaTimeCurve(AnimationCurve curve, float argMaxTime)
@@ -249,21 +267,13 @@ public class Character : MonoBehaviour
         
     }
 
-    protected virtual void StartUI()
+    protected void StartUI()
     {
         _curHp = _fullHp;
-        GameObject prefab = Resources.Load("Prefabs/HpSlider") as GameObject;
-        GameObject hpSlider = GameObject.Instantiate(prefab);
-        
-        hpSlider.transform.SetParent(GameManager.Instance.GetCanvas());
-        hpSlider.transform.SetAsFirstSibling();
-        //hpSlider.transform.localScale = Vector3.one;
-        slider = hpSlider.GetComponent<Slider>();
-
-        slider.gameObject.SetActive(true);
+        UIManagerInGame.Instance.hudManager.AddPlayerSlider(GetHashCode(), this);
     }
 
-    protected virtual void UpdateUI()
+    protected void UpdateUI()
     {
         Vector3 sliderPos = transform.position;
         sliderPos.y += 2f;
@@ -274,7 +284,8 @@ public class Character : MonoBehaviour
 
         sliderScale = Vector3.Magnitude(playerUIDistance) / Vector3.Magnitude(currentUIDistance);
         slider.gameObject.transform.localScale = Vector3.one * sliderScale;
-        slider.value = _curHp / _fullHp;
+        // 엄todo 이 코드는 체력 변경 시 마다 호출하도록 변경 필요
+        UIManagerInGame.Instance.hudManager.SetSliderValue(GetHashCode(), _curHp / _fullHp);
     }
 
     private void FixedUpdate()
@@ -420,11 +431,6 @@ public class Character : MonoBehaviour
             _changeStates.Clear();
         }
         _stateMap[_curState].UpdateState();
-    }
-
-    private void LateUpdate()
-    {
-        UpdateUI();
     }
 
     private eState SelectNextState()
@@ -609,6 +615,12 @@ public class Character : MonoBehaviour
         // transform.eulerAngles = euler;
     }
 
+    void SetDamage(float damage)
+    {
+        _curHp -= damage;
+        UIManagerInGame.Instance.hudManager.SetSliderValue(GetHashCode(), _curHp / _fullHp);
+    }
+
     public Vector3 GetDirectionVector()
     {
         return _directionVector;
@@ -731,7 +743,6 @@ public class Character : MonoBehaviour
     {
         // 피해 받았을때 진입
         // other : attacker
-        // name : defender
         if (other.TryGetComponent<AttackCollider>(out var attackCollider))
         {
             Debug.Log($"[testum][name:{name}]be hit other({other.name})");
@@ -742,6 +753,8 @@ public class Character : MonoBehaviour
                 AttackType attackType = attackInfo.GetAttackType();
                 _attackedMaxHeight = attackInfo.attackHeight;
                 _airborneUpTime = attackInfo.airborneUpTime;
+                var damage = attackInfo.damageRatio * attacker._strength;
+                SetDamage(damage);
                 switch (attackType)
                 {
                     case AttackType.NONE:

@@ -16,14 +16,14 @@ public class Player : Character
         _moveSet.RegisterAction(eState.ATTACK, KeyCode.C, eState.IDLE, new ActionInfo(ActionType.ATTACK, "Animation/Lucy_FightFist01_1", 0f, 0.7f));
         _moveSet.RegisterAction(eState.ATTACK2, KeyCode.C, eState.ATTACK, new ActionInfo(ActionType.ATTACK, "Animation/Lucy_FightFist01_2", 0.1f, 0.5f));
         _moveSet.RegisterAction(eState.ATTACK3, KeyCode.C, eState.ATTACK2, new ActionInfo(ActionType.ATTACK, "Animation/Lucy_FightFist02_2b_1", 0f, 0.4f));
-        SettingAttackInfo(eState.ATTACK, AttackRangeType.PUNCH_A, 0.15f, 0.4f, AttackType.NORMAL, 0.1f , 0.2f);
-        SettingAttackInfo(eState.ATTACK2, AttackRangeType.PUNCH_A, 0.0f, 0.3f, AttackType.NORMAL, 0.1f, 0.2f);
-        SettingAttackInfo(eState.ATTACK3, AttackRangeType.PUNCH_B, 0.1f, 0.2f, AttackType.AIRBORNE, 3.5f, 1f);
+        SettingAttackInfo(eState.ATTACK, AttackRangeType.PUNCH_A, 1f, 0.15f, 0.4f, AttackType.NORMAL, 0.1f , 0.2f);
+        SettingAttackInfo(eState.ATTACK2, AttackRangeType.PUNCH_A, 1f, 0.0f, 0.3f, AttackType.NORMAL, 0.1f, 0.2f);
+        SettingAttackInfo(eState.ATTACK3, AttackRangeType.PUNCH_B, 1f, 0.1f, 0.2f, AttackType.AIRBORNE, 3.5f, 1f);
         // Kick
         _moveSet.RegisterAction(eState.ATTACK4, KeyCode.X, eState.IDLE, new ActionInfo(ActionType.ATTACK, "Animation/Lucy_Kick13_Root", 0f, 0.5f));
         _moveSet.RegisterAction(eState.ATTACK5, KeyCode.X, eState.ATTACK4, new ActionInfo(ActionType.ATTACK, "Animation/Lucy_Kick12_Root", 0f, 0.35f));
-        SettingAttackInfo(eState.ATTACK4, AttackRangeType.KICK_B, 0.25f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
-        SettingAttackInfo(eState.ATTACK5, AttackRangeType.KICK_A, 0.15f, 0.18f, AttackType.NORMAL, 0.2f, 0.3f);
+        SettingAttackInfo(eState.ATTACK4, AttackRangeType.KICK_B, 1f, 0.25f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
+        SettingAttackInfo(eState.ATTACK5, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, AttackType.NORMAL, 0.2f, 0.3f);
         
         _moveSet.RegisterAction(eState.NORMAL_DAMAGED, KeyCode.Z, eState.IDLE, new ActionInfo(ActionType.NONE, "Animation/Damaged", 0f, 1.0f));
         _moveSet.RegisterAction(eState.AIRBORNE_DAMAGED, KeyCode.None, eState.IDLE, new ActionInfo(ActionType.NONE, "Animation/DamageAir_Start", 0f, 0.6f));
@@ -55,33 +55,25 @@ public class Player : Character
 
         _stateMap[_curState].StartState();
     }
+    
+    protected override void InitStats()
+    {
+        _hp = 5f;
+        _mp = 5f;
+        _strength = 5f;
+        _agility = 5f;
+        _intellect = 5f;
+        CalculateStats();
+    }
 
-    private void SettingAttackInfo(eState argState, AttackRangeType attackRangeType, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    private void SettingAttackInfo(eState argState, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
     {
         var action = _moveSet.GetAction(argState);
         ActionType aType = action.GetActionType();
         if (aType == ActionType.ATTACK)
         {
-            action.CreateAttackInfo(attackRangeType, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
+            action.CreateAttackInfo(attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
         }
-    }
-
-    protected override void StartUI()
-    {
-        base.StartUI();
-        
-        Vector3 sliderPos = transform.position;
-        sliderPos.y += 2f;
-        GameManager.Instance.SetPlayerUIPos(sliderPos);
-        slider.transform.position = Camera.main.WorldToScreenPoint(sliderPos);
-    }
-
-    protected override void UpdateUI()
-    {
-        base.UpdateUI();
-        Vector3 sliderPos = transform.position;
-        sliderPos.y += 2f;
-        GameManager.Instance.SetPlayerUIPos(transform.position);
     }
 
     public override void DeadDisable()

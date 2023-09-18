@@ -7,10 +7,14 @@ namespace SceneMain
     public class SceneDev : MonoBehaviour
     {
         private Canvas _canvas = null;
-        private UIManager _uiManager = null;
+        private UIManagerInGame _uiManager = null;
         private MoveSetCharacter _moveSetCharacter;
         private void Awake()
         {
+            GameManager.CreateInstance();
+            GameManager.Instance.Init();
+            GameManager.Instance.camera = Camera.main;
+            
             var canvasObj = GameObject.Find("Canvas");
             if (null != canvasObj)
             {
@@ -31,27 +35,22 @@ namespace SceneMain
             {
                 Debug.Log($"[testum]uiManager({_uiManager}) fail");
             }
-            
-            // 엄todo : Character 스포너 만들어서 동적 생성하기 
-            // _moveSetCharacter = CreateCharacter();
-            // _moveSetCharacter.Init(animStartTime, animEndTime);
-            
             // 필요 UI 명세별 생성
-            // _uiManager.animCustomWindow = _uiManager.CreateUI<UILayoutWindow>("Prefabs/UI/AnimCustomLayout", UILayerType.LayerNormal);
-            // _uiManager.animCustomWindow.Init(_moveSetCharacter);
-            //
-            // _uiManager.animPlayerPage = _uiManager.CreateUI<UIAnimPlayerPage>("Prefabs/UI/AnimPlayerPage", UILayerType.LayerNormal);
-            // _uiManager.animPlayerPage.Init(_moveSetCharacter);
-            //
-            // _uiManager.contextMenuPopup = _uiManager.CreateUI<UIContextMenuPopup>("Prefabs/UI/Common/ContextMenuPopup", UILayerType.LayerPopup);
-            // _uiManager.contextMenuPopup.Init();
-            //
-            // _uiManager.animPlayerPage.transform.SetAsLastSibling();
+            _uiManager.hudManager = _uiManager.CreateUI<UIHudManager>("Prefabs/UI/HudManager", UILayerType.LayerNormal);
+            _uiManager.hudManager.Init();
+            
+            var spawners = GameObject.FindObjectsOfType<Spawner>();
+            foreach (var spawner in spawners)
+            {
+                spawner.SpawnObject();
+            }
+
+            GameManager.Instance.SetMainPlayer();
         }
 
-        private UIManager LoadUIManager()
+        private UIManagerInGame LoadUIManager()
         {
-            var loadPrefab = Resources.Load<GameObject>("Prefabs/UIManager");
+            var loadPrefab = Resources.Load<GameObject>("Prefabs/UIManagerInGame");
             if (null == loadPrefab)
             {
                 Debug.LogError($"[testum]uiManager({loadPrefab}) fail");
@@ -62,7 +61,7 @@ namespace SceneMain
             var uiManagerObj = Instantiate(loadPrefab, _canvas.transform);
             if (null == uiManagerObj)
                 return null;
-            if (false == uiManagerObj.TryGetComponent<UIManager>(out var uiMgr))
+            if (false == uiManagerObj.TryGetComponent<UIManagerInGame>(out var uiMgr))
                 return null;
         
             return uiMgr;

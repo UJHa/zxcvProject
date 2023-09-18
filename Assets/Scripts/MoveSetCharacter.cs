@@ -40,7 +40,7 @@ public class MoveSetCharacter : MonoBehaviour
 
     private void Update()
     {
-        if (UIManager.Instance.IsRaycastUI())
+        if (UIManagerInGame.Instance.IsRaycastUI())
             return;
         if (UmUtil.IsSliderHold())
             return;

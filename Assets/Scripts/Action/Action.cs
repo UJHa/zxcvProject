@@ -38,9 +38,9 @@ public class Action
         _animClip = Resources.Load<AnimationClip>(actionInfo.GetClipPath());
     }
     
-    public void CreateAttackInfo(AttackRangeType attackRangeType, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    public void CreateAttackInfo(AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
     {
-        _attackInfo = new(attackRangeType, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
+        _attackInfo = new(attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
     }
 
     public eState GetState()

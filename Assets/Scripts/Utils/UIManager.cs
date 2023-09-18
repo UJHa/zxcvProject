@@ -8,9 +8,7 @@ namespace Utils
 {
     public partial class UIManager
     {
-        public UIAnimPlayerPage animPlayerPage;
-        public UIContextMenuPopup contextMenuPopup;
-        public UILayoutWindow animCustomWindow;
+        
     }
 }
 
@@ -50,21 +48,13 @@ namespace Utils
     }
     public partial class UIManager : MonoBehaviour
     {
-        private static UIManager instance = null;
-        public static UIManager Instance => instance;
         private Dictionary<UILayerType, GameObject> _layerParents = new();
         private Dictionary<string, GameObject> _uiPrefabs = new();
         private Dictionary<AnchorPresetType, AnchorVector> _anchorVectors = new();
-
-
+        
         private void Awake()
         {
-            if (instance)
-            {
-                Destroy(this.gameObject);
-            }
-
-            instance = this;
+            InitInstance();
             Debug.Log($"uimanager awake");
             foreach (Transform tfm in transform)
             {
@@ -74,6 +64,11 @@ namespace Utils
             }
 
             InitAnchors();
+        }
+
+        protected virtual void InitInstance()
+        {
+            
         }
 
         private void InitAnchors()
@@ -160,7 +155,6 @@ namespace Utils
             });
         }
 
-        // 엄todo : path로 UI 오브젝트 리소스 관리하기 
         public T CreateUI<T>(string prefabPath, UILayerType layerType)
         {
             if (false == _layerParents.ContainsKey(layerType))
@@ -189,39 +183,10 @@ namespace Utils
 
             return ui;
         }
-
-        private void Update()
-        {
-            UpdateClick();
-        }
         
-        private void UpdateClick()
+        public AnchorVector GetAnchorVector(AnchorPresetType presetType)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (false == IsRaycastUI())
-                {
-                    contextMenuPopup.Hide();
-                }
-            }
-            else if (Input.GetMouseButtonUp(1))
-            {
-                var results = GetEventSystemRaycastResults();
-                if (results.Count > 0)
-                {
-                    if (results[0].gameObject.TryGetComponent<UIWidget>(out var widget))
-                    {
-                        var obj = widget.GetOwner();
-                        if (obj.TryGetComponent<UISlider>(out var slider))
-                        {
-                            List<MenuAction> menuList = slider.GetMenuList();
-                            contextMenuPopup.SetupMenus(menuList);
-                            Debug.Log($"[testum]Raycast result on");
-                            contextMenuPopup.Show();
-                        }
-                    }
-                }
-            }
+            return _anchorVectors[presetType];
         }
         
         public List<RaycastResult> GetEventSystemRaycastResults()
@@ -237,11 +202,6 @@ namespace Utils
         {
             var results = GetEventSystemRaycastResults();
             return results.Count > 0;
-        }
-
-        public AnchorVector GetAnchorVector(AnchorPresetType presetType)
-        {
-            return _anchorVectors[presetType];
         }
     }
 }

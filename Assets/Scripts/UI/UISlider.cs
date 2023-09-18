@@ -42,12 +42,12 @@ namespace UI
             _menuList.Add(new MenuAction
             {
                 btnName = "Start Pin",
-                btnAction = UIManager.Instance.animCustomWindow.StartPin
+                btnAction = UIManagerTool.Instance.animCustomWindow.StartPin
             });
             _menuList.Add(new MenuAction
             {
                 btnName = "End Pin",
-                btnAction = UIManager.Instance.animCustomWindow.EndPin
+                btnAction = UIManagerTool.Instance.animCustomWindow.EndPin
             });
         }
 

@@ -4,6 +4,7 @@ public class AttackInfo
     private float _endRate;
     private AttackType _attackType;
     private AttackRangeType _attackRangeType;
+    public float damageRatio;
     public float attackHeight;
     public float airborneUpTime;
     
@@ -13,9 +14,10 @@ public class AttackInfo
         attackHeight = 0f;
     }
 
-    public AttackInfo(AttackRangeType attackRangeType, float startRate, float endRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    public AttackInfo(AttackRangeType attackRangeType, float damageRatio, float startRate, float endRate, AttackType attackType, float attackHeight, float airborneUpTime)
     {
         _attackRangeType = attackRangeType;
+        this.damageRatio = damageRatio;
         _startRate = startRate;
         _endRate = endRate;
         this._attackType = attackType;

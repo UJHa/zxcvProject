@@ -10,7 +10,7 @@ namespace SceneMain
         private float oneFrameTime;
         
         private Canvas _canvas = null;
-        private UIManager _uiManager = null;
+        private UIManagerTool _uiManager = null;
         private MoveSetCharacter _moveSetCharacter;
         private void Awake()
         {
@@ -57,9 +57,9 @@ namespace SceneMain
             _uiManager.animPlayerPage.transform.SetAsLastSibling();
         }
 
-        private UIManager LoadUIManager()
+        private UIManagerTool LoadUIManager()
         {
-            var loadPrefab = Resources.Load<GameObject>("Prefabs/UIManager");
+            var loadPrefab = Resources.Load<GameObject>("Prefabs/UIManagerTool");
             if (null == loadPrefab)
             {
                 Debug.LogError($"[testum]uiManager({loadPrefab}) fail");
@@ -70,7 +70,7 @@ namespace SceneMain
             var uiManagerObj = Instantiate(loadPrefab, _canvas.transform);
             if (null == uiManagerObj)
                 return null;
-            if (false == uiManagerObj.TryGetComponent<UIManager>(out var uiMgr))
+            if (false == uiManagerObj.TryGetComponent<UIManagerTool>(out var uiMgr))
                 return null;
         
             return uiMgr;
