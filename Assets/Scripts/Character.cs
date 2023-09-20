@@ -273,21 +273,6 @@ public class Character : MonoBehaviour
         UIManagerInGame.Instance.hudManager.AddPlayerSlider(GetHashCode(), this);
     }
 
-    protected void UpdateUI()
-    {
-        Vector3 sliderPos = transform.position;
-        sliderPos.y += 2f;
-        slider.transform.position = Camera.main.WorldToScreenPoint(sliderPos);
-
-        Vector3 playerUIDistance = Camera.main.transform.position - GameManager.Instance.GetPlayerUIPos();
-        Vector3 currentUIDistance = Camera.main.transform.position - sliderPos;
-
-        sliderScale = Vector3.Magnitude(playerUIDistance) / Vector3.Magnitude(currentUIDistance);
-        slider.gameObject.transform.localScale = Vector3.one * sliderScale;
-        // 엄todo 이 코드는 체력 변경 시 마다 호출하도록 변경 필요
-        UIManagerInGame.Instance.hudManager.SetSliderValue(GetHashCode(), _curHp / _fullHp);
-    }
-
     private void FixedUpdate()
     {
         // ground check
@@ -619,6 +604,11 @@ public class Character : MonoBehaviour
     {
         _curHp -= damage;
         UIManagerInGame.Instance.hudManager.SetSliderValue(GetHashCode(), _curHp / _fullHp);
+        if (_curHp <= 0f)
+        {
+            _curHp = 0f;
+            ChangeState(eState.DEAD);
+        }
     }
 
     public Vector3 GetDirectionVector()
@@ -741,6 +731,8 @@ public class Character : MonoBehaviour
 
     public void OnHit(Collider other)
     {
+        if (eState.DEAD == _curState)
+            return;
         // 피해 받았을때 진입
         // other : attacker
         if (other.TryGetComponent<AttackCollider>(out var attackCollider))
@@ -812,8 +804,9 @@ public class Character : MonoBehaviour
 
     public virtual void DeadDisable()
     {
+        // 이건 deadState 이후 시체가 사라질 때 처리하는 함수로 쓰자.
         gameObject.SetActive(false);
-        slider.gameObject.SetActive(false);
+        // slider.gameObject.SetActive(false);
     }
 
     public RaycastHit[] GetGroundCheckObjects()

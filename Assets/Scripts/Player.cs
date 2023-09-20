@@ -30,6 +30,7 @@ public class Player : Character
         _moveSet.RegisterAction(eState.DAMAGED_AIRBORNE_LOOP, KeyCode.Z, eState.AIRBORNE_DAMAGED, new ActionInfo(ActionType.NONE, "Animation/DamageAir_Fall", 0f, 1f));
         _moveSet.RegisterAction(eState.DAMAGED_LANDING, KeyCode.None, eState.DAMAGED_AIRBORNE_LOOP, new ActionInfo(ActionType.NONE, "Animation/DamageAir_End_Light", 0f, 1f));
         _moveSet.RegisterAction(eState.WAKE_UP, KeyCode.None, eState.DAMAGED_LANDING, new ActionInfo(ActionType.NONE, "Animation/LyingBack_WakeUp", 0f, 1f));
+        _moveSet.RegisterAction(eState.DEAD, KeyCode.None, eState.NONE, new ActionInfo(ActionType.NONE, "Animation/DamageAir_End_Light", 0.8f, 1f));
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
         _stateMap.Add(eState.IDLE, new IdleState(this, eState.IDLE));

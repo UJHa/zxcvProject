@@ -11,6 +11,7 @@ public class DeadState : State
     public override void StartState()
     {
         base.StartState();
+        _action.Play();
     }
 
     public override void FixedUpdateState()
@@ -24,6 +25,6 @@ public class DeadState : State
 
     public override void UpdateState()
     {
-        _character.DeadDisable();
+        
     }
 }
