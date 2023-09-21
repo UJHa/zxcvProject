@@ -150,6 +150,9 @@ public class Character : MonoBehaviour
 
     protected float _attackedMaxHeight = 0f;
     protected float _airborneUpTime = 0f;
+
+    // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
+    private GameObject hitFx;
     
     private void Awake()
     {
@@ -180,6 +183,7 @@ public class Character : MonoBehaviour
         }
 
         InitStats();
+        hitFx = Resources.Load<GameObject>("Prefabs/StatusFx/Hits/Hit_01");
     }
 
     protected virtual void InitStats()
@@ -752,6 +756,9 @@ public class Character : MonoBehaviour
                     case AttackType.NONE:
                         break;
                     case AttackType.NORMAL:
+                        var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+                        var hitFxObj = Instantiate(hitFx);
+                        hitFxObj.transform.position = closePos;
                         // 엄todo: isGround 및 피격 여부로 체크 변경하기
                         if (false == _isGround)
                             ChangeState(eState.AIRBORNE_DAMAGED);
