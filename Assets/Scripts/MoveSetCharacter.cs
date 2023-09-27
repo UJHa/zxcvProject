@@ -28,8 +28,7 @@ public class MoveSetCharacter : MonoBehaviour
 
     public void ChangeAction(string clipName, float animStartTime, float animEndTime)
     {
-        ActionInfo actionInfo = new(ActionType.NONE, clipName, animStartTime, animEndTime);
-        _action = new Action(_animancer, eState.NONE, KeyCode.None, actionInfo);
+        _action = new Action(_animancer, eState.NONE, KeyCode.None);
         _curState = _action.PlayOnly();
         // _action.GoToFirstFrame();
         PauseAnim();
@@ -40,7 +39,7 @@ public class MoveSetCharacter : MonoBehaviour
 
     private void Update()
     {
-        if (UIManagerInGame.Instance.IsRaycastUI())
+        if (UIManagerTool.Instance.IsRaycastUI())
             return;
         if (UmUtil.IsSliderHold())
             return;

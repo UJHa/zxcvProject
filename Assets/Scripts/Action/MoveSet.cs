@@ -48,7 +48,7 @@ public class MoveSet
         _animancer = player.GetComponent<AnimancerComponent>();
     }
     
-    public void RegisterAction(eState actionState, KeyCode inputKey, eState enableState, ActionInfo actionInfo)
+    public void RegisterAction(eState actionState, KeyCode inputKey, eState enableState)
     {
         if (_actionMap.ContainsKey(actionState))
         {
@@ -56,7 +56,7 @@ public class MoveSet
         }
         else
         {
-            _actionMap.Add(actionState, new Action(_animancer, actionState, inputKey, actionInfo));
+            _actionMap.Add(actionState, new Action(_animancer, actionState, inputKey));
         }
 
         var action = _actionMap[actionState];
