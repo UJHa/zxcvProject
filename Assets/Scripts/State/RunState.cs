@@ -4,8 +4,6 @@ using UnityEditor;
 
 public class RunState : State
 {
-    private AnimationClip _animClip;
-
     public RunState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -14,9 +12,7 @@ public class RunState : State
     {
         base.StartState();
         _character.SetMoveSpeedToRun();
-        if (null == _animClip)
-            _animClip = Resources.Load<AnimationClip>("Animation/Run");
-        _animancer.Play(_animClip, _character.runStart);
+        _action.Play(_character.runStart);
     }
 
     public override void FixedUpdateState()

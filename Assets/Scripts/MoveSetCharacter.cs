@@ -23,12 +23,13 @@ public class MoveSetCharacter : MonoBehaviour
     
     public void Init(float animStartTime, float animEndTime)
     {
-        ChangeAction("Animation/Lucy_FightFist01_2", animStartTime, animEndTime);
+        // ChangeAction("Animation/Lucy_FightFist01_2", animStartTime, animEndTime);
     }
 
+    // ChangeAction이 가지고 있는 액션일 때는 json 로드로 생성하는 기능 구현하기
     public void ChangeAction(string clipName, float animStartTime, float animEndTime)
     {
-        _action = new Action(_animancer, eState.NONE, KeyCode.None);
+        _action = new Action(_animancer, clipName);
         _curState = _action.PlayOnly();
         // _action.GoToFirstFrame();
         PauseAnim();
@@ -101,6 +102,8 @@ public class MoveSetCharacter : MonoBehaviour
 
     public bool IsPlaying()
     {
+        if (null == _action || null == _curState)
+            return false;
         return _curState.IsPlaying;
     }
 
@@ -122,11 +125,15 @@ public class MoveSetCharacter : MonoBehaviour
     
     public float GetStartAnimRate()
     {
+        if (null == _action)
+            return 0f;
         return _action.GetStartRate();
     }
     
     public float GetEndAnimRate()
     {
+        if (null == _action)
+            return 1f;
         return _action.GetEndRate();
     }
     

@@ -33,9 +33,6 @@ public class MoveSet
 {
     private Dictionary<eState, Action> _actionMap = new();          // [key:eState][value:Action]
     private Dictionary<string, Action> _inputEnableMap = new();   // [key:curState_enableKeyCode][value:Action]
-    // 이 두개는 일단 디버깅용으로 사용할거라 나중에 지우기
-    private Dictionary<eState, List<Action>> _inputEnableStateMap = new();   // 현재 eState에서 변환 가능 액션 리스트 
-    private Dictionary<KeyCode, List<Action>> _inputKeyMap = new();     // 입력 키 조건의 가능 액션 리스트
     private AnimancerComponent _animancer;
 
     public MoveSet()
@@ -61,22 +58,16 @@ public class MoveSet
 
         var action = _actionMap[actionState];
 
-        var enableKey = $"{enableState}_{inputKey}";
-        if (_inputEnableMap.ContainsKey(enableKey))
+        if (KeyCode.None != inputKey)
         {
-            Debug.LogError($"Character's (same state+input key) Action is not only one!");
-            return;
+            var enableKey = $"{enableState}_{inputKey}";
+            if (_inputEnableMap.ContainsKey(enableKey))
+            {
+                Debug.LogError($"Character's (same state+input key) Action is not only one!");
+                return;
+            }
+            _inputEnableMap.Add(enableKey, action);
         }
-        _inputEnableMap.Add(enableKey, action);
-        
-        // 이 밑의 두개는 일단 디버깅용 불필요하면 지우자.
-        if (false == _inputEnableStateMap.ContainsKey(enableState))
-            _inputEnableStateMap.Add(enableState, new());
-        _inputEnableStateMap[enableState].Add(action);
-        
-        if (false == _inputKeyMap.ContainsKey(inputKey))
-            _inputKeyMap.Add(inputKey, new());
-        _inputKeyMap[inputKey].Add(action);
     }
 
     public Action GetAction(eState curState)

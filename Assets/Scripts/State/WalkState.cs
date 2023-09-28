@@ -1,14 +1,7 @@
-using System;
 using UnityEngine;
-using UnityEditor;
-using System.Diagnostics;
-using Animancer;
-using Debug = UnityEngine.Debug;
 
 public class WalkState : State
 {
-    private AnimationClip _animClip;
-
     public WalkState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -19,9 +12,7 @@ public class WalkState : State
         // string name = "";
         _character.SetMoveSpeedToWalk();
 
-        if (null == _animClip)
-            _animClip = Resources.Load<AnimationClip>("Animation/Walk");
-        _animancer.Play(_animClip, _character.walkStart);
+        _action.Play(_character.walkStart);
     }
 
     public override void FixedUpdateState()

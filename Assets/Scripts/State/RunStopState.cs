@@ -12,7 +12,6 @@ public class RunStopState : State
     private long _stopingTimeMSec = 500;
     private long _remainTime;
     private float _remainRate;
-    private AnimationClip _animClip;
 
     public RunStopState(Character character, eState eState) : base(character, eState)
     {
@@ -25,9 +24,7 @@ public class RunStopState : State
         _inputTimer.Start();
         _remainTime = _stopingTimeMSec;
         _remainRate = (float)_remainTime / _stopingTimeMSec;
-        if (null == _animClip)
-            _animClip = Resources.Load<AnimationClip>("Animation/RunStop");
-        var curState = _animancer.Play(_animClip);
+        var curState = _action.Play();
         curState.Speed = 0.8f;
     }
 

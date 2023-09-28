@@ -8,7 +8,6 @@ public class LandingState : State
 {
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
-    private AnimationClip _animClip;
 
     public LandingState(Character character, eState eState) : base(character, eState)
     {
@@ -20,9 +19,7 @@ public class LandingState : State
         base.StartState();
         _character.ResetMoveSpeed();
         _character._isGround = true;
-        if (null == _animClip)
-            _animClip = Resources.Load<AnimationClip>("Animation/JumpEnd");
-        _animancer.Play(_animClip, _character.jumpEnd);
+        _action.Play(_character.jumpEnd);
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리

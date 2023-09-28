@@ -8,7 +8,6 @@ public class JumpDownState : State
 {
     private float _jumpTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
-    private AnimationClip _animClip;
 
     public JumpDownState(Character character, eState eState) : base(character, eState)
     {
@@ -17,9 +16,7 @@ public class JumpDownState : State
     public override void StartState()
     {
         base.StartState();
-        if (null == _animClip)
-            _animClip = Resources.Load<AnimationClip>("Animation/Jump");
-        _animancer.Play(_animClip);
+        _action.Play();
         
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpdown start");

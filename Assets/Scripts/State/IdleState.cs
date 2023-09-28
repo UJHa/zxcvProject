@@ -9,7 +9,6 @@ public class IdleState : State
 {
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
-    private AnimationClip _animClip = null;
     public IdleState(Character character, eState eState) : base(character, eState)
     {
         _inputTimer = new Stopwatch();
@@ -20,9 +19,7 @@ public class IdleState : State
         base.StartState();
         _character.ResetMoveSpeed();
         _character._isGround = true;
-        if (null == _animClip)
-            _animClip = Resources.Load<AnimationClip>("Animation/Idle");
-        _animancer.Play(_animClip, _character.idleStart);
+        _action.Play(_character.idleStart);
         
         _inputTimer.Start();
 

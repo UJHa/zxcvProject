@@ -31,6 +31,7 @@ public class Action
     private ActionData _actionData;
     private AttackInfo _attackInfo;
 
+    // Ingame 및 json 데이터 존재할 때의 Action 생성
     public Action(AnimancerComponent animancer, eState state, KeyCode inputKey)
     {
         _animancer = animancer;
@@ -39,6 +40,16 @@ public class Action
         _actionData = ActionTable.GetActionData(state.ToString());
         // _actionInfo = actionInfo;
         _animClip = Resources.Load<AnimationClip>(_actionData.clipPath);
+    }
+    
+    public Action(AnimancerComponent animancer, string clipPath)
+    {
+        _animancer = animancer;
+        // _state = state;
+        // _inputKey = inputKey;
+        // _actionData = ActionTable.GetActionData(state.ToString());
+        // _actionInfo = actionInfo;
+        _animClip = Resources.Load<AnimationClip>(clipPath);
     }
     
     public void CreateAttackInfo(AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
