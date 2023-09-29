@@ -63,6 +63,7 @@ public class Character : MonoBehaviour
 {
     [Header("Stats")]
     [SerializeField] private float _fullHp = 100f;
+    [SerializeField] private float _curHp = 0f;
     [SerializeField] private float _attackPower = 30f;
     [SerializeField] protected float _hp = 5f;
     [SerializeField] protected float _mp = 5f;
@@ -84,7 +85,8 @@ public class Character : MonoBehaviour
     [Header("Jump Stats")]
     [SerializeField] private AnimationCurve _jumpUp = new ();
     [SerializeField] private AnimationCurve _jumpDown = new ();
-    [SerializeField] private bool _useReverse = false;
+    [SerializeField] private AnimationCurve _airBoneUp = new ();
+    [SerializeField] private AnimationCurve _airBoneDown = new ();
     [SerializeField] private float _jumpMaxHeight = 2f;
     [SerializeField] private float _jumpUpMaxTimer = 2f;
     [SerializeField] private float _jumpDownMaxTimer = 1f;
@@ -120,8 +122,7 @@ public class Character : MonoBehaviour
 
     [Header("UI")]
     protected Slider slider;
-
-    private float _curHp = 0f;
+    
     protected float sliderScale = 1.0f;
 
     protected Vector3 _directionVector = Vector3.zero;
@@ -158,12 +159,9 @@ public class Character : MonoBehaviour
     {
         _animancer = GetComponent<AnimancerComponent>();
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
-        if (false == _useReverse)
-            MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
-        else
-        {
-            MakeReverseCurve(_jumpUp, _jumpDown);
-        }
+        MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
+        MakeFixedDeltaTimeCurve(_airBoneUp, _jumpUpMaxTimer);
+        MakeFixedDeltaTimeCurve(_airBoneDown, _jumpDownMaxTimer);
 
         foreach (var partData in _attackPartDatas)
         {
@@ -235,16 +233,6 @@ public class Character : MonoBehaviour
             reverse.AddKey(maxX-origin[i].time, maxY-origin[i].value);
         }
     }
-    
-    public float GetDamagedUpVelocity(float deltatime)
-    {
-        if (deltatime <= 0f)
-            return 0f;
-        var prevTime = deltatime - Time.fixedDeltaTime;
-        float dx = deltatime - prevTime;
-        float dy = (_jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime)) / _airborneUpTime;
-        return dy / dx * _attackedMaxHeight;
-    }
 
     public float GetJumpUpVelocity(float deltatime)
     {
@@ -266,9 +254,32 @@ public class Character : MonoBehaviour
         if (deltatime >= _jumpDownMaxTimer)
             curTime = _jumpDownMaxTimer;
         var dy = _jumpDown.Evaluate(curTime) - _jumpDown.Evaluate(curTime - dx);
-        
+
         return -1f * dy / dx * _jumpMaxHeight;
+    }
+    
+    public float GetAirBoneUpVelocity(float deltatime)
+    {
+        if (deltatime <= 0f)
+            return 0f;
+        var prevTime = deltatime - Time.fixedDeltaTime;
+        float dx = deltatime - prevTime;
+        float dy = (_airBoneUp.Evaluate(deltatime) - _airBoneUp.Evaluate(prevTime)) / _airborneUpTime;
+        return dy / dx * _attackedMaxHeight;
+    }
+    
+    public float GetAirBoneDownVelocity(float deltatime)
+    {
+        if (deltatime <= 0f)
+            return 0f;
         
+        var dx = Time.fixedDeltaTime;
+        var curTime = deltatime;
+        if (deltatime >= _jumpDownMaxTimer)
+            curTime = _jumpDownMaxTimer;
+        var dy = _airBoneDown.Evaluate(curTime) - _airBoneDown.Evaluate(curTime - dx);
+
+        return -1f * dy / dx * _jumpMaxHeight;
     }
 
     protected void StartUI()
@@ -608,10 +619,9 @@ public class Character : MonoBehaviour
     {
         _curHp -= damage;
         UIManagerInGame.Instance.hudManager.SetSliderValue(GetHashCode(), _curHp / _fullHp);
-        if (_curHp <= 0f)
+        if (IsDead())
         {
             _curHp = 0f;
-            ChangeState(eState.DEAD);
         }
     }
 
@@ -649,7 +659,7 @@ public class Character : MonoBehaviour
 
     public void ChangeState(eState state, eStateType stateType = eStateType.NONE)
     {
-        Debug.Log($"[testState]State Change prev({_curState}) cur({state}) count({_changeStates.Count})");
+        Debug.Log($"[{name}][testState]State Change prev({_curState}) cur({state}) count({_changeStates.Count})");
         // _curState = state;
         _changeStates.Add(new StateInfo()
         {
@@ -693,6 +703,11 @@ public class Character : MonoBehaviour
     public bool IsGround()
     {
         return _isGround;
+    }
+    
+    public bool IsDead()
+    {
+        return _curHp <= 0f;
     }
 
     public GameObject FindCollisions()
@@ -764,7 +779,10 @@ public class Character : MonoBehaviour
                             ChangeState(eState.AIRBORNE_DAMAGED);
                         else
                         {
-                            ChangeState(eState.NORMAL_DAMAGED);
+                            if (IsDead())
+                                ChangeState(eState.DEAD);
+                            else
+                                ChangeState(eState.NORMAL_DAMAGED);
                         }
                         break;
                     case AttackType.AIRBORNE:
