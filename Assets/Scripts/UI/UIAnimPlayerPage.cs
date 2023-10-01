@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DataClass;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,9 +17,6 @@ namespace UI
 {
     public class UIAnimPlayerPage : MonoBehaviour
     {
-        // 엄todo : 나중에 Resources나 특정 디렉토리의 파일 리스트를 가져오도록 개발 필요
-        [Header("Test Anim Datas")]
-        [SerializeField] private List<string> _animInfos = new();
         [Header("UI State")]
         [SerializeField] private AnimEditState _animEditState;
         [Header("UI object")]
@@ -35,6 +33,8 @@ namespace UI
 
         private Image _pinStart = null;
         private Image _pinEnd = null;
+        private List<ActionData> _actions = new();
+        private Dictionary<string, UIButton> _scrollBtnDict = new(); // action name을 key로 설정
 
         // 엄todo UI와 연결 의존도 낮추기 위해 제거되어야 한다.
         private MoveSetCharacter _moveSetCharacter;
@@ -43,17 +43,32 @@ namespace UI
         {
             _moveSetCharacter = moveSetCharacter;
             var prefabName = _infoBtnPrefab.name;
-            foreach (var animInfo in _animInfos)
+            var allActions = ActionTable.GetActionList();
+            foreach (var actionData in allActions)
             {
-                Debug.Log($"[testum]animInfo({animInfo})");
-                _infoBtnPrefab.name = animInfo;
+                if (actionData.actionName == eState.NONE.ToString())
+                    continue;
+                _actions.Add(actionData);
+                Debug.Log($"[testum]actionData({actionData})");
+                _infoBtnPrefab.name = actionData.actionName;
+                if (_scrollBtnDict.ContainsKey(actionData.actionName))
+                {
+                    Debug.LogError($"ScrollView have actionName's UIButton({actionData.actionName})");
+                    continue;
+                }
                 var btnObj = Instantiate(_infoBtnPrefab, _scrollRect.content);
                 btnObj.Init();
-                btnObj.SetText(animInfo);
+                btnObj.SetText(actionData.actionName);
+                _scrollBtnDict.Add(actionData.actionName, btnObj);
+            }
+
+            foreach (var actionData in _actions)
+            {
+                var btnObj = _scrollBtnDict[actionData.actionName];
                 btnObj.onClick.AddListener(() =>
                 {
                     Debug.Log($"[testum]Click button name({btnObj.name})");
-                    _moveSetCharacter.ChangeAction(animInfo, 0f, 1f);
+                    SelectButton(btnObj, $"[Select]{btnObj.name.Split("(")[0]}", actionData);
                 });
             }
 
@@ -99,6 +114,20 @@ namespace UI
             });
         }
 
+        private void SelectButton(UIButton btnObj, string argName, ActionData actionData)
+        {
+            // 이전 선택된 버튼 이름 기존으로 롤백("[Select]"글자 지우기)
+            // 엄todo : 툴이라서 일단 모든 버튼 이름 갱신 처리
+            // 나중에 이름이 아닌 다른 방식으로 액션 수정 여부 표기 시 구조 변경 필요
+            foreach (var uiButton in _scrollBtnDict.Values)
+            {
+                uiButton.SetText(uiButton.name.Split("(")[0]);
+            }
+            
+            btnObj.SetText(argName);
+            _moveSetCharacter.ChangeAction(actionData);
+        }
+
         private void PlayAnimUI()
         {
             if (_moveSetCharacter.IsPlaying())
@@ -108,8 +137,8 @@ namespace UI
             }
             else
             {
-                _moveSetCharacter.SetActionStartRate(0f);
-                _moveSetCharacter.SetActionEndRate(1f);
+                // _moveSetCharacter.SetActionStartRate(0f);
+                // _moveSetCharacter.SetActionEndRate(1f);
                 _moveSetCharacter.PlayAnim();
                 SetAnimEditState(AnimEditState.Play);
             }

@@ -57,11 +57,11 @@ namespace DataClass
                 string path = Path.Combine(jsonPath, file.Name);
                 var result = File.ReadAllText(path);
                 var dataList = JArray.Parse(result);
-                dataTable.SaveData(dataList);
+                dataTable.Init(dataList);
             }
         }
 
-        protected virtual void SaveData(JArray dataList)
+        protected virtual void Init(JArray dataList)
         {
         }
     }

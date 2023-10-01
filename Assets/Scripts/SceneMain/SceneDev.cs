@@ -56,29 +56,6 @@ namespace SceneMain
             GameManager.Instance.SetMainPlayer();
         }
 
-        private void LoadJsonData()
-        {
-            string jsonPath = $"{Application.dataPath}/Resources/Json";
-            Debug.Log($"[testumJson]Application.dataPath({Application.dataPath})");
-            var info = new DirectoryInfo(jsonPath);
-            var fileInfo = info.GetFiles();
-            // ToJson을 사용하면 JSON형태로 포멧팅된 문자열이 생성된다
-            foreach(var file in fileInfo)
-            {
-                if (file.Name.Contains(".meta"))
-                    continue;
-                Debug.Log($"[testumJson]fileName({file.Name})");
-                string path = Path.Combine(jsonPath, file.Name);
-                var result = File.ReadAllText(path);
-                var actionDatas = JsonConvert.DeserializeObject<List<ActionData>>(result);
-                var actionData = actionDatas[0];
-                Debug.Log($"[testumJson]{result}\n({actionData})");
-            }
-            // string jsonData = JsonUtility.ToJson(exportAction);
-            // 데이터를 저장할 경로 지정
-            
-        }
-
         private UIManagerInGame LoadUIManager()
         {
             var loadPrefab = Resources.Load<GameObject>("Prefabs/UIManagerInGame");

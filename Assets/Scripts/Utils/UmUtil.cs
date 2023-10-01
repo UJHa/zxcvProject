@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -44,6 +45,14 @@ namespace Utils
             Debug.Log($"[testum]argData({argData.selectedObject})");
             Debug.Log($"[testum]SliderOnPointerClick");
             UmUtil.SetSliderHold(false);
+        }
+
+        public static T StringToEnum<T>(string name) where T : struct
+        {
+            bool success = Enum.TryParse<T>(name, out var result);
+            if (success)
+                return result;
+            return default(T);
         }
     }
 }

@@ -1,3 +1,4 @@
+using DataClass;
 using UI;
 using UnityEngine;
 using Utils;
@@ -14,6 +15,8 @@ namespace SceneMain
         private MoveSetCharacter _moveSetCharacter;
         private void Awake()
         {
+            DataTable.LoadJsonData();
+            
             var canvasObj = GameObject.Find("Canvas");
             if (null != canvasObj)
             {

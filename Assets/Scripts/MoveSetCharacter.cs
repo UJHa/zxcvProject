@@ -1,5 +1,6 @@
 using System;
 using Animancer;
+using DataClass;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,14 +25,16 @@ public class MoveSetCharacter : MonoBehaviour
     public void Init(float animStartTime, float animEndTime)
     {
         // ChangeAction("Animation/Lucy_FightFist01_2", animStartTime, animEndTime);
+        ChangeAction(ActionTable.GetActionData(eState.IDLE.ToString()));
     }
 
     // ChangeAction이 가지고 있는 액션일 때는 json 로드로 생성하는 기능 구현하기
-    public void ChangeAction(string clipName, float animStartTime, float animEndTime)
+    public void ChangeAction(ActionData actionData)
     {
-        _action = new Action(_animancer, clipName);
-        _curState = _action.PlayOnly();
-        // _action.GoToFirstFrame();
+        _action = new Action(_animancer, actionData.actionName);
+        _action.Init();
+        _curState = _action.Play();
+        _action.SetNormTime(actionData.startTimeRatio);
         PauseAnim();
     }
 
@@ -85,14 +88,14 @@ public class MoveSetCharacter : MonoBehaviour
     {
         if (IsAnimRateFinish())
             _action.GoToFirstFrame();
-        _curState = _action.PlayOnly();
+        _curState = _action.Play();
     }
 
     public void PlayPinAnim()
     {
         if (IsAnimRateFinish())
             _action.GoToFirstFrame();
-        _curState = _action.PlayOnly();
+        _curState = _action.Play();
     }
 
     public void PauseAnim()
@@ -150,7 +153,7 @@ public class MoveSetCharacter : MonoBehaviour
 
     public void SetActionStartRate(float argRate)
     {
-        _action.SetStartRate(argRate);
+        _action.SetNormTime(argRate);
     }
     
     public void SetActionEndRate(float argRate)

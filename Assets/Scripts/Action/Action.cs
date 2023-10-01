@@ -12,6 +12,7 @@ using System.IO;
 using Animancer;
 using DataClass;
 using UnityEngine;
+using Utils;
 
 [System.Serializable]
 public class ExportAction
@@ -23,33 +24,36 @@ public class ExportAction
 
 public class Action
 {
-    private readonly AnimancerComponent _animancer;
+    protected readonly AnimancerComponent _animancer;
     private readonly KeyCode _inputKey;
     private readonly eState _state;
-    private readonly AnimationClip _animClip;
-    private AnimancerState _curState;
+    protected AnimationClip _animClip;
+    protected AnimancerState _curState;
     private ActionData _actionData;
     private AttackInfo _attackInfo;
 
     // Ingame 및 json 데이터 존재할 때의 Action 생성
-    public Action(AnimancerComponent animancer, eState state, KeyCode inputKey)
+    public Action(AnimancerComponent animancer, string state, KeyCode inputKey = KeyCode.None)
     {
         _animancer = animancer;
-        _state = state;
+        _state = UmUtil.StringToEnum<eState>(state);
         _inputKey = inputKey;
-        _actionData = ActionTable.GetActionData(state.ToString());
-        // _actionInfo = actionInfo;
-        _animClip = Resources.Load<AnimationClip>(_actionData.clipPath);
     }
     
-    public Action(AnimancerComponent animancer, string clipPath)
+    // public Action(AnimancerComponent animancer, string clipPath)
+    // {
+    //     _animancer = animancer;
+    //     // _state = state;
+    //     // _inputKey = inputKey;
+    //     // _actionData = ActionTable.GetActionData(state.ToString());
+    //     // _actionInfo = actionInfo;
+    //     _animClip = Resources.Load<AnimationClip>(clipPath);
+    // }
+
+    public void Init()
     {
-        _animancer = animancer;
-        // _state = state;
-        // _inputKey = inputKey;
-        // _actionData = ActionTable.GetActionData(state.ToString());
-        // _actionInfo = actionInfo;
-        _animClip = Resources.Load<AnimationClip>(clipPath);
+        _actionData = ActionTable.GetActionData(_state.ToString());
+        _animClip = Resources.Load<AnimationClip>(_actionData.clipPath);
     }
     
     public void CreateAttackInfo(AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
@@ -70,13 +74,10 @@ public class Action
     public AnimancerState Play(float fadeTime = 0f)
     {
         _curState = _animancer.Play(_animClip, fadeTime);
-        _curState.NormalizedTime = _actionData.startTimeRatio;
-        return _curState;
-    }
-    
-    public AnimancerState PlayOnly()
-    {
-        _curState = _animancer.Play(_animClip);
+        // 엄todo : 이런 조건문은 분리된 공간에서 관리될 수 있도록 수정하기
+        // play 함수에서 호출하지 않고 분리 하고 싶음
+        if (null != _actionData)
+            _curState.NormalizedTime = _actionData.startTimeRatio;
         return _curState;
     }
 
@@ -108,6 +109,11 @@ public class Action
     public void GoToEndFrame()
     {
         _curState.NormalizedTime = _actionData.endTimeRatio;
+    }
+
+    public void SetNormTime(float ratio)
+    {
+        _curState.NormalizedTime = ratio;
     }
     
     public float GetCurPlayRate()
@@ -160,6 +166,6 @@ public class Action
 
     public ActionType GetActionType()
     {
-        return Enum.Parse<ActionType>(_actionData.actionType);
+        return UmUtil.StringToEnum<ActionType>(_actionData.actionType);
     }
 }

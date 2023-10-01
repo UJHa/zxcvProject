@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -25,11 +27,14 @@ namespace DataClass
 
     public class ActionTable : DataTable
     {
+        private static ActionTable _instance = null;
+        
         public Dictionary<int, ActionData> IndexDictionary = new();
         public Dictionary<string, ActionData> actionNameDictionary = new();
-        protected override void SaveData(JArray dataList)
+        protected override void Init(JArray dataList)
         {
-            base.SaveData(dataList);
+            base.Init(dataList);
+            _instance = this;
             foreach (var jToken in dataList)
             {
                 var actionData = JsonConvert.DeserializeObject<ActionData>(jToken.ToString());
@@ -60,6 +65,17 @@ namespace DataClass
             if (false == actionTable.actionNameDictionary.ContainsKey(actionName))
                 return null;
             return actionTable.actionNameDictionary[actionName];
+        }
+
+        public static List<ActionData> GetActionList()
+        {
+            if (null == _instance)
+            {
+                Debug.LogError($"ActionTable is not instantiate!");
+                return null;
+            }
+            
+            return _instance.IndexDictionary.Values.ToList();
         }
     }
 }

@@ -47,16 +47,15 @@ public class MoveSet
     
     public void RegisterAction(eState actionState, KeyCode inputKey, eState enableState)
     {
+        Action action = null;
         if (_actionMap.ContainsKey(actionState))
         {
             Debug.LogError($"[OnlyLog]Character contains same action name[{actionState}]");
+            return;
         }
-        else
-        {
-            _actionMap.Add(actionState, new Action(_animancer, actionState, inputKey));
-        }
-
-        var action = _actionMap[actionState];
+        action = new Action(_animancer, actionState.ToString(), inputKey);
+        action.Init();
+        _actionMap.Add(actionState, action);
 
         if (KeyCode.None != inputKey)
         {
