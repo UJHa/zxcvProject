@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 namespace Utils
 {
@@ -11,7 +12,7 @@ namespace Utils
         private static UIManagerTool instance = null;
         public static UIManagerTool Instance => instance;
         // MoveSetScene용 UI 페이지
-        public UIAnimPlayerPage animPlayerPage;
+        public UIActionPlayerPage actionPlayerPage;
         public UIContextMenuPopup contextMenuPopup;
         public UILayoutWindow animCustomWindow;
         

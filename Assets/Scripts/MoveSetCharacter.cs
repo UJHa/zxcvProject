@@ -22,10 +22,10 @@ public class MoveSetCharacter : MonoBehaviour
         _animancer = GetComponent<AnimancerComponent>();
     }
     
-    public void Init(float animStartTime, float animEndTime)
+    public void Init()
     {
         // ChangeAction("Animation/Lucy_FightFist01_2", animStartTime, animEndTime);
-        ChangeAction(ActionTable.GetActionData(eState.IDLE.ToString()));
+        // ChangeAction(ActionTable.GetActionData(eState.IDLE.ToString()));
     }
 
     // ChangeAction이 가지고 있는 액션일 때는 json 로드로 생성하는 기능 구현하기

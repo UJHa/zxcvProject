@@ -28,9 +28,6 @@ namespace SceneMain
                 }
             }
 
-            float animStartTime = 0f;
-            float animEndTime = 1f;
-
             // Character 명세별 생성(일단 1개)
             _moveSetCharacter = CreateCharacter();
 
@@ -44,20 +41,19 @@ namespace SceneMain
                 Debug.Log($"[testum]uiManager({_uiManager}) fail");
             }
             
-            _moveSetCharacter.Init(animStartTime, animEndTime);
+            _moveSetCharacter.Init();
             
             // 필요 UI 명세별 생성
             _uiManager.animCustomWindow = _uiManager.CreateUI<UILayoutWindow>("Prefabs/UI/AnimCustomLayout", UILayerType.LayerNormal);
             _uiManager.animCustomWindow.Init(_moveSetCharacter);
             
-            _uiManager.animPlayerPage = _uiManager.CreateUI<UIAnimPlayerPage>("Prefabs/UI/AnimPlayerPage", UILayerType.LayerNormal);
-            _uiManager.animPlayerPage.Init(_moveSetCharacter);
+            _uiManager.actionPlayerPage = _uiManager.CreateUI<UIActionPlayerPage>("Prefabs/UI/ActionPlayerPage", UILayerType.LayerNormal);
+            _uiManager.actionPlayerPage.Init(_moveSetCharacter);
             
             _uiManager.contextMenuPopup = _uiManager.CreateUI<UIContextMenuPopup>("Prefabs/UI/Common/ContextMenuPopup", UILayerType.LayerPopup);
             _uiManager.contextMenuPopup.Init();
-            
-            
-            _uiManager.animPlayerPage.transform.SetAsLastSibling();
+
+            _uiManager.actionPlayerPage.transform.SetAsLastSibling();
         }
 
         private UIManagerTool LoadUIManager()
