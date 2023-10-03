@@ -32,6 +32,7 @@ public class MoveSetCharacter : MonoBehaviour
     public void ChangeAction(ActionData actionData)
     {
         _action = new Action(_animancer, actionData.actionName);
+        _action.SetActionData(actionData);
         _action.Init();
         _curState = _action.Play();
         _action.SetNormTime(actionData.startTimeRatio);
@@ -83,9 +84,10 @@ public class MoveSetCharacter : MonoBehaviour
         //     PauseAnim();
         // }
     }
-
-    public void PlayAnim()
+    
+    public void PlayAnim(ActionData actionData)
     {
+        _action.SetActionData(actionData);
         if (IsAnimRateFinish())
             _action.GoToFirstFrame();
         _curState = _action.Play();
@@ -143,12 +145,6 @@ public class MoveSetCharacter : MonoBehaviour
     public bool IsAnimRateFinish()
     {
         return _action.IsAnimationFinish();
-    }
-
-    public void ExportCurAction()
-    {
-        Debug.Log("Export!");
-        _action.Export();
     }
 
     public void SetActionStartRate(float argRate)

@@ -24,8 +24,7 @@ public class RunStopState : State
         _inputTimer.Start();
         _remainTime = _stopingTimeMSec;
         _remainRate = (float)_remainTime / _stopingTimeMSec;
-        var curState = _action.Play();
-        curState.Speed = 0.8f;
+        _action.Play();
     }
 
     public override void FixedUpdateState()

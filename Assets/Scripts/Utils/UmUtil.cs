@@ -11,6 +11,11 @@ namespace Utils
         
         private static bool _isSliderHold = false;
 
+        public static string GetResourceJsonPath()
+        {
+            return $"{Application.dataPath}/Resources/Json";
+        }
+
         public static float GetOnFrameTime()
         {
             if (0f == oneFrameTime)
@@ -53,6 +58,24 @@ namespace Utils
             if (success)
                 return result;
             return default(T);
+        }
+
+        public static float GetWidth(RectTransform rectTransform)
+        {
+            return rectTransform.rect.width;
+        }
+
+        public static float StringToFloat(string num)
+        {
+            if (string.IsNullOrEmpty(num))
+                return 0f;
+            if (float.TryParse(num, out var result))
+                return result;
+            else
+            {
+                Debug.LogError($"StringToFloat Failed! num({num})");
+                return 0f;
+            }
         }
     }
 }

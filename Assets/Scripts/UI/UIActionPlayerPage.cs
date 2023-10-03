@@ -33,19 +33,19 @@ namespace UI
         [Header("Right View(UI)")]
         [SerializeField] private ScrollRect _scrollRect;
         [SerializeField] private UIButton _actionInfoBtnPrefab;
-        
+        [Header("Bottom View(UI)")]
         [SerializeField] private UISlider _slider;
+        [SerializeField] private Image _playRange;
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
         [SerializeField] private Button _playPin;
-        [SerializeField] private Button _exportBtn;
         [Header("UI Pin Rate")]
         [SerializeField] private float _startRate = 0f;
         [SerializeField] private float _endRate = 1f;
 
         private Image _pinStart = null;
         private Image _pinEnd = null;
-        private List<ActionData> _actions = new();
+        private Dictionary<string, ActionData> _actions = new();
         private Dictionary<ActionParam, UITextInputField> _actionInfoTextDict = new(); // _actionInfoPrefab 인스턴스 저장
         private Dictionary<string, UIButton> _actionInfoBtnDict = new(); // _actionInfoBtnPrefab 인스턴스 저장
         private string _selectActionName = "";
@@ -90,6 +90,7 @@ namespace UI
                 var editEndRate = _actionInfoTextDict[ActionParam.END_RATE].GetFieldData();
                 var editAnimSpeed = _actionInfoTextDict[ActionParam.ANIM_SPEED].GetFieldData();
                 Debug.Log($"[saveAction]editStartRate({editStartRate})editEndRate({editEndRate})editAnimSpeed({editAnimSpeed})");
+                SaveJsonFile();
             });
             
             _play.onClick.AddListener(() =>
@@ -101,15 +102,24 @@ namespace UI
             {
                 PlayPinAnim();
             });
-            
-            _exportBtn.onClick.AddListener(() =>
-            {
-                ExportAction();
-            });
+        }
+
+        private void SaveJsonFile()
+        {
+            ActionTable.SetActionData(_selectActionName, new(_actions[_selectActionName]));
+            ActionTable.Export();
         }
 
         private void InitActionInspector()
         {
+            // anim_speed
+            {
+                var a = Instantiate(_actionInfoPrefab, _actionInfosParent);
+                a.SetGuideText("AnimSpeed : ");
+                a.SetPlaceHolder("min/max:0/~");
+                a.SetInputField("");
+                _actionInfoTextDict.Add(ActionParam.ANIM_SPEED, a);
+            }
             // startRate
             {
                 var a = Instantiate(_actionInfoPrefab, _actionInfosParent);
@@ -126,14 +136,6 @@ namespace UI
                 a.SetInputField("");
                 _actionInfoTextDict.Add(ActionParam.END_RATE, a);
             }
-            // anim_speed
-            {
-                var a = Instantiate(_actionInfoPrefab, _actionInfosParent);
-                a.SetGuideText("AnimSpeed : ");
-                a.SetPlaceHolder("min/max:0/~");
-                a.SetInputField("");
-                _actionInfoTextDict.Add(ActionParam.ANIM_SPEED, a);
-            }
         }
 
         private void InitActionBtnList()
@@ -143,7 +145,7 @@ namespace UI
             {
                 if (actionData.actionName == eState.NONE.ToString())
                     continue;
-                _actions.Add(actionData);
+                _actions.Add(actionData.actionName, actionData);
                 Debug.Log($"[testum]actionData({actionData})");
                 _actionInfoBtnPrefab.name = actionData.actionName;
                 if (_actionInfoBtnDict.ContainsKey(actionData.actionName))
@@ -158,22 +160,22 @@ namespace UI
                 _actionInfoBtnDict.Add(actionData.actionName, btnObj);
             }
 
-            foreach (var actionData in _actions)
+            foreach (var actionData in _actions.Values)
             {
                 var btnObj = _actionInfoBtnDict[actionData.actionName];
                 btnObj.onClick.AddListener(() =>
                 {
                     Debug.Log($"[testum]Click button name({btnObj.name})");
                     _selectActionName = actionData.actionName;
-                    SelectButton(actionData);
+                    SelectButton();
                 });
             }
 
-            _selectActionName = _actions[0].actionName; 
+            _selectActionName = _actions[eState.IDLE.ToString()].actionName; 
             _actionInfoBtnDict[_selectActionName].onClick.Invoke();
         }
 
-        private void SelectButton(ActionData actionData)
+        private void SelectButton()
         {
             // 이전 선택된 버튼 이름 기존으로 롤백("[Select]"글자 지우기)
             // 엄todo : 툴이라서 일단 모든 버튼 이름 갱신 처리
@@ -189,12 +191,31 @@ namespace UI
                 {
                     uiButton.SetText(uiButton.name.Split("(")[0]);
                 }
+
+                _actions[actionName] = ActionTable.GetActionData(actionName);
             }
-            
+
+            var actionData = _actions[_selectActionName];
             _moveSetCharacter.ChangeAction(actionData);
             _actionInfoTextDict[ActionParam.START_RATE].SetInputField(actionData.startTimeRatio.ToString());
             _actionInfoTextDict[ActionParam.END_RATE].SetInputField(actionData.endTimeRatio.ToString());
-            _actionInfoTextDict[ActionParam.ANIM_SPEED].SetInputField(1.ToString());
+            _actionInfoTextDict[ActionParam.ANIM_SPEED].SetInputField(actionData.speed.ToString());
+        }
+
+        private void VisibleActionRange()
+        {
+            var actionData = _actions[_selectActionName];
+            var editStartRate = _actionInfoTextDict[ActionParam.START_RATE].GetFieldData();
+            var editEndRate = _actionInfoTextDict[ActionParam.END_RATE].GetFieldData();
+            var editAnimSpeed = _actionInfoTextDict[ActionParam.ANIM_SPEED].GetFieldData();
+            var startRatio = UmUtil.StringToFloat(editStartRate);
+            var endRatio = UmUtil.StringToFloat(editEndRate);
+            var speed = UmUtil.StringToFloat(editAnimSpeed);
+            actionData.startTimeRatio = Mathf.Floor(startRatio * 100f) /  100f;
+            actionData.endTimeRatio = Mathf.Floor(endRatio * 100f) /  100f;
+            actionData.speed = Mathf.Floor(speed * 100f) /  100f;
+            _playRange.rectTransform.offsetMin = new(_slider.GetComponent<RectTransform>().sizeDelta.x * actionData.startTimeRatio, _playRange.rectTransform.offsetMin.y);
+            _playRange.rectTransform.offsetMax = new(-_slider.GetComponent<RectTransform>().sizeDelta.x * (1f - actionData.endTimeRatio), _playRange.rectTransform.offsetMax.y);
         }
 
         private void PlayAnimUI()
@@ -208,7 +229,7 @@ namespace UI
             {
                 // _moveSetCharacter.SetActionStartRate(0f);
                 // _moveSetCharacter.SetActionEndRate(1f);
-                _moveSetCharacter.PlayAnim();
+                _moveSetCharacter.PlayAnim(_actions[_selectActionName]);
                 SetAnimEditState(AnimEditState.Play);
             }
         }
@@ -227,11 +248,6 @@ namespace UI
             }
         }
         
-        private void ExportAction()
-        {
-            _moveSetCharacter.ExportCurAction();
-        }
-        
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -240,6 +256,7 @@ namespace UI
             }
             UpdateSlider();
             UpdateText();
+            VisibleActionRange();
         }
 
         private void UpdateSlider()

@@ -14,14 +14,6 @@ using DataClass;
 using UnityEngine;
 using Utils;
 
-[System.Serializable]
-public class ExportAction
-{
-    public string clipName;
-    public float startRate;
-    public float endRate;
-}
-
 public class Action
 {
     protected readonly AnimancerComponent _animancer;
@@ -55,6 +47,11 @@ public class Action
         _actionData = ActionTable.GetActionData(_state.ToString());
         _animClip = Resources.Load<AnimationClip>(_actionData.clipPath);
     }
+
+    public void SetActionData(ActionData actionData)
+    {
+        _actionData = actionData;
+    }
     
     public void CreateAttackInfo(AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
     {
@@ -77,7 +74,10 @@ public class Action
         // 엄todo : 이런 조건문은 분리된 공간에서 관리될 수 있도록 수정하기
         // play 함수에서 호출하지 않고 분리 하고 싶음
         if (null != _actionData)
+        {
             _curState.NormalizedTime = _actionData.startTimeRatio;
+            _curState.Speed = _actionData.speed;
+        }
         return _curState;
     }
 
@@ -145,23 +145,6 @@ public class Action
     public AttackInfo GetaAttackInfo()
     {
         return _attackInfo;
-    }
-
-    public void Export()
-    {
-        ExportAction exportAction = new()
-        {
-            clipName = _animClip.name,
-            startRate = _actionData.startTimeRatio,
-            endRate = _actionData.endTimeRatio
-        };
-        Debug.Log($"Application.dataPath({Application.dataPath})");
-        // ToJson을 사용하면 JSON형태로 포멧팅된 문자열이 생성된다
-        string jsonData = JsonUtility.ToJson(exportAction);
-        // 데이터를 저장할 경로 지정
-        string path = Path.Combine(Application.dataPath, "action.json");
-        // 파일 생성 및 저장
-        File.WriteAllText(path, jsonData);
     }
 
     public ActionType GetActionType()

@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Utils;
 
 namespace DataClass
 {
@@ -14,7 +15,7 @@ namespace DataClass
         public static Dictionary<Type, DataTable> Tables = new();
         public static void LoadJsonData()
         {
-            string jsonPath = $"{Application.dataPath}/Resources/Json";
+            string jsonPath = UmUtil.GetResourceJsonPath();
             Debug.Log($"[testumJson]Application.dataPath({Application.dataPath})");
             var info = new DirectoryInfo(jsonPath);
             var fileInfo = info.GetFiles();
