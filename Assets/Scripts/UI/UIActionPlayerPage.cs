@@ -38,7 +38,6 @@ namespace UI
         [SerializeField] private Image _playRange;
         [SerializeField] private TextMeshProUGUI _curStateTxt;
         [SerializeField] private Button _play;
-        [SerializeField] private Button _playPin;
         [Header("UI Pin Rate")]
         [SerializeField] private float _startRate = 0f;
         [SerializeField] private float _endRate = 1f;
@@ -49,8 +48,7 @@ namespace UI
         private Dictionary<ActionParam, UITextInputField> _actionInfoTextDict = new(); // _actionInfoPrefab 인스턴스 저장
         private Dictionary<string, UIButton> _actionInfoBtnDict = new(); // _actionInfoBtnPrefab 인스턴스 저장
         private string _selectActionName = "";
-
-        // 엄todo UI와 연결 의존도 낮추기 위해 제거되어야 한다.
+        
         private MoveSetCharacter _moveSetCharacter;
         
         public void Init(MoveSetCharacter moveSetCharacter)
@@ -97,11 +95,6 @@ namespace UI
             {
                 PlayAnimUI();
             });
-            
-            _playPin.onClick.AddListener(() =>
-            {
-                PlayPinAnim();
-            });
         }
 
         private void SaveJsonFile()
@@ -114,27 +107,27 @@ namespace UI
         {
             // anim_speed
             {
-                var a = Instantiate(_actionInfoPrefab, _actionInfosParent);
-                a.SetGuideText("AnimSpeed : ");
-                a.SetPlaceHolder("min/max:0/~");
-                a.SetInputField("");
-                _actionInfoTextDict.Add(ActionParam.ANIM_SPEED, a);
+                var infoField = Instantiate(_actionInfoPrefab, _actionInfosParent);
+                infoField.SetGuideText("AnimSpeed : ");
+                infoField.SetPlaceHolder("min/max:0/~");
+                infoField.SetInputField("");
+                _actionInfoTextDict.Add(ActionParam.ANIM_SPEED, infoField);
             }
             // startRate
             {
-                var a = Instantiate(_actionInfoPrefab, _actionInfosParent);
-                a.SetGuideText("StartRate : ");
-                a.SetPlaceHolder("min/max:0/1");
-                a.SetInputField("");
-                _actionInfoTextDict.Add(ActionParam.START_RATE, a);
+                var infoField = Instantiate(_actionInfoPrefab, _actionInfosParent);
+                infoField.SetGuideText("StartRate : ");
+                infoField.SetPlaceHolder("min/max:0/1");
+                infoField.SetInputField("");
+                _actionInfoTextDict.Add(ActionParam.START_RATE, infoField);
             }
             // endRate
             {
-                var a = Instantiate(_actionInfoPrefab, _actionInfosParent);
-                a.SetGuideText("EndRate : ");
-                a.SetPlaceHolder("min/max:0/1");
-                a.SetInputField("");
-                _actionInfoTextDict.Add(ActionParam.END_RATE, a);
+                var infoField = Instantiate(_actionInfoPrefab, _actionInfosParent);
+                infoField.SetGuideText("EndRate : ");
+                infoField.SetPlaceHolder("min/max:0/1");
+                infoField.SetInputField("");
+                _actionInfoTextDict.Add(ActionParam.END_RATE, infoField);
             }
         }
 
@@ -177,8 +170,8 @@ namespace UI
 
         private void SelectButton()
         {
-            // 이전 선택된 버튼 이름 기존으로 롤백("[Select]"글자 지우기)
             // 엄todo : 툴이라서 일단 모든 버튼 이름 갱신 처리
+            // 이전 선택된 버튼 이름 기존으로 롤백("[Select]"글자 지우기)
             // 나중에 이름이 아닌 다른 방식으로 액션 수정 여부 표기 시 구조 변경 필요
             foreach (var actionName in _actionInfoBtnDict.Keys)
             {
@@ -227,23 +220,7 @@ namespace UI
             }
             else
             {
-                // _moveSetCharacter.SetActionStartRate(0f);
-                // _moveSetCharacter.SetActionEndRate(1f);
                 _moveSetCharacter.PlayAnim(_actions[_selectActionName]);
-                SetAnimEditState(AnimEditState.Play);
-            }
-        }
-        
-        private void PlayPinAnim()
-        {
-            if (_moveSetCharacter.IsPlaying())
-            {
-                SetAnimEditState(AnimEditState.Stop);
-                _moveSetCharacter.PauseAnim();
-            }
-            else
-            {
-                _moveSetCharacter.PlayPinAnim();
                 SetAnimEditState(AnimEditState.Play);
             }
         }

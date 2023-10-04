@@ -38,17 +38,6 @@ namespace UI
             _slider.minValue = minValue;
             _slider.maxValue = maxValue;
             _slider.value = minValue;
-            
-            _menuList.Add(new MenuAction
-            {
-                btnName = "Start Pin",
-                btnAction = UIManagerTool.Instance.animCustomWindow.StartPin
-            });
-            _menuList.Add(new MenuAction
-            {
-                btnName = "End Pin",
-                btnAction = UIManagerTool.Instance.animCustomWindow.EndPin
-            });
         }
 
         public void Test()

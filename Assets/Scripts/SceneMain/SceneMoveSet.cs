@@ -27,8 +27,7 @@ namespace SceneMain
                     Debug.Log($"[testum]canvas find success!");
                 }
             }
-
-            // Character 명세별 생성(일단 1개)
+            
             _moveSetCharacter = CreateCharacter();
 
             _uiManager = LoadUIManager();
@@ -44,9 +43,6 @@ namespace SceneMain
             _moveSetCharacter.Init();
             
             // 필요 UI 명세별 생성
-            _uiManager.animCustomWindow = _uiManager.CreateUI<UILayoutWindow>("Prefabs/UI/AnimCustomLayout", UILayerType.LayerNormal);
-            _uiManager.animCustomWindow.Init(_moveSetCharacter);
-            
             _uiManager.actionPlayerPage = _uiManager.CreateUI<UIActionPlayerPage>("Prefabs/UI/ActionPlayerPage", UILayerType.LayerNormal);
             _uiManager.actionPlayerPage.Init(_moveSetCharacter);
             

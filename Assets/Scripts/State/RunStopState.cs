@@ -30,10 +30,8 @@ public class RunStopState : State
     public override void FixedUpdateState()
     {
         var groundObjs = _character.GetGroundCheckObjects();
-        // _remainRate = 1f;
         if (0 == groundObjs.Length)
         {
-            // animator.enabled = true;
             _character.ChangeState(eState.JUMP_DOWN);
         }
         else
@@ -54,12 +52,5 @@ public class RunStopState : State
             _character.ChangeState(eState.IDLE);
             return;
         }
-        
-        UpdateAnimation();
-    }
-
-    private void UpdateAnimation()
-    {
-        // animator.enabled = false;
     }
 }

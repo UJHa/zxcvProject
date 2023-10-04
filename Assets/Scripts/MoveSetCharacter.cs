@@ -1,16 +1,8 @@
-using System;
 using Animancer;
 using DataClass;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Utils;
 
-// 엄todo: 기능 개발 요구사항
-// 캐릭터 액션 기반 처리하기
-// >> 추가 작업 : Slider min,max를 action 객체가 가진 start,end 비율로 변경
-// 충돌체 붙일 수 있도록 세팅 가져오기
-// 캐릭터의 로직에 있는 데이터를 상위 Manager로 관리하기
 public class MoveSetCharacter : MonoBehaviour
 {
     private AnimancerState _curState = null;
@@ -24,8 +16,7 @@ public class MoveSetCharacter : MonoBehaviour
     
     public void Init()
     {
-        // ChangeAction("Animation/Lucy_FightFist01_2", animStartTime, animEndTime);
-        // ChangeAction(ActionTable.GetActionData(eState.IDLE.ToString()));
+        
     }
 
     // ChangeAction이 가지고 있는 액션일 때는 json 로드로 생성하는 기능 구현하기
@@ -74,15 +65,6 @@ public class MoveSetCharacter : MonoBehaviour
         {
             _curState.IsPlaying = !_curState.IsPlaying;
         }
-        // // 엄todo : UI 레이어 Raycast 통한 무시처리로 변경하기
-        // if (false == UmUtil.IsSliderHold())
-        // {
-        //     
-        // }
-        // else
-        // {
-        //     PauseAnim();
-        // }
     }
     
     public void PlayAnim(ActionData actionData)

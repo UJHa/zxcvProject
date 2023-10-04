@@ -303,7 +303,6 @@ public class Character : MonoBehaviour
         UpdateWallCollisions(eWallDirection.LEFT_BACK, (Vector3.left + Vector3.back).normalized);
         UpdateWallCollisions(eWallDirection.RIGHT_BACK, (Vector3.right + Vector3.back).normalized);
 
-        // _rightWallObjs = GetWallCheckObjects(Vector3.right);
         _stateMap[_curState].FixedUpdateState();
     }
 
@@ -320,7 +319,6 @@ public class Character : MonoBehaviour
                     colliderType = eWallDir
                 });
             }
-            // Debug.Log($"[testum][WallCollision][{eWallDir}]count({hits.Length})");
         }
     }
 
@@ -343,17 +341,6 @@ public class Character : MonoBehaviour
     {
         if (TryGetComponent<CapsuleCollider>(out var collider))
         {
-            // DrawWallCube();
-            // Vector3 wallBoxFrontBack = new Vector3(_wallBoxWidth, _wallBoxHeight, _wallBoxThickness);
-            // {
-            //     var boxPos = transform.position + collider.center;
-            //     var pivot = 0.5f;
-            //     var pivotPos = wallBoxFrontBack.z / 2;
-            //     var centerMovePos = collider.radius;
-            //     boxPos.z += centerMovePos + pivotPos;
-            //     Gizmos.color = Color.red;
-            //     Gizmos.DrawWireCube(boxPos, wallBoxFrontBack);
-            // }
             for (int i = 0; i < 8; i++)
             {
                 var rotateAngle = i * 45;
@@ -365,31 +352,6 @@ public class Character : MonoBehaviour
                 var cubePos = Vector3.forward * (collider.radius + _wallCollider.colliderSize.z / 2);
                 Gizmos.DrawWireCube(cubePos, _wallCollider.colliderSize);
             }
-
-            // {
-            //     var wallBackPos = collider.center;
-            //     wallBackPos.z -= collider.radius + (wallBoxFrontBack.z / 2);
-            //     wallBackPos += transform.position;
-            //     Gizmos.color = Color.red;
-            //     Gizmos.DrawWireCube(wallBackPos, wallBoxFrontBack);
-            // }
-            //
-            // Vector3 wallBoxLeftRight = new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth);
-            // {
-            //     var wallLeftPos = collider.center;
-            //     wallLeftPos.x += collider.radius + (wallBoxLeftRight.x / 2);
-            //     wallLeftPos += transform.position;
-            //     Gizmos.color = Color.red;
-            //     Gizmos.DrawWireCube(wallLeftPos, wallBoxLeftRight);
-            // }
-            //
-            // {
-            //     var wallRightPos = collider.center;
-            //     wallRightPos.x -= collider.radius + (wallBoxLeftRight.x / 2);
-            //     wallRightPos += transform.position;
-            //     Gizmos.color = Color.red;
-            //     Gizmos.DrawWireCube(wallRightPos, wallBoxLeftRight);
-            // }
         }
     }
 
@@ -407,7 +369,6 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log($"[testum]clip name : {_moveSet.GetCurActionName()}");
         if (_changeStates.Count > 0)
         {
             // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
@@ -490,7 +451,7 @@ public class Character : MonoBehaviour
     public Vector3 GetMoveDirectionVector(Vector3 normDirection)
     {
         // ContactWallForLog(new[] { eWallDirection.LEFT, eWallDirection.RIGHT, eWallDirection.FRONT, eWallDirection.BACK });
-        // 3개의 충돌체 검증 시 정확한 역방향 처리
+        // 3 방향의 충돌체 검증 시 정확한 역방향 처리
         if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.LEFT_BACK, eWallDirection.BACK }))
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.forward).normalized);
@@ -523,7 +484,7 @@ public class Character : MonoBehaviour
         {
             normDirection = GetInterpolationWallDirection(normDirection, Vector3.back);
         }
-        // 2개의 충돌체 검출 시 정확한 역방향 처리
+        // 2 방향의 충돌체 검출 시 정확한 역방향 처리
         else if (ContactWalls(new[] { eWallDirection.LEFT, eWallDirection.LEFT_BACK }))
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.right + Vector3.forward).normalized);
@@ -556,26 +517,22 @@ public class Character : MonoBehaviour
         {
             normDirection = GetInterpolationWallDirection(normDirection, (Vector3.left + Vector3.back).normalized);
         }
-        // 1개의 충돌체 검출 시 정확한 역방향 처리
+        // 1 방향의 충돌체 검출 시 정확한 역방향 처리
         else if (ContactWall(eWallDirection.LEFT))
         {
             normDirection = GetInterpolationWallDirection(normDirection,  Vector3.right);
-            // normDirection.x = normDirection.x > 0 ? 0 : normDirection.x;
         }
         else if (ContactWall(eWallDirection.RIGHT))
         {
             normDirection = GetInterpolationWallDirection(normDirection, Vector3.left);
-            // normDirection.x = normDirection.x < 0 ? 0 : normDirection.x;
         }
         else if (ContactWall(eWallDirection.BACK))
         {
             normDirection = GetInterpolationWallDirection(normDirection, Vector3.forward);
-            // normDirection.z = normDirection.z > 0 ? 0 : normDirection.z;
         }
         else if (ContactWall(eWallDirection.FRONT))
         {
             normDirection = GetInterpolationWallDirection(normDirection, Vector3.back);
-            // normDirection.z = normDirection.z < 0 ? 0 : normDirection.z;
         }
 
         return normDirection;
@@ -584,16 +541,12 @@ public class Character : MonoBehaviour
     private Vector3 GetInterpolationWallDirection(Vector3 normDirection, Vector3 standard)
     {
         Vector3 result = normDirection;
-        // string testLog = "";
-        // testLog += $"[testumWall]normDirection({result})standard({standard})내적({Vector3.Dot(result, standard)})";
         Vector3[] reverses = GetReverseVectors(standard);
         foreach (var reverse in reverses)
         {
             if (reverse.normalized != result.normalized)
                 continue;
             result -= standard * Vector3.Dot(result, standard);
-            // testLog += $"changed({result})";
-            // Debug.Log(testLog);
         }
 
         return result.normalized;
@@ -612,7 +565,6 @@ public class Character : MonoBehaviour
             _rotationTween.Kill();
         var rot = GetRotation(_directionVector);
         _rotationTween = transform.DORotateQuaternion(rot, rotateTime);
-        // transform.eulerAngles = euler;
     }
 
     void SetDamage(float damage)
@@ -660,7 +612,6 @@ public class Character : MonoBehaviour
     public void ChangeState(eState state, eStateType stateType = eStateType.NONE)
     {
         Debug.Log($"[{name}][testState]State Change prev({_curState}) cur({state}) count({_changeStates.Count})");
-        // _curState = state;
         _changeStates.Add(new StateInfo()
         {
             state = state,
@@ -671,7 +622,6 @@ public class Character : MonoBehaviour
     public void ResetMoveSpeed()
     {
         _moveSpeed = 0.0f;
-        // 점프한 y 좌표는 따로 관리해야 될듯?
         _rigidbody.velocity = Vector3.zero;
     }
 
@@ -743,11 +693,6 @@ public class Character : MonoBehaviour
         return (Vector3.Distance(traceTarget.transform.position, transform.position) > findRange);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        // OnHit(other);
-    }
-
     public void OnHit(Collider other)
     {
         if (eState.DEAD == _curState)
@@ -795,19 +740,6 @@ public class Character : MonoBehaviour
                 }
             }
         }
-        // Character attacker = other.transform.parent.GetComponent<Character>();
-        // if (attacker == null)
-        // {
-        //     Debug.Log("Attacker is not character.");
-        //     return;
-        // }
-        //
-        // _curHp -= attacker.getAttackDamage();
-        // if (_curHp <= 0f)
-        // {
-        //     _curHp = 0f;
-        //     ChangeState(eState.DEAD);
-        // }
     }
 
     public void OnAirborneLanding(Ground ground)
@@ -831,7 +763,6 @@ public class Character : MonoBehaviour
     {
         // 이건 deadState 이후 시체가 사라질 때 처리하는 함수로 쓰자.
         gameObject.SetActive(false);
-        // slider.gameObject.SetActive(false);
     }
 
     public RaycastHit[] GetGroundCheckObjects()
@@ -853,7 +784,6 @@ public class Character : MonoBehaviour
         var characterCenterPos = transform.position + collider.center;
         var wallPos = direction * (collider.radius + _wallCollider.colliderSize.z / 2);
         var boxCenter = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one).GetPosition();
-        // Debug.Log($"[testum]cobj direction({direction}) ({GetWallBoxCenter(direction)}) boxCenter({boxCenter-wallPos})");
         RaycastHit[] hits = Physics.BoxCastAll(boxCenter-wallPos, _wallCollider.colliderSize / 2, direction, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         return hits;
     }

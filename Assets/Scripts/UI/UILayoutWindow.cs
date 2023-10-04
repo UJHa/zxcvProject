@@ -79,7 +79,6 @@ namespace UI
                 return;
             if (UmUtil.IsSliderHold())
             {
-                // SetAnimEditState(AnimEditState.Stop);
                 _moveSetCharacter.PauseAnim();
                 _moveSetCharacter.UpdateStateTime(_slider.GetValue());
             }
@@ -88,7 +87,6 @@ namespace UI
                 _slider.SetValue(_moveSetCharacter.GetAnimRate());
                 if (_moveSetCharacter.IsAnimRateFinish())
                 {
-                    // SetAnimEditState(AnimEditState.Stop);
                     _slider.SetValue(_moveSetCharacter.GetEndAnimRate());
                     _moveSetCharacter.PlayFinish();
                 }
@@ -107,7 +105,6 @@ namespace UI
             var startRate = _uiManager.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
             Debug.Log($"[startpin] position({pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
             Debug.Log($"[startpin] startRate({startRate})");
-            // _startRate = GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
             _moveSetCharacter.SetActionStartRate(startRate);
         }
 
@@ -122,7 +119,6 @@ namespace UI
             _uiManager.contextMenuPopup.Hide();
             var endRate = _uiManager.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
             Debug.Log($"[endpin] endRate({endRate})");
-            // _endRate = GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
             _moveSetCharacter.SetActionEndRate(endRate);
         }
     }

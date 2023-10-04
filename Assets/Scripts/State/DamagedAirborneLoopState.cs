@@ -19,7 +19,6 @@ public class DamagedAirborneLoopState : DamagedState
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _curState = _action.Play(1f);
         _airTimer = 0f;
-        // _curState.Speed = 0.1f;
         _character.ClearAttackInfoData();
     }
 
@@ -40,7 +39,6 @@ public class DamagedAirborneLoopState : DamagedState
     {
         if (_action.IsAnimationFinish())
         {
-            // _character.ChangeState(eState.DAMAGED_LANDING);
             _action.GoToFirstFrame();
         }
         else

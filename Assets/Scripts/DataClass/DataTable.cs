@@ -19,7 +19,6 @@ namespace DataClass
             Debug.Log($"[testumJson]Application.dataPath({Application.dataPath})");
             var info = new DirectoryInfo(jsonPath);
             var fileInfo = info.GetFiles();
-            // ToJson을 사용하면 JSON형태로 포멧팅된 문자열이 생성된다
             foreach(var file in fileInfo)
             {
                 if (file.Name.Contains(".meta"))

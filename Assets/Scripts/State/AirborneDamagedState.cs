@@ -49,14 +49,10 @@ public class AirborneDamagedState : DamagedState
 
     public override void UpdateState()
     {
-        if (_action.IsAnimationFinish())
+        if (false == _action.IsAnimationFinish())
         {
-            // _character.ChangeState(eState.DAMAGED_AIRBORNE_LOOP);
-        }
-        else
-        {
-            var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
-            if (eState.NONE != nextState2)// && _eState == nextState2)
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
+            if (eState.NONE != nextState)
             {
                 _animancer.States.Current.Time = 0f;
             }

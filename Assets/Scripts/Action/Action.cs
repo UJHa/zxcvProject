@@ -1,14 +1,3 @@
-// Action은 하나의 Monobavior가 가진 Animator 기반으로 동작된다고 가정한다
-
-// 객체 예상 스펙
-// >> 다음 액션 객체
-// >> 애니메이션 이름
-// >> 애니메이션 입력 가능 시간 범위
-// >> 애니메이션 타입(이후 콤보 가능 액션, 입력 가능 액션, 타격 가능 액션 등...)(개발 전까지는 후순위)
-// >> 다음 애니메이션 이동 시의 fade 시간 여부?(개발 전까지는 후순위)
-
-using System;
-using System.IO;
 using Animancer;
 using DataClass;
 using UnityEngine;
@@ -23,24 +12,13 @@ public class Action
     protected AnimancerState _curState;
     private ActionData _actionData;
     private AttackInfo _attackInfo;
-
-    // Ingame 및 json 데이터 존재할 때의 Action 생성
+    
     public Action(AnimancerComponent animancer, string state, KeyCode inputKey = KeyCode.None)
     {
         _animancer = animancer;
         _state = UmUtil.StringToEnum<eState>(state);
         _inputKey = inputKey;
     }
-    
-    // public Action(AnimancerComponent animancer, string clipPath)
-    // {
-    //     _animancer = animancer;
-    //     // _state = state;
-    //     // _inputKey = inputKey;
-    //     // _actionData = ActionTable.GetActionData(state.ToString());
-    //     // _actionInfo = actionInfo;
-    //     _animClip = Resources.Load<AnimationClip>(clipPath);
-    // }
 
     public void Init()
     {
@@ -121,7 +99,6 @@ public class Action
         return _curState.NormalizedTime;
     }
     
-    // action 길이 기반 현재 비율 반환(미사용)
     public float GetLengthRate()
     {
         return (_curState.NormalizedTime - _actionData.startTimeRatio) / (_actionData.endTimeRatio - _actionData.startTimeRatio);

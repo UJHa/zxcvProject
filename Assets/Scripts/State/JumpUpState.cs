@@ -18,7 +18,6 @@ public class JumpUpState : State
         base.StartState();
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpup start");
-        // 엄todo : 이전 State 따라서 Jump CrossFadeSec 값이 다르게 주자!
         _action.Play(_character.jumpUpStart);
         _character._isGround = false;
         _moveVelocity = Vector3.zero;

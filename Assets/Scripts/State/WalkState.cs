@@ -9,7 +9,6 @@ public class WalkState : State
     public override void StartState()
     {
         base.StartState();
-        // string name = "";
         _character.SetMoveSpeedToWalk();
 
         _action.Play(_character.walkStart);

@@ -22,7 +22,6 @@ public class LandingState : State
         _action.Play(_character.jumpEnd);
         _inputTimer.Start();
 
-        // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
         _character.UpdateGroundHeight();
     }
 

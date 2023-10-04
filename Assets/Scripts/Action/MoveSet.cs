@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Animancer;
 using UnityEngine;
 
-// MoveSet Action이 알아야 되는 정보
 public enum ActionType
 {
     NONE,
@@ -13,10 +12,6 @@ public enum ActionType
 public enum AttackRangeType
 {
     NONE,
-    LEFT_HAND,
-    RIGHT_HAND,
-    LEFT_FOOT,
-    RIGHT_FOOT,
     PUNCH_A,
     PUNCH_B,
     KICK_A,
@@ -85,18 +80,5 @@ public class MoveSet
             return eState.NONE;
         var action = _inputEnableMap[enableKey];
         return action.GetState();
-    }
-    
-    // MoveSet 상위(캐릭터)에서 호출
-    // fadeTime을 Animation 정보에 넣어서 관리하기
-    public AnimancerState Play(eState actionState)
-    {
-        if (false == _actionMap.ContainsKey(actionState))
-        {
-            Debug.LogError($"Fail Play! actionState({actionState})");
-            return null;
-        }
-        
-        return _actionMap[actionState].Play();
     }
 }

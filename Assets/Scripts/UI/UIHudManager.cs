@@ -26,7 +26,6 @@ namespace UI
                 GameObject prefab = Resources.Load("Prefabs/HpSlider") as GameObject;
                 GameObject hpSlider = GameObject.Instantiate(prefab, transform, true);
                 hpSlider.transform.SetAsFirstSibling();
-                //hpSlider.transform.localScale = Vector3.one;
                 var slider = hpSlider.GetComponent<Slider>();
                 slider.gameObject.SetActive(true);
                 
@@ -65,8 +64,6 @@ namespace UI
                 Vector3 sliderPos = character.transform.position;
                 sliderPos.y += 2f;
                 _sliders[hashCode].transform.position = Camera.main.WorldToScreenPoint(sliderPos);
-                // Vector3 playerUIDistance = Camera.main.transform.position - GameManager.Instance.GetPlayerUIPos();
-                // Vector3 currentUIDistance = Camera.main.transform.position - sliderPos;
                 
                 slider.gameObject.transform.localScale = Vector3.one;
             }

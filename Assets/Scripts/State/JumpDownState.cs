@@ -42,8 +42,6 @@ public class JumpDownState : State
         _jumpTimer += Time.fixedDeltaTime;
         _moveVelocity.y = _character.GetJumpDownVelocity(_jumpTimer);
         _character.GetRigidbody().velocity = _moveVelocity;
-        // character.GetRigidbody().velocity = new Vector3(0f, character.GetJumpDownVelocity(_jumpTimer), 0f) ; 
-        // Debug.Log($"[jumpdown]timer({_jumpTimer}) GetVelocity({character.GetJumpDownVelocity(_jumpTimer)}), position({character.transform.position}), rigid pos({character.GetRigidbody().position})");
     }
 
     public override void EndState()

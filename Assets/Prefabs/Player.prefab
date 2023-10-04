@@ -1950,7 +1950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e2e56b26ca45f48869aff59c7fa28b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _colliderType: 5
+  _colliderType: 1
 --- !u!1 &6136724877743868280
 GameObject:
   m_ObjectHideFlags: 0
@@ -2024,7 +2024,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fullHp: 100
+  _curHp: 0
   _attackPower: 30
+  _hp: 5
+  _mp: 5
+  _strength: 5
+  _agility: 5
+  _intellect: 5
   jumpUpStart: 0.07
   idleStart: 0.07
   walkStart: 0.07
@@ -2081,7 +2087,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _useReverse: 0
+  _airBoneUp:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _airBoneDown:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _jumpMaxHeight: 2
   _jumpUpMaxTimer: 0.8
   _jumpDownMaxTimer: 0.6
@@ -2100,21 +2117,21 @@ MonoBehaviour:
   - {fileID: 2001029440010266184}
   - {fileID: 2707670309046875429}
   _attackPartDatas:
-  - attackPart: 1
+  - attackPart: 0
     attackCollider: {fileID: 7596293611078780404}
-  - attackPart: 2
+  - attackPart: 0
     attackCollider: {fileID: 3414987712248359516}
-  - attackPart: 3
+  - attackPart: 0
     attackCollider: {fileID: 9177636827613785345}
-  - attackPart: 4
+  - attackPart: 0
     attackCollider: {fileID: 5604798778750302970}
-  - attackPart: 5
+  - attackPart: 1
     attackCollider: {fileID: 6026300478117554533}
-  - attackPart: 6
+  - attackPart: 2
     attackCollider: {fileID: 858455694098392600}
-  - attackPart: 7
+  - attackPart: 3
     attackCollider: {fileID: 1159814235865960960}
-  - attackPart: 8
+  - attackPart: 4
     attackCollider: {fileID: 5427011001870460692}
   _rigidbody: {fileID: 6136724877743868229}
   _prevState: 0
@@ -2279,7 +2296,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e2e56b26ca45f48869aff59c7fa28b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _colliderType: 7
+  _colliderType: 3
 --- !u!1 &7022008634782560970
 GameObject:
   m_ObjectHideFlags: 0
@@ -2390,7 +2407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e2e56b26ca45f48869aff59c7fa28b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _colliderType: 8
+  _colliderType: 4
 --- !u!1 &7194244489336258888
 GameObject:
   m_ObjectHideFlags: 0
@@ -2501,7 +2518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06e2e56b26ca45f48869aff59c7fa28b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _colliderType: 6
+  _colliderType: 2
 --- !u!1 &7915699813569230937
 GameObject:
   m_ObjectHideFlags: 0

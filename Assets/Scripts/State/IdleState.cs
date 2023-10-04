@@ -44,16 +44,7 @@ public class IdleState : State
 
     public override void UpdateState()
     {
-        UpdateAnimation();
         UpdateInput();
-    }
-
-    private void UpdateAnimation()
-    {
-        // var curState = _animancer.States.Current;
-        // Debug.Log($"[testum]TTT curState({curState.Key})");
-        // if (curState.Key.Equals("JumpEnd") && curState.NormalizedTime >= 1.0f)
-        //     _animancer.Play(_animClip, _character.idleStart);
     }
 
     private void UpdateInput()
@@ -69,7 +60,6 @@ public class IdleState : State
             {
                 _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
             }
-            // else if (Input.GetKeyDown(KeyCode.C))
             else
             {
                 var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
