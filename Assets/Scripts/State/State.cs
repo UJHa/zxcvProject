@@ -21,7 +21,10 @@ public enum eState
     DAMAGED_AIRBORNE_LOOP,
     DAMAGED_LANDING,
     WAKE_UP,
-    DEAD
+    DEAD,
+    FIGHTER_AIR_ATTACK1,
+    FIGHTER_AIR_ATTACK2,
+    FIGHTER_AIR_ATTACK3
 }
 
 public abstract class State

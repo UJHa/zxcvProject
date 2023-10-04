@@ -23,10 +23,14 @@ public class JumpUpState : State
         _character._isGround = false;
         _moveVelocity = Vector3.zero;
         Debug.Log($"[testum]speed({_character.GetMoveSpeed()})");
+        _character.GetRigidbody().velocity = Vector3.zero;
     }
 
     public override void UpdateState()
     {
+        var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+        if (eState.NONE != nextState)
+            _character.ChangeState(nextState, eStateType.INPUT);
         UpdateMoveXZ();
     }
 

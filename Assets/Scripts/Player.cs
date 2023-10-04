@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,10 @@ public class Player : Character
         // Kick
         _moveSet.RegisterAction(eState.ATTACK4, KeyCode.X, eState.IDLE);
         _moveSet.RegisterAction(eState.ATTACK5, KeyCode.X, eState.ATTACK4);
+        // Air Punch
+        _moveSet.RegisterAction(eState.FIGHTER_AIR_ATTACK1, KeyCode.C, eState.JUMP_UP);
+        _moveSet.RegisterAction(eState.FIGHTER_AIR_ATTACK2, KeyCode.C, eState.FIGHTER_AIR_ATTACK1);
+        _moveSet.RegisterAction(eState.FIGHTER_AIR_ATTACK3, KeyCode.C, eState.FIGHTER_AIR_ATTACK2);
         // Damaged
         _moveSet.RegisterAction(eState.NORMAL_DAMAGED, KeyCode.Z, eState.IDLE);
         _moveSet.RegisterAction(eState.AIRBORNE_DAMAGED, KeyCode.None, eState.IDLE);
@@ -41,35 +46,48 @@ public class Player : Character
         SettingAttackInfo(eState.ATTACK3, AttackRangeType.PUNCH_B, 1f, 0.1f, 0.2f, AttackType.AIRBORNE, 3.5f, 1f);
         SettingAttackInfo(eState.ATTACK4, AttackRangeType.KICK_B, 1f, 0.25f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
         SettingAttackInfo(eState.ATTACK5, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, AttackType.NORMAL, 0.2f, 0.3f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.3f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.3f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK3, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.0f, 0.0f);
         
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
-        _stateMap.Add(eState.IDLE, new IdleState(this, eState.IDLE));
-        _stateMap.Add(eState.WALK, new WalkState(this, eState.WALK));
-        _stateMap.Add(eState.RUN, new RunState(this, eState.RUN));
-        _stateMap.Add(eState.RUN_STOP, new RunStopState(this, eState.RUN_STOP));
-        _stateMap.Add(eState.JUMP_UP, new JumpUpState(this, eState.JUMP_UP));
-        _stateMap.Add(eState.JUMP_DOWN, new JumpDownState(this, eState.JUMP_DOWN));
-        _stateMap.Add(eState.LANDING, new LandingState(this, eState.LANDING));
+        RegisterState(eState.IDLE, typeof(IdleState));
+        RegisterState(eState.WALK, typeof(WalkState));
+        RegisterState(eState.RUN, typeof(RunState));
+        RegisterState(eState.RUN_STOP, typeof(RunStopState));
+        RegisterState(eState.JUMP_UP, typeof(JumpUpState));
+        RegisterState(eState.JUMP_DOWN, typeof(JumpDownState));
+        RegisterState(eState.LANDING, typeof(LandingState));
+
+        RegisterState(eState.ATTACK, typeof(PunchOneState));
+        RegisterState(eState.ATTACK2, typeof(PunchTwoState));
+        RegisterState(eState.ATTACK3, typeof(PunchThreeState));
+        RegisterState(eState.ATTACK4, typeof(KickOneState));
+        RegisterState(eState.ATTACK5, typeof(KickTwoState));
         
-        _stateMap.Add(eState.ATTACK, new PunchOneState(this, eState.ATTACK));
-        _stateMap.Add(eState.ATTACK2, new PunchTwoState(this, eState.ATTACK2));
-        _stateMap.Add(eState.ATTACK3, new PunchThreeState(this, eState.ATTACK3));
-        _stateMap.Add(eState.ATTACK4, new KickOneState(this, eState.ATTACK4));
-        _stateMap.Add(eState.ATTACK5, new KickTwoState(this, eState.ATTACK5));
+        RegisterState(eState.NORMAL_DAMAGED, typeof(NormalDamagedState));
+        RegisterState(eState.AIRBORNE_DAMAGED, typeof(AirborneDamagedState));
+        RegisterState(eState.DAMAGED_AIRBORNE_LOOP, typeof(DamagedAirborneLoopState));
+        RegisterState(eState.DAMAGED_LANDING, typeof(DamagedLandingState));
+        RegisterState(eState.WAKE_UP, typeof(WakeUpState));
+        RegisterState(eState.DEAD, typeof(DeadState));
         
-        _stateMap.Add(eState.NORMAL_DAMAGED, new NormalDamagedState(this, eState.NORMAL_DAMAGED));
-        _stateMap.Add(eState.AIRBORNE_DAMAGED, new AirborneDamagedState(this, eState.AIRBORNE_DAMAGED));
-        _stateMap.Add(eState.DAMAGED_AIRBORNE_LOOP, new DamagedAirborneLoopState(this, eState.DAMAGED_AIRBORNE_LOOP));
-        _stateMap.Add(eState.DAMAGED_LANDING, new DamagedLandingState(this, eState.DAMAGED_LANDING));
-        _stateMap.Add(eState.WAKE_UP, new WakeUpState(this, eState.WAKE_UP));
-        _stateMap.Add(eState.DEAD, new DeadState(this, eState.DEAD));
+        RegisterState(eState.FIGHTER_AIR_ATTACK1, typeof(AirAttackOne));
+        RegisterState(eState.FIGHTER_AIR_ATTACK2, typeof(AirAttackTwo));
+        RegisterState(eState.FIGHTER_AIR_ATTACK3, typeof(AirAttackThree));
 
         _curState = eState.IDLE;
 
         _stateMap[_curState].StartState();
     }
-    
+
+    private void RegisterState(eState state, Type type)
+    {
+        State a = Activator.CreateInstance(type, this, state) as State;
+        _stateMap.Add(state, a);
+    }
+
     protected override void InitStats()
     {
         _hp = 5f;
