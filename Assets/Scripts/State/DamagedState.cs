@@ -19,7 +19,7 @@ public class DamagedState : State
 
     public override void EndState()
     {
-        
+        _character.RefreshHitBoxKey();
     }
 
     public override void UpdateState()

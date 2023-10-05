@@ -11,7 +11,7 @@ public class Action
     protected AnimationClip _animClip;
     protected AnimancerState _curState;
     private ActionData _actionData;
-    private AttackInfo _attackInfo;
+    private HitboxInfo _hitboxInfo;
     
     public Action(AnimancerComponent animancer, string state, KeyCode inputKey = KeyCode.None)
     {
@@ -31,9 +31,9 @@ public class Action
         _actionData = actionData;
     }
     
-    public void CreateAttackInfo(AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    public void CreateHitboxInfo(string hitboxKey, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, HitboxType hitboxType, float attackHeight, float airborneUpTime)
     {
-        _attackInfo = new(attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
+        _hitboxInfo = new(hitboxKey, attackRangeType, damageRatio, argStartRate, argEndRate, hitboxType, attackHeight, airborneUpTime);
     }
 
     public eState GetState()
@@ -111,17 +111,17 @@ public class Action
     
     public bool IsCollisionEnable()
     {
-        return _curState.NormalizedTime >= _attackInfo.GetStartRate() && _curState.NormalizedTime <= _attackInfo.GetEndRate();
+        return _curState.NormalizedTime >= _hitboxInfo.GetStartRate() && _curState.NormalizedTime <= _hitboxInfo.GetEndRate();
     }
 
     public AttackRangeType GetHitColliderType()
     {
-        return _attackInfo.GetRangeType();
+        return _hitboxInfo.GetRangeType();
     }
     
-    public AttackInfo GetaAttackInfo()
+    public HitboxInfo GetaAttackInfo()
     {
-        return _attackInfo;
+        return _hitboxInfo;
     }
 
     public ActionType GetActionType()

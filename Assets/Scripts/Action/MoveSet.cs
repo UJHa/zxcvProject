@@ -17,7 +17,7 @@ public enum AttackRangeType
     KICK_A,
     KICK_B
 }
-public enum AttackType
+public enum HitboxType
 {
     NONE,
     NORMAL,

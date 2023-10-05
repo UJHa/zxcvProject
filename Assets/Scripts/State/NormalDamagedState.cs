@@ -22,7 +22,7 @@ public class NormalDamagedState : DamagedState
 
     public override void EndState()
     {
-        
+        base.EndState();
     }
 
     public override void UpdateState()

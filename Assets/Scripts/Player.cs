@@ -41,14 +41,14 @@ public class Player : Character
         _moveSet.RegisterAction(eState.WAKE_UP, KeyCode.None, eState.DAMAGED_LANDING);
         _moveSet.RegisterAction(eState.DEAD, KeyCode.None, eState.NONE);
         
-        SettingAttackInfo(eState.ATTACK, AttackRangeType.PUNCH_A, 1f, 0.15f, 0.4f, AttackType.NORMAL, 0.1f , 0.2f);
-        SettingAttackInfo(eState.ATTACK2, AttackRangeType.PUNCH_A, 1f, 0.0f, 0.3f, AttackType.NORMAL, 0.1f, 0.2f);
-        SettingAttackInfo(eState.ATTACK3, AttackRangeType.PUNCH_B, 1f, 0.1f, 0.2f, AttackType.AIRBORNE, 3.5f, 1f);
-        SettingAttackInfo(eState.ATTACK4, AttackRangeType.KICK_B, 1f, 0.25f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
-        SettingAttackInfo(eState.ATTACK5, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, AttackType.NORMAL, 0.2f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK3, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.0f, 0.0f);
+        SettingAttackInfo(eState.ATTACK, AttackRangeType.PUNCH_A, 1f, 0.15f, 0.4f, HitboxType.NORMAL, 0.1f , 0.2f);
+        SettingAttackInfo(eState.ATTACK2, AttackRangeType.PUNCH_A, 1f, 0.0f, 0.3f, HitboxType.NORMAL, 0.1f, 0.2f);
+        SettingAttackInfo(eState.ATTACK3, AttackRangeType.PUNCH_B, 1f, 0.1f, 0.2f, HitboxType.AIRBORNE, 3.5f, 1f);
+        SettingAttackInfo(eState.ATTACK4, AttackRangeType.KICK_B, 1f, 0.25f, 0.3f, HitboxType.NORMAL, 0.2f, 0.3f);
+        SettingAttackInfo(eState.ATTACK5, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, HitboxType.NORMAL, 0.2f, 0.3f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.1f, 0.3f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.1f, 0.3f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK3, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.0f, 0.0f);
         
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
@@ -98,13 +98,14 @@ public class Player : Character
         CalculateStats();
     }
 
-    private void SettingAttackInfo(eState argState, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    private void SettingAttackInfo(eState argState, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, HitboxType hitboxType, float attackHeight, float airborneUpTime)
     {
         var action = _moveSet.GetAction(argState);
         ActionType aType = action.GetActionType();
         if (aType == ActionType.ATTACK)
         {
-            action.CreateAttackInfo(attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
+            
+            action.CreateHitboxInfo($"{GetInstanceID()}_{argState}", attackRangeType, damageRatio, argStartRate, argEndRate, hitboxType, attackHeight, airborneUpTime);
         }
     }
 

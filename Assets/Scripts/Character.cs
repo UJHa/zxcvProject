@@ -152,6 +152,8 @@ public class Character : MonoBehaviour
     protected float _attackedMaxHeight = 0f;
     protected float _airborneUpTime = 0f;
 
+    protected string curHitboxKey = ""; // 피격 시 공격한 정보 저장용
+
     // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
     private GameObject hitFx;
     
@@ -705,20 +707,25 @@ public class Character : MonoBehaviour
             var attacker = attackCollider.GetOwner();
             if (attacker != this)
             {
-                AttackInfo attackInfo = attackCollider.GetAttackInfo();
-                AttackType attackType = attackInfo.GetAttackType();
-                _attackedMaxHeight = attackInfo.attackHeight;
-                _airborneUpTime = attackInfo.airborneUpTime;
-                var damage = attackInfo.damageRatio * attacker._strength;
+                HitboxInfo hitboxInfo = attackCollider.GetAttackInfo();
+                // 동일한 대상이 동일한 state로 공격 판정 시 무시 처리
+                string hitboxKey = hitboxInfo.GetHitboxKey();
+                if (curHitboxKey.Equals(hitboxKey))
+                    return;
+                HitboxType hitboxType = hitboxInfo.GetAttackType();
+                _attackedMaxHeight = hitboxInfo.attackHeight;
+                _airborneUpTime = hitboxInfo.airborneUpTime;
+                var damage = hitboxInfo.damageRatio * attacker._strength;
                 SetDamage(damage);
-                switch (attackType)
+                switch (hitboxType)
                 {
-                    case AttackType.NONE:
+                    case HitboxType.NONE:
                         break;
-                    case AttackType.NORMAL:
+                    case HitboxType.NORMAL:
                         var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
                         var hitFxObj = Instantiate(hitFx);
                         hitFxObj.transform.position = closePos;
+                        Debug.Log($"[{name}]Attacked State({attacker._curState})");
                         // 엄todo: isGround 및 피격 여부로 체크 변경하기
                         if (false == _isGround)
                             ChangeState(eState.AIRBORNE_DAMAGED);
@@ -730,7 +737,7 @@ public class Character : MonoBehaviour
                                 ChangeState(eState.NORMAL_DAMAGED);
                         }
                         break;
-                    case AttackType.AIRBORNE:
+                    case HitboxType.AIRBORNE:
                         // 방향을 때린 상대의 방향으로 회전시키기
                         Vector3 vector = attacker.transform.position - transform.position;
                         vector.y = 0;
@@ -899,12 +906,12 @@ public class Character : MonoBehaviour
             partData.attackCollider.gameObject.SetActive(enable);
         }
     }
-    public void ActiveAttackCollider(bool enable, AttackRangeType colliderType, AttackInfo attackInfo)
+    public void ActiveAttackCollider(bool enable, AttackRangeType colliderType, HitboxInfo hitboxInfo)
     {
         if (false == _attackColliderMap.ContainsKey(colliderType))
             return;
         _attackColliderMap[colliderType].gameObject.SetActive(enable);
-        _attackColliderMap[colliderType].SetAttackInfo(attackInfo);
+        _attackColliderMap[colliderType].SetAttackInfo(hitboxInfo);
     }
     
     public void ActiveHitCollider(bool enable, HitColliderType colliderType)
@@ -917,5 +924,10 @@ public class Character : MonoBehaviour
     private Vector3 GetLeftRightWallBoxSize()
     {
         return new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth) / 2;
+    }
+
+    public void RefreshHitBoxKey()
+    {
+        curHitboxKey = "";
     }
 }

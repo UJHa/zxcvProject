@@ -1,26 +1,28 @@
-public class AttackInfo
+public class HitboxInfo
 {
+    private string _hitboxKey;
     private float _startRate;
     private float _endRate;
-    private AttackType _attackType;
+    private HitboxType _hitboxType;
     private AttackRangeType _attackRangeType;
     public float damageRatio;
     public float attackHeight;
     public float airborneUpTime;
     
-    public AttackInfo()
+    public HitboxInfo()
     {
-        _attackType = AttackType.NONE;
+        _hitboxType = HitboxType.NONE;
         attackHeight = 0f;
     }
 
-    public AttackInfo(AttackRangeType attackRangeType, float damageRatio, float startRate, float endRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    public HitboxInfo(string hitboxKey, AttackRangeType attackRangeType, float damageRatio, float startRate, float endRate, HitboxType hitboxType, float attackHeight, float airborneUpTime)
     {
+        _hitboxKey = hitboxKey;
         _attackRangeType = attackRangeType;
         this.damageRatio = damageRatio;
         _startRate = startRate;
         _endRate = endRate;
-        this._attackType = attackType;
+        _hitboxType = hitboxType;
         this.attackHeight = attackHeight;
         this.airborneUpTime = airborneUpTime;
     }
@@ -40,8 +42,13 @@ public class AttackInfo
         return _attackRangeType;
     }
 
-    public AttackType GetAttackType()
+    public HitboxType GetAttackType()
     {
-        return _attackType;
+        return _hitboxType;
+    }
+
+    public string GetHitboxKey()
+    {
+        return _hitboxKey;
     }
 }
