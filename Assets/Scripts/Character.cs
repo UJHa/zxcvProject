@@ -712,6 +712,7 @@ public class Character : MonoBehaviour
                 string hitboxKey = hitboxInfo.GetHitboxKey();
                 if (curHitboxKey.Equals(hitboxKey))
                     return;
+                curHitboxKey = hitboxKey;
                 HitboxType hitboxType = hitboxInfo.GetAttackType();
                 _attackedMaxHeight = hitboxInfo.attackHeight;
                 _airborneUpTime = hitboxInfo.airborneUpTime;
@@ -725,7 +726,7 @@ public class Character : MonoBehaviour
                         var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
                         var hitFxObj = Instantiate(hitFx);
                         hitFxObj.transform.position = closePos;
-                        Debug.Log($"[{name}]Attacked State({attacker._curState})");
+                        Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
                         // 엄todo: isGround 및 피격 여부로 체크 변경하기
                         if (false == _isGround)
                             ChangeState(eState.AIRBORNE_DAMAGED);
@@ -739,14 +740,22 @@ public class Character : MonoBehaviour
                         break;
                     case HitboxType.AIRBORNE:
                         // 방향을 때린 상대의 방향으로 회전시키기
-                        Vector3 vector = attacker.transform.position - transform.position;
-                        vector.y = 0;
-                        SetDirectionByVector3(vector);
+                        RotateToAttacker(attacker);
                         ChangeState(eState.AIRBORNE_DAMAGED);
+                        break;
+                    case HitboxType.AIR_POWER_DOWN:
+                        ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
                         break;
                 }
             }
         }
+    }
+
+    private void RotateToAttacker(Character attacker)
+    {
+        Vector3 vector = attacker.transform.position - transform.position;
+        vector.y = 0;
+        SetDirectionByVector3(vector);
     }
 
     public void OnAirborneLanding(Ground ground)

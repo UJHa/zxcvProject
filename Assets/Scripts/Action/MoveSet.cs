@@ -22,6 +22,7 @@ public enum HitboxType
     NONE,
     NORMAL,
     AIRBORNE,
+    AIR_POWER_DOWN,
 }
 
 public class MoveSet

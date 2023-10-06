@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AirAttackOne : State
+public class AirAttackOne : AttackState
 {
     public AirAttackOne(Character character, eState eState) : base(character, eState)
     {

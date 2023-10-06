@@ -20,5 +20,6 @@
 {"id":19,"actionName":"DEAD","actionType":"NONE","clipPath":"Animation/DamageAir_End_Light","speed":1.0,"startTimeRatio":0.8,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":20,"actionName":"FIGHTER_AIR_ATTACK1","actionType":"ATTACK","clipPath":"Animation/Fighter_JumpAttack1","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":21,"actionName":"FIGHTER_AIR_ATTACK2","actionType":"ATTACK","clipPath":"Animation/Fighter_JumpAttack2","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
-{"id":22,"actionName":"FIGHTER_AIR_ATTACK3","actionType":"ATTACK","clipPath":"Animation/Fighter_JumpAttack3","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0}
+{"id":22,"actionName":"FIGHTER_AIR_ATTACK3","actionType":"ATTACK","clipPath":"Animation/Fighter_JumpAttack3","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
+{"id":23,"actionName":"AIRBORNE_POWER_DOWN_DAMAGED","actionType":"ATTACK","clipPath":"Animation/DamageAir_Fall","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0}
 ]

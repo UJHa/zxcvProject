@@ -35,8 +35,9 @@ public class Player : Character
         // Damaged
         _moveSet.RegisterAction(eState.NORMAL_DAMAGED, KeyCode.Z, eState.IDLE);
         _moveSet.RegisterAction(eState.AIRBORNE_DAMAGED, KeyCode.None, eState.IDLE);
-        _moveSet.RegisterAction(eState.DAMAGED_AIRBORNE_LOOP, KeyCode.Z, eState.AIRBORNE_DAMAGED);
+        _moveSet.RegisterAction(eState.DAMAGED_AIRBORNE_LOOP, KeyCode.None, eState.AIRBORNE_DAMAGED);
         _moveSet.RegisterAction(eState.DAMAGED_LANDING, KeyCode.None, eState.DAMAGED_AIRBORNE_LOOP);
+        _moveSet.RegisterAction(eState.AIRBORNE_POWER_DOWN_DAMAGED, KeyCode.None, eState.DAMAGED_AIRBORNE_LOOP);
         
         _moveSet.RegisterAction(eState.WAKE_UP, KeyCode.None, eState.DAMAGED_LANDING);
         _moveSet.RegisterAction(eState.DEAD, KeyCode.None, eState.NONE);
@@ -46,9 +47,9 @@ public class Player : Character
         SettingAttackInfo(eState.ATTACK3, AttackRangeType.PUNCH_B, 1f, 0.1f, 0.2f, HitboxType.AIRBORNE, 3.5f, 1f);
         SettingAttackInfo(eState.ATTACK4, AttackRangeType.KICK_B, 1f, 0.25f, 0.3f, HitboxType.NORMAL, 0.2f, 0.3f);
         SettingAttackInfo(eState.ATTACK5, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, HitboxType.NORMAL, 0.2f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.1f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.1f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK3, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.0f, 0.0f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.1f, 0.2f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.NORMAL, 0.1f, 0.2f);
+        SettingAttackInfo(eState.FIGHTER_AIR_ATTACK3, AttackRangeType.PUNCH_A, 1f, 0f, 1f, HitboxType.AIR_POWER_DOWN, 0.0f, 0.0f);
         
 
         // 이거를 게임 도중에 할 수도 있음.. 겟앰프드의 야수 캐릭터 같은 경우? or 캐릭터 체력 상태별 다른 공격 모션을 주고 싶을 때
@@ -76,6 +77,7 @@ public class Player : Character
         RegisterState(eState.FIGHTER_AIR_ATTACK1, typeof(AirAttackOne));
         RegisterState(eState.FIGHTER_AIR_ATTACK2, typeof(AirAttackTwo));
         RegisterState(eState.FIGHTER_AIR_ATTACK3, typeof(AirAttackThree));
+        RegisterState(eState.AIRBORNE_POWER_DOWN_DAMAGED, typeof(AirBornePowerDownDamagedState));
 
         _curState = eState.IDLE;
 
