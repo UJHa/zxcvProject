@@ -6,18 +6,16 @@ using Utils;
 public class Action
 {
     protected readonly AnimancerComponent _animancer;
-    private readonly KeyCode _inputKey;
     private readonly eState _state;
     protected AnimationClip _animClip;
     protected AnimancerState _curState;
     private ActionData _actionData;
     private HitboxInfo _hitboxInfo;
     
-    public Action(AnimancerComponent animancer, string state, KeyCode inputKey = KeyCode.None)
+    public Action(AnimancerComponent animancer, string state)
     {
         _animancer = animancer;
         _state = UmUtil.StringToEnum<eState>(state);
-        _inputKey = inputKey;
     }
 
     public void Init()
@@ -31,9 +29,9 @@ public class Action
         _actionData = actionData;
     }
     
-    public void CreateHitboxInfo(string hitboxKey, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, HitboxType hitboxType, float attackHeight, float airborneUpTime)
+    public void CreateHitboxInfo(string hitboxKey, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
     {
-        _hitboxInfo = new(hitboxKey, attackRangeType, damageRatio, argStartRate, argEndRate, hitboxType, attackHeight, airborneUpTime);
+        _hitboxInfo = new(hitboxKey, attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
     }
 
     public eState GetState()

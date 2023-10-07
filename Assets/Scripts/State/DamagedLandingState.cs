@@ -41,12 +41,6 @@ public class DamagedLandingState : DamagedState
                 else
                     _character.ChangeState(eState.WAKE_UP);
             }
-            else
-            {
-                var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
-                if (eState.NONE != nextState2 && _eState == nextState2)
-                    _animancer.States.Current.Time = 0f;
-            }
         }
     }
 }

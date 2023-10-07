@@ -29,7 +29,7 @@ public class KickOneState : AttackState
     {
         if (_character.IsGround())
         {
-            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.X);
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.STRONG_ATTACK);
             if (eState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
             else if (_action.IsAnimationFinish())

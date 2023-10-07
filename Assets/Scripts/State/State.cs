@@ -16,6 +16,9 @@ public enum eState
     ATTACK3,
     ATTACK4,
     ATTACK5,
+    FIGHTER_AIR_ATTACK1,
+    FIGHTER_AIR_ATTACK2,
+    FIGHTER_AIR_ATTACK3,
     NORMAL_DAMAGED,
     AIRBORNE_DAMAGED,
     AIRBORNE_POWER_DOWN_DAMAGED,
@@ -23,9 +26,7 @@ public enum eState
     DAMAGED_LANDING,
     WAKE_UP,
     DEAD,
-    FIGHTER_AIR_ATTACK1,
-    FIGHTER_AIR_ATTACK2,
-    FIGHTER_AIR_ATTACK3
+    GET_ITEM,
 }
 
 public abstract class State

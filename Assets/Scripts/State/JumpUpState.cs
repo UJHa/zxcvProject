@@ -27,7 +27,7 @@ public class JumpUpState : State
 
     public override void UpdateState()
     {
-        var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+        var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
         if (eState.NONE != nextState)
             _character.ChangeState(nextState, eStateType.INPUT);
         UpdateMoveXZ();

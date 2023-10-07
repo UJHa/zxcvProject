@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class AirAttackThree : AttackState
+public class AirAttackOneState : AttackState
 {
-    public AirAttackThree(Character character, eState eState) : base(character, eState)
+    public AirAttackOneState(Character character, eState eState) : base(character, eState)
     {
 
     }
@@ -25,7 +25,10 @@ public class AirAttackThree : AttackState
 
     public override void UpdateState()
     {
-        if (_action.IsAnimationFinish())
+        var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
+        if (eState.NONE != nextState)
+            _character.ChangeState(nextState, eStateType.INPUT);
+        else if (_action.IsAnimationFinish())
         {
             _character.ChangeState(eState.JUMP_DOWN);
         }

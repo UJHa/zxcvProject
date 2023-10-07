@@ -1,21 +1,26 @@
+using System.Diagnostics;
+using Animancer;
 using UnityEngine;
+using UnityEditor;
+using UnityEngine.PlayerLoop;
+using Debug = UnityEngine.Debug;
 
-public class WakeUpState : State
+public class GetItemState : State
 {
-    public WakeUpState(Character character, eState eState) : base(character, eState)
+    public GetItemState(Character character, eState eState) : base(character, eState)
     {
     }
 
     public override void StartState()
     {
         base.StartState();
-        _character.ActiveHitCollider(false, HitColliderType.STAND);
-        _character.ActiveHitCollider(false, HitColliderType.AIRBORNE);
+        _character.ResetMoveSpeed();
         _action.Play();
     }
 
     public override void FixedUpdateState()
     {
+        // var groundObjs = _character.GetGroundCheckObjects();
     }
 
     public override void EndState()
@@ -25,6 +30,11 @@ public class WakeUpState : State
 
     public override void UpdateState()
     {
+        UpdateInput();
+    }
+
+    private void UpdateInput()
+    {
         if (_character.IsGround())
         {
             if (_action.IsAnimationFinish())
@@ -32,5 +42,10 @@ public class WakeUpState : State
                 _character.ChangeState(eState.IDLE);
             }
         }
+    }
+    
+    private void UpdateMoveInput()
+    {
+        
     }
 }

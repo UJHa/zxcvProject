@@ -27,8 +27,7 @@ public class GameManager : MonoBehaviour
         instance.transform.SetAsFirstSibling();
         IsExistInstance = true;
     }
-
-    public Camera camera;
+    
     [FormerlySerializedAs("player")] public GameObject mainPlayer;
     public Vector3 adjust_pos = new Vector3(0.0f, 0.1f, 4.0f);
     [SerializeField]
@@ -47,6 +46,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // GetComponent<Camera>().fieldOfView = GetComponent<Camera>().fieldOfView;
         foreach(NonPlayer enemy in GameObject.FindObjectsOfType<NonPlayer>())
         {
             enemies.Add(enemy);
@@ -57,8 +57,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (camera)
-            camera.transform.position = mainPlayer.transform.position + adjust_pos;
+        if (Camera.main)
+            Camera.main.transform.position = mainPlayer.transform.position + adjust_pos;
         
         if (InputManager.IsExistInstance)
             InputManager.Instance.Update();

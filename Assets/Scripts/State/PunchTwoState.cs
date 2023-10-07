@@ -29,7 +29,7 @@ public class PunchTwoState : AttackState
     {
         if (_character.IsGround())
         {
-            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
             if (eState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
             else if (_action.IsAnimationFinish())

@@ -56,28 +56,20 @@ public class IdleState : State
 
         if (_character.IsGround())
         {
-            if(Input.GetKeyDown(KeyCode.V))
+            KeyBindingType[] keyBindingTypes = new[]
             {
-                _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
-            }
-            else
+                KeyBindingType.JUMP, 
+                KeyBindingType.WEEK_ATTACK, 
+                KeyBindingType.STRONG_ATTACK, 
+                KeyBindingType.INTERACTION
+            };
+            foreach (var bindingType in keyBindingTypes)
             {
-                var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.C);
-                if (eState.NONE == nextState)
-                {
-                    var nextState2 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.X);
-                    if (eState.NONE != nextState2)
-                        _character.ChangeState(nextState2, eStateType.INPUT);
-                    else
-                    {
-                        var nextState3 = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
-                        if (eState.NONE != nextState3)
-                            _character.ChangeState(nextState3, eStateType.INPUT);
-                    }
-                }
-                else
+                var nextState = _moveSet.DetermineNextState(_character.GetCurState(), bindingType);
+                if (eState.NONE != nextState)
                 {
                     _character.ChangeState(nextState, eStateType.INPUT);
+                    break;
                 }
             }
         }

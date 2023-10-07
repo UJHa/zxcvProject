@@ -35,13 +35,5 @@ public class AirBornePowerDownDamagedState : DamagedState
 
     public override void UpdateState()
     {
-        if (false == _action.IsAnimationFinish())
-        {
-            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyCode.Z);
-            if (eState.NONE != nextState)
-            {
-                _animancer.States.Current.Time = 0f;
-            }
-        }
     }
 }

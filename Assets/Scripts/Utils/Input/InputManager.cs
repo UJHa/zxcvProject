@@ -13,7 +13,9 @@ public enum KeyBindingType
     UP_ARROW,
     DOWN_ARROW,
     JUMP,
-    ATTACK
+    WEEK_ATTACK,
+    STRONG_ATTACK,
+    INTERACTION
 }
 
 public class KeyInfo
@@ -55,8 +57,9 @@ public class InputManager
         _inputMap.Add(KeyBindingType.LEFT_ARROW, new KeyInfo { keyType = KeyBindingType.LEFT_ARROW, keyCode = KeyCode.LeftArrow, isDown = false, isHold = false, isUp = false, });
         _inputMap.Add(KeyBindingType.RIGHT_ARROW, new KeyInfo { keyType = KeyBindingType.RIGHT_ARROW, keyCode = KeyCode.RightArrow, isDown = false, isHold = false, isUp = false, });
         _inputMap.Add(KeyBindingType.JUMP, new KeyInfo { keyType = KeyBindingType.JUMP, keyCode = KeyCode.V, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.ATTACK, new KeyInfo { keyType = KeyBindingType.ATTACK, keyCode = KeyCode.C, isDown = false, isHold = false, isUp = false, });
-        
+        _inputMap.Add(KeyBindingType.WEEK_ATTACK, new KeyInfo { keyType = KeyBindingType.WEEK_ATTACK, keyCode = KeyCode.C, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.STRONG_ATTACK, new KeyInfo { keyType = KeyBindingType.STRONG_ATTACK, keyCode = KeyCode.X, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.INTERACTION, new KeyInfo { keyType = KeyBindingType.STRONG_ATTACK, keyCode = KeyCode.Z, isDown = false, isHold = false, isUp = false, });
     }
 
     public void Update()
@@ -209,5 +212,12 @@ public class InputManager
             return -Vector3.right;
             
         return Vector3.zero;
+    }
+
+    public KeyCode GetKeyCode(KeyBindingType type)
+    {
+        if (_inputMap.ContainsKey(type))
+            return _inputMap[type].keyCode;
+        return KeyCode.None;
     }
 }

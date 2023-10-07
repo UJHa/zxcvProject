@@ -19,7 +19,7 @@ namespace SceneMain
         {
             GameManager.CreateInstance();
             GameManager.Instance.Init();
-            GameManager.Instance.camera = Camera.main;
+            // GameManager.Instance.camera = Camera.main;
 
             DataTable.LoadJsonData();
             

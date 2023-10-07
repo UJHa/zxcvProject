@@ -55,15 +55,33 @@ public class LandingState : State
             return;
         
         UpdateMoveInput();
-        
-        if(Input.GetKeyDown(KeyCode.V) && _character.IsGround())
+
+        if (_character.IsGround())
         {
-            _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
-        }
-        
-        if (Input.GetKeyDown(KeyCode.C) && _character.IsGround())
-        {
-            _character.ChangeState(eState.ATTACK);
+            KeyBindingType[] keyBindingTypes = new[]
+            {
+                KeyBindingType.JUMP, 
+                KeyBindingType.WEEK_ATTACK, 
+                KeyBindingType.STRONG_ATTACK,
+            };
+            foreach (var bindingType in keyBindingTypes)
+            {
+                var nextState = _moveSet.DetermineNextState(_character.GetCurState(), bindingType);
+                if (eState.NONE != nextState)
+                {
+                    _character.ChangeState(nextState, eStateType.INPUT);
+                    break;
+                }
+            }
+            // if(Input.GetKeyDown(InputManager.Instance.GetKeyCode(KeyBindingType.JUMP)))
+            // {
+            //     _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            // }
+            //
+            // if (Input.GetKeyDown(InputManager.Instance.GetKeyCode(KeyBindingType.WEEK_ATTACK)))
+            // {
+            //     _character.ChangeState(eState.ATTACK);
+            // }
         }
     }
     

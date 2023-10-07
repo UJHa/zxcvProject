@@ -713,16 +713,16 @@ public class Character : MonoBehaviour
                 if (curHitboxKey.Equals(hitboxKey))
                     return;
                 curHitboxKey = hitboxKey;
-                HitboxType hitboxType = hitboxInfo.GetAttackType();
+                AttackType attackType = hitboxInfo.GetAttackType();
                 _attackedMaxHeight = hitboxInfo.attackHeight;
                 _airborneUpTime = hitboxInfo.airborneUpTime;
                 var damage = hitboxInfo.damageRatio * attacker._strength;
                 SetDamage(damage);
-                switch (hitboxType)
+                switch (attackType)
                 {
-                    case HitboxType.NONE:
+                    case AttackType.NONE:
                         break;
-                    case HitboxType.NORMAL:
+                    case AttackType.NORMAL:
                         var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
                         var hitFxObj = Instantiate(hitFx);
                         hitFxObj.transform.position = closePos;
@@ -738,12 +738,12 @@ public class Character : MonoBehaviour
                                 ChangeState(eState.NORMAL_DAMAGED);
                         }
                         break;
-                    case HitboxType.AIRBORNE:
+                    case AttackType.AIRBORNE:
                         // 방향을 때린 상대의 방향으로 회전시키기
                         RotateToAttacker(attacker);
                         ChangeState(eState.AIRBORNE_DAMAGED);
                         break;
-                    case HitboxType.AIR_POWER_DOWN:
+                    case AttackType.AIR_POWER_DOWN:
                         ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
                         break;
                 }
