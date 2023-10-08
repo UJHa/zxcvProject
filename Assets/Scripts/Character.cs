@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Animancer;
 using DG.Tweening;
+using Item;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -49,6 +50,22 @@ public struct AttackPartData
 {
     public AttackRangeType attackPart;
     public AttackCollider attackCollider;
+}
+
+public enum ColliderType
+{
+    NONE,
+    LEFT_HAND,
+    RIGHT_HAND,
+    LEFT_FOOT,
+    RIGHT_FOOT
+}
+
+[Serializable]
+public struct PartColliderData
+{
+    public ColliderType Type;
+    public PartCollider Collider;
 }
 
 // 엄todo : 대쉬 슬라이드로 언덕 오르기/내리기 테스트 및 구현 >>>> 보류
@@ -116,6 +133,10 @@ public class Character : MonoBehaviour
     [Header("Attack Collider")]
     [SerializeField] private List<AttackPartData> _attackPartDatas = new();
     private Dictionary<AttackRangeType, AttackCollider> _attackColliderMap = new();
+    
+    [Header("Attack Collider")]
+    [SerializeField] private List<PartColliderData> _partColliderDatas = new();
+    private Dictionary<ColliderType, PartCollider> _partColliderMap = new();
 
     [Header("3D Phygics Component")] 
     [SerializeField] private Rigidbody _rigidbody;
@@ -180,6 +201,13 @@ public class Character : MonoBehaviour
                 hitCollider.gameObject.SetActive(false);
                 _hitColliderMap.Add(hitCollider.GetHitType(), hitCollider);
             }
+        }
+
+        foreach (var partColliderData in _partColliderDatas)
+        {
+            partColliderData.Collider.SetOwner(this);
+            if (false == _partColliderMap.ContainsKey(partColliderData.Type))
+                _partColliderMap.Add(partColliderData.Type, partColliderData.Collider);
         }
 
         InitStats();
@@ -678,6 +706,17 @@ public class Character : MonoBehaviour
         return null;
     }
 
+    // 엄todo : 캐릭터의 루팅 범위 기능 개발이 필요함(현재 캐릭터 크기의 캡슐로 처리)
+    public Collider[] FindEnableAcquireItems()
+    {
+        Vector3 start = transform.position;
+        start.y -= 0.7f;
+        Vector3 end = transform.position;
+        end.y += 0.7f;
+        var result = Physics.OverlapCapsule(start, end, 0.2f);
+        return result;
+    }
+
     public GameObject traceTarget = null;
     private float findRange = 5.0f;
     public void SetTarget(GameObject gameObject)
@@ -938,5 +977,26 @@ public class Character : MonoBehaviour
     public void RefreshHitBoxKey()
     {
         curHitboxKey = "";
+    }
+
+    public void EquipDropItem(DropItem dropItem)
+    {
+        var item = dropItem.GetItem();
+        if (false == item is ItemWeapon)
+        {
+            Debug.Log($"[testum]Equip fail! it's not ItemWeapon");
+        }
+        else
+        {
+            var itemWeapon = item as ItemWeapon;
+            var colliderType = itemWeapon.GetEquipColliderType(); // 
+            if (false == _partColliderMap.TryGetValue(colliderType, out var partCollider))
+            {
+                Debug.LogError($"Character doesn't have colliderType({colliderType})");
+                return;
+            }
+            var equipItem = Instantiate(item, partCollider.transform);
+            Destroy(dropItem.gameObject);
+        }
     }
 }

@@ -19,7 +19,16 @@ public class IdleState : State
         base.StartState();
         _character.ResetMoveSpeed();
         _character._isGround = true;
-        _action.Play(_character.idleStart);
+        var prevState = _animancer.Layers[0].CurrentState;
+        if (null != prevState && prevState.Clip.Equals(_action.GetClip()))
+        {
+            // 재생중이던 clip이 idle clip과 동일하지 않을 때
+        }
+        else
+        {
+            // 재생중이던 clip이 idle clip과 동일할 때
+            _action.Play(_character.idleStart);
+        }
         
         _inputTimer.Start();
 

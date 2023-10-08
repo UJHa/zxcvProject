@@ -8,12 +8,6 @@ public class HitboxInfo
     public float damageRatio;
     public float attackHeight;
     public float airborneUpTime;
-    
-    public HitboxInfo()
-    {
-        _attackType = AttackType.NONE;
-        attackHeight = 0f;
-    }
 
     public HitboxInfo(string hitboxKey, AttackRangeType attackRangeType, float damageRatio, float startRate, float endRate, AttackType attackType, float attackHeight, float airborneUpTime)
     {
