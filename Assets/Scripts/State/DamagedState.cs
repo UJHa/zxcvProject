@@ -1,9 +1,5 @@
-using Animancer;
-using UnityEngine;
-
 public class DamagedState : State
 {
-    private AnimancerState _curState;
     public DamagedState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -26,9 +22,9 @@ public class DamagedState : State
     {
         if (_character.IsGround())
         {
-            if (_action.IsAnimationFinish())
+            if (_moveSet.IsAnimationFinish())
             {
-                _character.ChangeState(eState.IDLE);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
         }
     }

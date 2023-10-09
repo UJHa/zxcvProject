@@ -11,7 +11,7 @@ public class WakeUpState : State
         base.StartState();
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(false, HitColliderType.AIRBORNE);
-        _action.Play();
+        _moveSet.Play(_action);
     }
 
     public override void FixedUpdateState()
@@ -27,9 +27,9 @@ public class WakeUpState : State
     {
         if (_character.IsGround())
         {
-            if (_action.IsAnimationFinish())
+            if (_moveSet.IsAnimationFinish())
             {
-                _character.ChangeState(eState.IDLE);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
         }
     }

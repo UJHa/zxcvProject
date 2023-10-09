@@ -1,12 +1,8 @@
-using System;
-using Animancer;
 using UnityEngine;
-using UnityEditor;
 
 public class AirBornePowerDownDamagedState : DamagedState
 {
     private Vector3 _moveVelocity = Vector3.zero;
-    private AnimancerState _curState;
     private float _maxUpHeight = 0f;
 
     public AirBornePowerDownDamagedState(Character character, eState eState) : base(character, eState)
@@ -18,7 +14,7 @@ public class AirBornePowerDownDamagedState : DamagedState
         base.StartState();
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
-        _curState = _action.Play();
+        _moveSet.Play(_action);
         _character._isGround = false;
     }
 

@@ -10,7 +10,7 @@ public class AirAttackThreeState : AttackState
     public override void StartState()
     {
         base.StartState();
-        _action.Play();
+        _moveSet.Play(_action);
         _character.GetRigidbody().velocity = Vector3.zero;
     }
 
@@ -25,12 +25,12 @@ public class AirAttackThreeState : AttackState
 
     public override void UpdateState()
     {
-        if (_action.IsAnimationFinish())
+        if (_moveSet.IsAnimationFinish())
         {
-            _character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
         
-        bool collisionEnable = _action.IsCollisionEnable();
+        bool collisionEnable = _moveSet.IsCollisionEnable();
         _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
     }
 }

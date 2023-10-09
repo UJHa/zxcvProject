@@ -1,7 +1,4 @@
 using UnityEngine;
-using UnityEditor;
-using System.Diagnostics;
-using Animancer;
 using Debug = UnityEngine.Debug;
 
 public class JumpUpState : State
@@ -18,7 +15,7 @@ public class JumpUpState : State
         base.StartState();
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpup start");
-        _action.Play(_character.jumpUpStart);
+        _moveSet.Play(_action, _character.jumpUpStart);
         _character._isGround = false;
         _moveVelocity = Vector3.zero;
         Debug.Log($"[testum]speed({_character.GetMoveSpeed()})");
@@ -27,6 +24,8 @@ public class JumpUpState : State
 
     public override void UpdateState()
     {
+        if (_moveSet.IsAnimationFinish())
+            _moveSet.SetAnimationEndRatio();
         var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
         if (eState.NONE != nextState)
             _character.ChangeState(nextState, eStateType.INPUT);
@@ -38,7 +37,7 @@ public class JumpUpState : State
         if (_jumpTimer >= _character.GetJumpUpMaxTimer())
         {
             Debug.Log($"[testlog] jump up update fin?");
-            _character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeRoleState(eRoleState.JUMP_DOWN);
             return;
         }
         _jumpTimer += Time.fixedDeltaTime;

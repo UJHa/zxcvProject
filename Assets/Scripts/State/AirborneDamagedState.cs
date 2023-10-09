@@ -1,5 +1,4 @@
 using System;
-using Animancer;
 using UnityEngine;
 using UnityEditor;
 
@@ -7,7 +6,6 @@ public class AirborneDamagedState : DamagedState
 {
     private float _upMoveTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
-    private AnimancerState _curState;
     private float _maxUpHeight = 0f;
 
     public AirborneDamagedState(Character character, eState eState) : base(character, eState)
@@ -19,7 +17,7 @@ public class AirborneDamagedState : DamagedState
         base.StartState();
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
-        _curState = _action.Play();
+        _moveSet.Play(_action);
         _maxUpHeight = _character.transform.position.y + _character.GetAttackedMaxHeight();
         Debug.Log($"[testum]_maxUpHeight({_maxUpHeight})");
         _upMoveTimer = 0f;

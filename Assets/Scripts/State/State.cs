@@ -1,24 +1,21 @@
-using Animancer;
-using UnityEngine;
-
 public enum eState
 {
     NONE,
-    IDLE,
-    WALK,
-    RUN,
-    RUN_STOP,
+    FIGHTER_IDLE,
+    FIGHTER_WALK,
+    FIGHTER_RUN,
+    FIGHTER_RUN_STOP,
     JUMP_UP,
     JUMP_DOWN,
     LANDING,
-    ATTACK,
-    ATTACK2,
-    ATTACK3,
-    ATTACK4,
-    ATTACK5,
-    FIGHTER_AIR_ATTACK1,
-    FIGHTER_AIR_ATTACK2,
-    FIGHTER_AIR_ATTACK3,
+    FIGHTER_WEEK_ATTACK1,
+    FIGHTER_WEEK_ATTACK2,
+    FIGHTER_WEEK_ATTACK3,
+    FIGHTER_STRONG_ATTACK1,
+    FIGHTER_STRONG_ATTACK2,
+    FIGHTER_WEEK_AIR_ATTACK1,
+    FIGHTER_WEEK_AIR_ATTACK2,
+    FIGHTER_WEEK_AIR_ATTACK3,
     NORMAL_DAMAGED,
     AIRBORNE_DAMAGED,
     AIRBORNE_POWER_DOWN_DAMAGED,
@@ -27,29 +24,34 @@ public enum eState
     WAKE_UP,
     DEAD,
     GET_ITEM,
+    RAPIER_IDLE,
+    RAPIER_WALK,
+    RAPIER_RUN,
+    RAPIER_RUN_STOP,
+    RAPIER_JUMP_UP,
+    RAPIER_JUMP_DOWN,
+    RAPIER_LANDING,
 }
 
 public abstract class State
 {
     protected Character _character;
-    protected readonly AnimancerComponent _animancer;
     protected readonly eState _eState;
     protected readonly MoveSet _moveSet;
-    protected readonly Action _action;
+    protected Action _action;
 
     public State(Character character, eState eState)
     {
         this._character = character;
-        this._animancer = _character.GetComponent<AnimancerComponent>();
         _moveSet = _character.GetMoveSet();
         _eState = eState;
-        _action = _moveSet.GetAction(_eState);
     }
 
     public virtual void StartState()
     {
         _character.ActiveAttackColliders(false);
         _character.ActiveHitCollider(true, HitColliderType.STAND);
+        _action = GameManager.Instance.GetAction(_eState);
     }
     public abstract void UpdateState();
     public abstract void FixedUpdateState();

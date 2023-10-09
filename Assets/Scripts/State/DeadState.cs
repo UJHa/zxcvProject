@@ -11,7 +11,7 @@ public class DeadState : State
     public override void StartState()
     {
         base.StartState();
-        _action.Play();
+        _moveSet.Play(_action);
     }
 
     public override void FixedUpdateState()

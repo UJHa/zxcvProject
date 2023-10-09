@@ -1,10 +1,5 @@
-using Animancer;
-using UnityEngine;
-using UnityEditor;
-
 public class NormalDamagedState : DamagedState
 {
-    private AnimancerState _curState;
 
     public NormalDamagedState(Character character, eState eState) : base(character, eState)
     {
@@ -13,7 +8,7 @@ public class NormalDamagedState : DamagedState
     public override void StartState()
     {
         base.StartState();
-        _curState = _action.Play();
+        _moveSet.Play(_action);
     }
 
     public override void FixedUpdateState()

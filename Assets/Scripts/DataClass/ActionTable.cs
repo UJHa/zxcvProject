@@ -21,6 +21,7 @@ namespace DataClass
         {
             id = actionData.id;
             actionName = actionData.actionName;
+            roleState = actionData.roleState;
             actionType = actionData.actionType;
             clipPath = actionData.clipPath;
             speed = actionData.speed;
@@ -31,6 +32,7 @@ namespace DataClass
 
         public int id { get; set; }
         public string actionName { get; set; }
+        public string roleState { get; set; }
         public string actionType { get; set; }
         public string clipPath { get; set; }
         public float speed { get; set; }
@@ -39,7 +41,7 @@ namespace DataClass
         public float damageRatio { get; set; }
         public override string ToString()
         {
-            return $"id({id})actionName({actionName})action({actionType})speed({speed})clipPath({clipPath})startTimeRatio({startTimeRatio})endTimeRatio({endTimeRatio})damageRatio({damageRatio})";
+            return $"id({id})actionName({actionName})roleState({roleState})action({actionType})speed({speed})clipPath({clipPath})startTimeRatio({startTimeRatio})endTimeRatio({endTimeRatio})damageRatio({damageRatio})";
         }
     }
 

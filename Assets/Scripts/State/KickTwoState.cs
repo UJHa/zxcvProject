@@ -1,11 +1,5 @@
-using Animancer;
-using UnityEngine;
-using UnityEditor;
-
 public class KickTwoState : AttackState
 {
-    private AnimancerState _curState;
-
     public KickTwoState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -13,7 +7,7 @@ public class KickTwoState : AttackState
     public override void StartState()
     {
         base.StartState();
-        _curState = _action.Play();
+        _moveSet.Play(_action);
     }
 
     public override void FixedUpdateState()
@@ -29,12 +23,12 @@ public class KickTwoState : AttackState
     {
         if (_character.IsGround())
         {
-            if (_action.IsAnimationFinish())
+            if (_moveSet.IsAnimationFinish())
             {
-                _character.ChangeState(eState.IDLE);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
             
-            bool collisionEnable = _action.IsCollisionEnable();
+            bool collisionEnable = _moveSet.IsCollisionEnable();
             _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
         }
     }

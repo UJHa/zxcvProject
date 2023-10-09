@@ -164,7 +164,7 @@ namespace UI
                 });
             }
 
-            _selectActionName = _actions[eState.IDLE.ToString()].actionName; 
+            _selectActionName = _actions[eState.FIGHTER_IDLE.ToString()].actionName; 
             _actionInfoBtnDict[_selectActionName].onClick.Invoke();
         }
 

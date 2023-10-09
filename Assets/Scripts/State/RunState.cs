@@ -1,6 +1,4 @@
-using Animancer;
 using UnityEngine;
-using UnityEditor;
 
 public class RunState : State
 {
@@ -12,7 +10,7 @@ public class RunState : State
     {
         base.StartState();
         _character.SetMoveSpeedToRun();
-        _action.Play(_character.runStart);
+        _moveSet.Play(_action, _character.runStart);
     }
 
     public override void FixedUpdateState()
@@ -20,7 +18,7 @@ public class RunState : State
         var groundObjs = _character.GetGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
-            _character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
         else
             _character.UpdateGroundHeight();
@@ -41,13 +39,13 @@ public class RunState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
         if (Vector3.zero == vector)
         {
-            _character.ChangeState(eState.RUN_STOP);
+            _character.ChangeRoleState(eRoleState.RUN_STOP);
             return;
         }
 
         if (InputManager.Instance.GetButtonDown(KeyBindingType.JUMP))
         {
-            _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            _character.ChangeRoleState(eRoleState.JUMP_UP, eStateType.INPUT);
             return;
         }
         

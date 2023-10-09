@@ -1,27 +1,24 @@
-using Animancer;
 using DataClass;
 using UnityEngine;
 using Utils;
 
 public class Action
 {
-    protected readonly AnimancerComponent _animancer;
     private readonly eState _state;
     protected AnimationClip _animClip;
-    protected AnimancerState _curState;
     private ActionData _actionData;
     private HitboxInfo _hitboxInfo;
     
-    public Action(AnimancerComponent animancer, string state)
+    public Action(string state)
     {
-        _animancer = animancer;
         _state = UmUtil.StringToEnum<eState>(state);
-    }
-
-    public void Init()
-    {
         _actionData = ActionTable.GetActionData(_state.ToString());
         _animClip = Resources.Load<AnimationClip>(_actionData.clipPath);
+    }
+    
+    public void Init()
+    {
+        
     }
 
     public void SetActionData(ActionData actionData)
@@ -43,23 +40,11 @@ public class Action
     {
         return _animClip;
     }
-
-    public AnimancerState Play(float fadeTime = 0f)
+    
+    public float GetSpeed()
     {
-        _curState = _animancer.Play(_animClip, fadeTime);
-        // 엄todo : 이런 조건문은 분리된 공간에서 관리될 수 있도록 수정하기
-        // play 함수에서 호출하지 않고 분리 하고 싶음
-        if (null != _actionData)
-        {
-            _curState.NormalizedTime = _actionData.startTimeRatio;
-            _curState.Speed = _actionData.speed;
-        }
-        return _curState;
-    }
-
-    public void SetStartRate(float argRate)
-    {
-        _actionData.startTimeRatio = argRate;
+        var speed = null != _actionData ? _actionData.speed : 1f;
+        return speed;
     }
     
     public void SetEndRate(float argRate)
@@ -67,49 +52,21 @@ public class Action
         _actionData.endTimeRatio = argRate;
     }
     
-    public float GetStartRate()
+    public float GetStartRatio()
     {
-        return _actionData.startTimeRatio;
+        var result = null != _actionData ? _actionData.startTimeRatio : 0f;
+        return result;
     }
     
-    public float GetEndRate()
+    public float GetEndRatio()
     {
-        return _actionData.endTimeRatio;
+        var result = null != _actionData ? _actionData.endTimeRatio : 1f;
+        return result;
     }
     
-    public void GoToFirstFrame()
+    public bool IsCollisionEnable(float normTime)
     {
-        _curState.NormalizedTime = _actionData.startTimeRatio;
-    }
-    
-    public void GoToEndFrame()
-    {
-        _curState.NormalizedTime = _actionData.endTimeRatio;
-    }
-
-    public void SetNormTime(float ratio)
-    {
-        _curState.NormalizedTime = ratio;
-    }
-    
-    public float GetCurPlayRate()
-    {
-        return _curState.NormalizedTime;
-    }
-    
-    public float GetLengthRate()
-    {
-        return (_curState.NormalizedTime - _actionData.startTimeRatio) / (_actionData.endTimeRatio - _actionData.startTimeRatio);
-    }
-
-    public bool IsAnimationFinish()
-    {
-        return _curState.NormalizedTime >= _actionData.endTimeRatio;
-    }
-    
-    public bool IsCollisionEnable()
-    {
-        return _curState.NormalizedTime >= _hitboxInfo.GetStartRate() && _curState.NormalizedTime <= _hitboxInfo.GetEndRate();
+        return normTime >= _hitboxInfo.GetStartRate() && normTime <= _hitboxInfo.GetEndRate();
     }
 
     public AttackRangeType GetHitColliderType()

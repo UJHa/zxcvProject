@@ -1,9 +1,4 @@
-using System.Diagnostics;
-using Animancer;
 using Item;
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.PlayerLoop;
 using Debug = UnityEngine.Debug;
 
 public class GetItemState : State
@@ -35,13 +30,13 @@ public class GetItemState : State
         if (canPickUp)
         {
             _character.ResetMoveSpeed();
-            _action.Play();
+            _moveSet.Play(_action);
 
             _character.EquipDropItem(_dropItem);
         }
         else
         {
-            _character.ChangeState(eState.IDLE);
+            _character.ChangeRoleState(eRoleState.IDLE);
         }
     }
 
@@ -59,14 +54,14 @@ public class GetItemState : State
     {
         if (false == canPickUp)
         {
-            _character.ChangeState(eState.IDLE);
+            _character.ChangeRoleState(eRoleState.IDLE);
             return;
         }
         if (_character.IsGround())
         {
-            if (_action.IsAnimationFinish())
+            if (_moveSet.IsAnimationFinish())
             {
-                _character.ChangeState(eState.IDLE);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
         }
         UpdateInput();

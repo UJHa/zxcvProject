@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Animancer;
+using DataClass;
 using UnityEngine;
+using Utils;
 
 public enum ActionType
 {
@@ -34,7 +36,6 @@ public class InputEnableInfo
 
 public class MoveSet
 {
-    private Dictionary<eState, Action> _actionMap = new();          // [key:eState][value:Action]
     private Dictionary<KeyBindingType, InputEnableInfo> _inputEnableMap = new();   // [key:curState_enableKeyCode][value:Action] 필요 스펙 키 : input key, 값 (가능 state, 결정 state)
     private AnimancerComponent _animancer;
 
@@ -46,26 +47,6 @@ public class MoveSet
     public void Init(GameObject player)
     {
         _animancer = player.GetComponent<AnimancerComponent>();
-    }
-    
-    public void RegisterAction(eState actionState)
-    {
-        Action action = null;
-        if (_actionMap.ContainsKey(actionState))
-        {
-            Debug.LogError($"[OnlyLog]Character contains same action name[{actionState}]");
-            return;
-        }
-        action = new Action(_animancer, actionState.ToString());
-        action.Init();
-        _actionMap.Add(actionState, action);
-    }
-
-    public Action GetAction(eState curState)
-    {
-        if (false == _actionMap.ContainsKey(curState))
-            return null;
-        return _actionMap[curState];
     }
     
     public eState DetermineNextState(eState state, KeyBindingType inputBindingType)
@@ -99,5 +80,57 @@ public class MoveSet
             }
             curStateDict.Add(enableState, determineState);
         }
+    }
+
+    private AnimancerState _curAnimancerState = null;
+    private Action _curAction = null;
+
+    public AnimancerState Play(Action action, float fadeTime = 0f)
+    {
+        _curAction = action;
+        _curAnimancerState = _animancer.Play(action.GetClip(), fadeTime);
+        _curAnimancerState.NormalizedTime = action.GetStartRatio();
+        _curAnimancerState.Speed = action.GetSpeed();
+        return _curAnimancerState;
+    }
+
+    public bool IsAnimationFinish()
+    {
+        return _curAnimancerState.NormalizedTime >= _curAction.GetEndRatio();
+    }
+
+    public void SetAnimationEndRatio()
+    {
+        _curAnimancerState.NormalizedTime = _curAction.GetEndRatio();
+    }
+
+    public bool IsCollisionEnable()
+    {
+        return _curAction.IsCollisionEnable(_curAnimancerState.NormalizedTime);
+    }
+
+    public bool IsEqualClip(Action action)
+    {
+        if (null == _curAnimancerState)
+            return true;
+        return _curAnimancerState.Clip.Equals(action.GetClip());
+    }
+    
+    public float GetClipLength()
+    {
+        return _curAnimancerState.Length;
+    }
+
+    public float GetClipSpeed()
+    {
+        return _curAnimancerState.Speed;
+    }
+
+    public eRoleState GetRoleState(eState prevState)
+    {
+        var actionState = ActionTable.GetActionData(prevState.ToString());
+        if (null == actionState)
+            return eRoleState.NONE;
+        return UmUtil.StringToEnum<eRoleState>(actionState.roleState);
     }
 }

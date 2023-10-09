@@ -21,8 +21,6 @@ namespace SceneMain
             GameManager.Instance.Init();
             // GameManager.Instance.camera = Camera.main;
 
-            DataTable.LoadJsonData();
-            
             var canvasObj = GameObject.Find("Canvas");
             if (null != canvasObj)
             {

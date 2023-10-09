@@ -17,9 +17,10 @@ public class NpcRunState : State
         _isJump = false;
 
         _character.SetMoveSpeedToRun();
-        if (null == _animClip)
-            _animClip = Resources.Load<AnimationClip>("Animation/Run");
-        _animancer.Play(_animClip, _character.runStart);
+        // 엄todo : 봇 개발 이후 주석 부분 수정
+        // if (null == _animClip)
+        //     _animClip = Resources.Load<AnimationClip>("Animation/Run");
+        // _animancer.Play(_animClip, _character.runStart);
     }
 
     public override void FixedUpdateState()
@@ -42,17 +43,17 @@ public class NpcRunState : State
             _character.transform.position += traceDirection * _character.GetMoveSpeed();
             if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) <= _attackRange)
             {
-                _character.ChangeState(eState.ATTACK);
+                _character.ChangeState(eState.FIGHTER_WEEK_ATTACK1);
             }
             if (_character.IsInRange())
             {
                 _character.SetTarget(null);
-                _character.ChangeState(eState.IDLE);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
         }
         else
         {
-            _character.ChangeState(eState.IDLE);
+            _character.ChangeRoleState(eRoleState.IDLE);
         }
     }
 }

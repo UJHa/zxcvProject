@@ -36,7 +36,7 @@ public class NpcIdleState : State
             if (target != null)
             {
                 _character.SetTarget(target);
-                _character.ChangeState(eState.RUN);
+                _character.ChangeRoleState(eRoleState.RUN);
             }
 
             stopwatch.Reset();

@@ -152,6 +152,7 @@ public class Character : MonoBehaviour
 
     [SerializeField] protected eState _prevState;
     [SerializeField] protected eState _curState;
+    [SerializeField] protected eRole _curRole = eRole.FIGHTER;
 
     public bool _isGround = false;
     private bool _checkGround = true;
@@ -453,6 +454,11 @@ public class Character : MonoBehaviour
         return _curState;
     }
     
+    public eRoleState GetPrevRoleState()
+    {
+        return _moveSet.GetRoleState(_prevState);
+    }
+    
     public MoveSet GetMoveSet()
     {
         return _moveSet;
@@ -647,6 +653,11 @@ public class Character : MonoBehaviour
             state = state,
             stateType = stateType
         });
+    }
+    
+    public void ChangeRoleState(eRoleState roleState, eStateType stateType = eStateType.NONE)
+    {
+        ChangeState(GameManager.Instance.GetRole(_curRole).States[roleState], stateType);
     }
 
     public void ResetMoveSpeed()
@@ -995,8 +1006,24 @@ public class Character : MonoBehaviour
                 Debug.LogError($"Character doesn't have colliderType({colliderType})");
                 return;
             }
-            var equipItem = Instantiate(item, partCollider.transform);
+            var equipItem = Instantiate(itemWeapon, partCollider.transform);
+            // equipItem.GetRole();
+            _curRole = eRole.RAPIER;
+            RegisterState(eState.RAPIER_IDLE, typeof(IdleState));
+            RegisterState(eState.RAPIER_WALK, typeof(WalkState));
+            RegisterState(eState.RAPIER_RUN, typeof(RunState));
+            RegisterState(eState.RAPIER_RUN_STOP, typeof(RunStopState));
+            RegisterState(eState.RAPIER_JUMP_UP, typeof(JumpUpState));
+            RegisterState(eState.RAPIER_JUMP_DOWN, typeof(JumpDownState));
+            RegisterState(eState.RAPIER_LANDING, typeof(LandingState));
+            _moveSet.RegisterEnableInputMap(KeyBindingType.JUMP, new[] { eState.RAPIER_IDLE, eState.RAPIER_WALK, eState.RAPIER_RUN }, eState.RAPIER_JUMP_UP);
             Destroy(dropItem.gameObject);
         }
+    }
+    
+    protected void RegisterState(eState argState, Type type)
+    {
+        State state = Activator.CreateInstance(type, this, argState) as State;
+        _stateMap.Add(argState, state);
     }
 }

@@ -11,7 +11,7 @@ public class WalkState : State
         base.StartState();
         _character.SetMoveSpeedToWalk();
 
-        _action.Play(_character.walkStart);
+        _moveSet.Play(_action, _character.walkStart);
     }
 
     public override void FixedUpdateState()
@@ -19,7 +19,7 @@ public class WalkState : State
         var groundObjs = _character.GetGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
-            _character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
         else
             _character.UpdateGroundHeight();
@@ -39,13 +39,13 @@ public class WalkState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
         if (Vector3.zero == vector)
         {
-            _character.ChangeState(eState.IDLE);
+            _character.ChangeRoleState(eRoleState.IDLE);
             return;
         }
 
         if (InputManager.Instance.GetButtonDown(KeyBindingType.JUMP))
         {
-            _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
+            _character.ChangeRoleState(eRoleState.JUMP_UP, eStateType.INPUT);
             return;
         }
         

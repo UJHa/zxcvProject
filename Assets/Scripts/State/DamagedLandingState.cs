@@ -1,10 +1,7 @@
-using Animancer;
 using UnityEngine;
-using UnityEditor;
 
 public class DamagedLandingState : DamagedState
 {
-    private AnimancerState _curState;
 
     public DamagedLandingState(Character character, eState eState) : base(character, eState)
     {
@@ -15,7 +12,7 @@ public class DamagedLandingState : DamagedState
         base.StartState();
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(false, HitColliderType.AIRBORNE);
-        _curState = _action.Play(0.3f);
+        _moveSet.Play(_action, 0.3f);
         _character.GetRigidbody().velocity = Vector3.zero;
         _character.UpdateGroundHeight(true);
         _character._isGround = true;
@@ -34,7 +31,7 @@ public class DamagedLandingState : DamagedState
     {
         if (_character.IsGround())
         {
-            if (_action.IsAnimationFinish())
+            if (_moveSet.IsAnimationFinish())
             {
                 if (_character.IsDead())
                     _character.ChangeState(eState.DEAD);

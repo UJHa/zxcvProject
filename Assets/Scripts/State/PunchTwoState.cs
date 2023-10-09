@@ -1,10 +1,8 @@
-using Animancer;
 using UnityEngine;
 using UnityEditor;
 
 public class PunchTwoState : AttackState
 {
-    private AnimancerState _curState;
 
     public PunchTwoState(Character character, eState eState) : base(character, eState)
     {
@@ -13,7 +11,7 @@ public class PunchTwoState : AttackState
     public override void StartState()
     {
         base.StartState();
-        _curState = _action.Play();
+        _moveSet.Play(_action);
     }
 
     public override void FixedUpdateState()
@@ -32,12 +30,12 @@ public class PunchTwoState : AttackState
             var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
             if (eState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
-            else if (_action.IsAnimationFinish())
+            else if (_moveSet.IsAnimationFinish())
             {
-                _character.ChangeState(eState.IDLE);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
         }
-        bool collisionEnable = _action.IsCollisionEnable();
+        bool collisionEnable = _moveSet.IsCollisionEnable();
         _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
     }
 }

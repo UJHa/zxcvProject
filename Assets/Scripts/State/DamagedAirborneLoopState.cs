@@ -1,4 +1,3 @@
-using Animancer;
 using UnityEngine;
 using UnityEditor;
 
@@ -6,7 +5,6 @@ public class DamagedAirborneLoopState : DamagedState
 {
     private float _airTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
-    private AnimancerState _curState;
 
     public DamagedAirborneLoopState(Character character, eState eState) : base(character, eState)
     {
@@ -17,7 +15,7 @@ public class DamagedAirborneLoopState : DamagedState
         base.StartState();
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
-        _curState = _action.Play(1f);
+        _moveSet.Play(_action, 1f);
         _airTimer = 0f;
         _character.ClearAttackInfoData();
     }

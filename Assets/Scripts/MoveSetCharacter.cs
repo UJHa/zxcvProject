@@ -22,12 +22,18 @@ public class MoveSetCharacter : MonoBehaviour
     // ChangeAction이 가지고 있는 액션일 때는 json 로드로 생성하는 기능 구현하기
     public void ChangeAction(ActionData actionData)
     {
-        _action = new Action(_animancer, actionData.actionName);
-        _action.SetActionData(actionData);
+        _action = new Action(actionData.actionName);
         _action.Init();
-        _curState = _action.Play();
-        _action.SetNormTime(actionData.startTimeRatio);
+        _curState = Play(_action);
         PauseAnim();
+    }
+
+    public AnimancerState Play(Action action)
+    {
+        var result = _animancer.Play(action.GetClip());
+        result.NormalizedTime = _action.GetStartRatio();
+        result.Speed = _action.GetSpeed();
+        return result;
     }
 
     private float _startMousePosX = 0f;
@@ -58,7 +64,7 @@ public class MoveSetCharacter : MonoBehaviour
             
         if (Input.GetKeyDown(KeyCode.X))
         {
-            _action.GoToFirstFrame();
+            GoToFirstFrame();
         }
 
         if (Input.GetKeyDown(KeyCode.V))
@@ -71,15 +77,16 @@ public class MoveSetCharacter : MonoBehaviour
     {
         _action.SetActionData(actionData);
         if (IsAnimRateFinish())
-            _action.GoToFirstFrame();
-        _curState = _action.Play();
+            GoToFirstFrame();
+        _curState = Play(_action);
+        Debug.Log($"[testTime]time({this._curState.Length})");
     }
 
     public void PlayPinAnim()
     {
         if (IsAnimRateFinish())
-            _action.GoToFirstFrame();
-        _curState = _action.Play();
+            GoToFirstFrame();
+        _curState = Play(_action);
     }
 
     public void PauseAnim()
@@ -102,40 +109,50 @@ public class MoveSetCharacter : MonoBehaviour
     public void PlayFinish()
     {
         PauseAnim();
-        _action.GoToEndFrame();
+        GoToEndFrame();
     }
 
     public float GetAnimRate()
     {
-        return _action.GetCurPlayRate();
+        return _curState.NormalizedTime;
     }
     
     public float GetStartAnimRate()
     {
         if (null == _action)
             return 0f;
-        return _action.GetStartRate();
+        return _action.GetStartRatio();
     }
     
     public float GetEndAnimRate()
     {
         if (null == _action)
             return 1f;
-        return _action.GetEndRate();
+        return _action.GetEndRatio();
     }
     
     public bool IsAnimRateFinish()
     {
-        return _action.IsAnimationFinish();
+        return _curState.NormalizedTime >= _action.GetEndRatio();
     }
 
     public void SetActionStartRate(float argRate)
     {
-        _action.SetNormTime(argRate);
+        _curState.NormalizedTime = argRate;
     }
     
     public void SetActionEndRate(float argRate)
     {
         _action.SetEndRate(argRate);
+    }
+    
+    void GoToFirstFrame()
+    {
+        _curState.NormalizedTime = _action.GetStartRatio();
+    }
+    
+    void GoToEndFrame()
+    {
+        _curState.NormalizedTime = _action.GetEndRatio();
     }
 }

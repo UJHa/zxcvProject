@@ -1,11 +1,5 @@
-using Animancer;
-using UnityEngine;
-using UnityEditor;
-
 public class PunchThreeState : AttackState
 {
-    private AnimancerState _curState;
-
     public PunchThreeState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -13,7 +7,7 @@ public class PunchThreeState : AttackState
     public override void StartState()
     {
         base.StartState();
-        _curState = _action.Play();
+        _moveSet.Play(_action);
     }
 
     public override void FixedUpdateState()
@@ -29,11 +23,11 @@ public class PunchThreeState : AttackState
     {
         if (_character.IsGround())
         {
-            if (_action.IsAnimationFinish())
+            if (_moveSet.IsAnimationFinish())
             {
-                _character.ChangeState(eState.IDLE);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
-            bool collisionEnable = _action.IsCollisionEnable();
+            bool collisionEnable = _moveSet.IsCollisionEnable();
             _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
         }
     }

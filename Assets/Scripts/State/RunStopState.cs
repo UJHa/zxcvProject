@@ -1,15 +1,10 @@
 using System.Diagnostics;
-using System.Linq;
-using Animancer;
-using UnityEngine;
-using UnityEditor;
-using Debug = UnityEngine.Debug;
 
 public class RunStopState : State
 {
     private Stopwatch _inputTimer;
     private float _jumpTimer = 0f;
-    private long _stopingTimeMSec = 500;
+    private long _stopTimeMSec;
     private long _remainTime;
     private float _remainRate;
 
@@ -21,10 +16,12 @@ public class RunStopState : State
     public override void StartState()
     {
         base.StartState();
+        _character.SetMoveSpeedToRun();
         _inputTimer.Start();
-        _remainTime = _stopingTimeMSec;
-        _remainRate = (float)_remainTime / _stopingTimeMSec;
-        _action.Play();
+        _moveSet.Play(_action);
+        _stopTimeMSec = (long)(_moveSet.GetClipLength() * (1f / _moveSet.GetClipSpeed()) * 1000);
+        _remainTime = _stopTimeMSec;
+        _remainRate = (float)_remainTime / _stopTimeMSec;
     }
 
     public override void FixedUpdateState()
@@ -32,10 +29,10 @@ public class RunStopState : State
         var groundObjs = _character.GetGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
-            _character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
         else
-            _character.MovePosition(_character.GetDirectionVector(), _character.GetMoveSpeed() * _remainRate);
+            _character.MovePosition(_character.GetDirectionVector(), _character.GetMoveSpeed() * (_remainRate / 2f));
     }
 
     public override void EndState()
@@ -45,11 +42,11 @@ public class RunStopState : State
 
     public override void UpdateState()
     {
-        _remainTime = _stopingTimeMSec - _inputTimer.ElapsedMilliseconds;
-        _remainRate = (float)_remainTime / _stopingTimeMSec;
+        _remainTime = _stopTimeMSec - _inputTimer.ElapsedMilliseconds;
+        _remainRate = (float)_remainTime / _stopTimeMSec;
         if (0 >= _remainTime)
         {
-            _character.ChangeState(eState.IDLE);
+            _character.ChangeRoleState(eRoleState.IDLE);
             return;
         }
     }

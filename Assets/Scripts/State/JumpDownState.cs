@@ -1,7 +1,4 @@
 using UnityEngine;
-using UnityEditor;
-using System.Diagnostics;
-using Animancer;
 using Debug = UnityEngine.Debug;
 
 public class JumpDownState : State
@@ -16,8 +13,8 @@ public class JumpDownState : State
     public override void StartState()
     {
         base.StartState();
-        _action.Play();
-        
+        _moveSet.Play(_action);
+
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpdown start");
     }
@@ -33,7 +30,7 @@ public class JumpDownState : State
         if (groundObjs.Length > 0)
         {
             Debug.Log("[testumLanding]isGround!");
-            _character.ChangeState(eState.LANDING);
+            _character.ChangeRoleState(eRoleState.LANDING);
             return;
         }
         else

@@ -1,8 +1,5 @@
 using System.Diagnostics;
-using Animancer;
 using UnityEngine;
-using UnityEditor;
-using Debug = UnityEngine.Debug;
 
 public class LandingState : State
 {
@@ -19,7 +16,7 @@ public class LandingState : State
         base.StartState();
         _character.ResetMoveSpeed();
         _character._isGround = true;
-        _action.Play(_character.jumpEnd);
+        _moveSet.Play(_action, _character.jumpEnd);
         _inputTimer.Start();
 
         _character.UpdateGroundHeight();
@@ -43,10 +40,8 @@ public class LandingState : State
 
     private void UpdateAnimation()
     {
-        var curState = _animancer.States.Current;
-        Debug.Log($"[testum]TTT curState({curState.Key})");
-        if (curState.NormalizedTime >= 1.0f)
-            _character.ChangeState(eState.IDLE);
+        if (_moveSet.IsAnimationFinish())
+            _character.ChangeRoleState(eRoleState.IDLE);
     }
 
     private void UpdateInput()
@@ -90,16 +85,7 @@ public class LandingState : State
         var vector = InputManager.Instance.GetButtonAxisRaw();
         if (Vector3.zero != vector)
         {
-            if (eState.WALK == _character.GetPrevState()
-                && vector == _character.GetDirectionVector()
-                && _inputTimer.ElapsedMilliseconds <= _inputDelayMSec)
-            {
-                _character.ChangeState(eState.RUN);
-            }
-            else
-            {
-                _character.ChangeState(eState.WALK);
-            }
+            _character.ChangeRoleState(eRoleState.WALK);
         }
     }
 }

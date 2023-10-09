@@ -10,7 +10,7 @@ public class AirAttackTwoState : AttackState
     public override void StartState()
     {
         base.StartState();
-        _action.Play();
+        _moveSet.Play(_action);
         _character.GetRigidbody().velocity = Vector3.zero;
     }
 
@@ -28,12 +28,12 @@ public class AirAttackTwoState : AttackState
         var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
         if (eState.NONE != nextState)
             _character.ChangeState(nextState, eStateType.INPUT);
-        else if (_action.IsAnimationFinish())
+        else if (_moveSet.IsAnimationFinish())
         {
-            _character.ChangeState(eState.JUMP_DOWN);
+            _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
         
-        bool collisionEnable = _action.IsCollisionEnable();
+        bool collisionEnable = _moveSet.IsCollisionEnable();
         _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
     }
 }
