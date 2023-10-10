@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class AirAttackThreeState : AttackState
+public class WeekAirAttackState : AttackState
 {
-    public AirAttackThreeState(Character character, eState eState) : base(character, eState)
+    public WeekAirAttackState(Character character, eState eState) : base(character, eState)
     {
 
     }
@@ -25,11 +25,14 @@ public class AirAttackThreeState : AttackState
 
     public override void UpdateState()
     {
-        if (_moveSet.IsAnimationFinish())
+        var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
+        if (eState.NONE != nextState)
+            _character.ChangeState(nextState, eStateType.INPUT);
+        else if (_moveSet.IsAnimationFinish())
         {
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
-        
+
         bool collisionEnable = _moveSet.IsCollisionEnable();
         _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
     }

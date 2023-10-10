@@ -1,6 +1,8 @@
-public class KickTwoState : AttackState
+public class StrongAttackState : AttackState
 {
-    public KickTwoState(Character character, eState eState) : base(character, eState)
+    private KeyBindingType _bindingType = KeyBindingType.STRONG_ATTACK;
+    
+    public StrongAttackState(Character character, eState eState) : base(character, eState)
     {
     }
 
@@ -8,6 +10,7 @@ public class KickTwoState : AttackState
     {
         base.StartState();
         _moveSet.Play(_action);
+        _bindingType = KeyBindingType.STRONG_ATTACK;
     }
 
     public override void FixedUpdateState()
@@ -23,11 +26,14 @@ public class KickTwoState : AttackState
     {
         if (_character.IsGround())
         {
-            if (_moveSet.IsAnimationFinish())
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), _bindingType);
+            if (eState.NONE != nextState)
+                _character.ChangeState(nextState, eStateType.INPUT);
+            else if (_moveSet.IsAnimationFinish())
             {
                 _character.ChangeRoleState(eRoleState.IDLE);
             }
-            
+
             bool collisionEnable = _moveSet.IsCollisionEnable();
             _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
         }

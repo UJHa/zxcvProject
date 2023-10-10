@@ -20,18 +20,19 @@ public class Player : Character
         RegisterState(eState.JUMP_DOWN, typeof(JumpDownState));
         RegisterState(eState.LANDING, typeof(LandingState));
 
-        RegisterState(eState.FIGHTER_WEEK_ATTACK1, typeof(PunchOneState));
-        RegisterState(eState.FIGHTER_WEEK_ATTACK2, typeof(PunchTwoState));
-        RegisterState(eState.FIGHTER_WEEK_ATTACK3, typeof(PunchThreeState));
-        RegisterState(eState.FIGHTER_STRONG_ATTACK1, typeof(KickOneState));
-        RegisterState(eState.FIGHTER_STRONG_ATTACK2, typeof(KickTwoState));
-        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK1, typeof(AirAttackOneState));
-        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK2, typeof(AirAttackTwoState));
-        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK3, typeof(AirAttackThreeState));
+        RegisterState(eState.FIGHTER_WEEK_ATTACK1, typeof(WeekAttackState));
+        RegisterState(eState.FIGHTER_WEEK_ATTACK2, typeof(WeekAttackState));
+        RegisterState(eState.FIGHTER_WEEK_ATTACK3, typeof(WeekAttackState));
+        RegisterState(eState.FIGHTER_STRONG_ATTACK1, typeof(StrongAttackState));
+        RegisterState(eState.FIGHTER_STRONG_ATTACK2, typeof(StrongAttackState));
+        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
+        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
+        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
 
         RegisterState(eState.NORMAL_DAMAGED, typeof(NormalDamagedState));
         RegisterState(eState.AIRBORNE_DAMAGED, typeof(AirborneDamagedState));
         RegisterState(eState.AIRBORNE_POWER_DOWN_DAMAGED, typeof(AirBornePowerDownDamagedState));
+        RegisterState(eState.KNOCK_BACK_DAMAGED, typeof(KnockBackDamagedState));
         RegisterState(eState.DAMAGED_AIRBORNE_LOOP, typeof(DamagedAirborneLoopState));
         RegisterState(eState.DAMAGED_LANDING, typeof(DamagedLandingState));
         
@@ -44,7 +45,7 @@ public class Player : Character
         _moveSet.Init(gameObject);
         _moveSet.RegisterEnableInputMap(KeyBindingType.JUMP, new[] { eState.FIGHTER_IDLE, eState.FIGHTER_WALK, eState.FIGHTER_RUN }, eState.JUMP_UP);
         // GROUND WEEK ATTACK
-        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_IDLE, eState.RAPIER_IDLE}, eState.FIGHTER_WEEK_ATTACK1);
+        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_IDLE}, eState.FIGHTER_WEEK_ATTACK1);
         _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_ATTACK1}, eState.FIGHTER_WEEK_ATTACK2);
         _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_ATTACK2}, eState.FIGHTER_WEEK_ATTACK3);
         // AIR WEEK ATTACK
@@ -61,7 +62,7 @@ public class Player : Character
         SettingAttackInfo(eState.FIGHTER_WEEK_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0.0f, 0.3f, AttackType.NORMAL, 0.1f, 0.2f);
         SettingAttackInfo(eState.FIGHTER_WEEK_ATTACK3, AttackRangeType.PUNCH_B, 1f, 0.1f, 0.2f, AttackType.AIRBORNE, 3.5f, 1f);
         SettingAttackInfo(eState.FIGHTER_STRONG_ATTACK1, AttackRangeType.KICK_B, 1f, 0.25f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_STRONG_ATTACK2, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, AttackType.NORMAL, 0.2f, 0.3f);
+        SettingAttackInfo(eState.FIGHTER_STRONG_ATTACK2, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, AttackType.KNOCK_BACK, 0.2f, 0.3f);
         SettingAttackInfo(eState.FIGHTER_WEEK_AIR_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.2f);
         SettingAttackInfo(eState.FIGHTER_WEEK_AIR_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.2f);
         SettingAttackInfo(eState.FIGHTER_WEEK_AIR_ATTACK3, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.AIR_POWER_DOWN, 0.0f, 0.0f);
@@ -79,16 +80,6 @@ public class Player : Character
         _agility = 5f;
         _intellect = 5f;
         CalculateStats();
-    }
-
-    private void SettingAttackInfo(eState argState, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
-    {
-        var action = GameManager.Instance.GetAction(argState);
-        ActionType aType = action.GetActionType();
-        if (aType == ActionType.ATTACK)
-        {
-            action.CreateHitboxInfo($"{GetInstanceID()}_{argState}", attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
-        }
     }
 
     public override void DeadDisable()

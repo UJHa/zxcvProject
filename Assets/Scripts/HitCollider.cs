@@ -14,9 +14,10 @@ public class HitCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"[testOther]other({other.name})");
         if (null != _character)
         {
-            if (other.TryGetComponent<AttackCollider>(out var attackCollider))
+            if (other.TryGetComponent<AttackCollider>(out var attackCollider) && attackCollider.GetOwner())
                 _character.OnHit(other);
             else if (other.TryGetComponent<Ground>(out var ground) && _hitColliderType == HitColliderType.AIRBORNE)
                 _character.OnAirborneLanding(ground);

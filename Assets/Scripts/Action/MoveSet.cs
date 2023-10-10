@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Animancer;
 using DataClass;
@@ -11,20 +12,13 @@ public enum ActionType
     DEFENCE,
 }
 
-public enum AttackRangeType
-{
-    NONE,
-    PUNCH_A,
-    PUNCH_B,
-    KICK_A,
-    KICK_B
-}
 public enum AttackType
 {
     NONE,
     NORMAL,
     AIRBORNE,
     AIR_POWER_DOWN,
+    KNOCK_BACK,
 }
 
 public class InputEnableInfo
@@ -88,15 +82,28 @@ public class MoveSet
     public AnimancerState Play(Action action, float fadeTime = 0f)
     {
         _curAction = action;
-        _curAnimancerState = _animancer.Play(action.GetClip(), fadeTime);
-        _curAnimancerState.NormalizedTime = action.GetStartRatio();
-        _curAnimancerState.Speed = action.GetSpeed();
+        try
+        {
+            _curAnimancerState = _animancer.Play(action.GetClip(), fadeTime);
+            _curAnimancerState.NormalizedTime = action.GetStartRatio();
+            _curAnimancerState.Speed = action.GetSpeed();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed play animation! stateName({action.GetActionName()})clipName({action.GetClipPath()})clip({action.GetClip()})");
+            return null;
+        }
         return _curAnimancerState;
     }
 
     public bool IsAnimationFinish()
     {
         return _curAnimancerState.NormalizedTime >= _curAction.GetEndRatio();
+    }
+    
+    public void PauseAnimation()
+    {
+        _curAnimancerState.Speed = 0f;
     }
 
     public void SetAnimationEndRatio()

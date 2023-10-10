@@ -1,4 +1,15 @@
+using Unity.VisualScripting;
 using UnityEngine;
+
+public enum AttackRangeType
+{
+    NONE,
+    PUNCH_A,
+    PUNCH_B,
+    KICK_A,
+    KICK_B,
+    SWORD,
+}
 
 public class AttackCollider : MonoBehaviour
 {
@@ -13,8 +24,6 @@ public class AttackCollider : MonoBehaviour
     
     public Character GetOwner()
     {
-        if (null == _ownCharacter)
-            Debug.LogError("[testum]GetOwner is null!");
         return _ownCharacter;
     }
 
@@ -26,5 +35,11 @@ public class AttackCollider : MonoBehaviour
     public HitboxInfo GetAttackInfo()
     {
         return _hitboxInfo;
+    }
+
+    public void EnableCollider(bool enable)
+    {
+        if (TryGetComponent<Collider>(out var collider))
+            collider.enabled = enable;
     }
 }

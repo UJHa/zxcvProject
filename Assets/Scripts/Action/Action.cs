@@ -83,4 +83,14 @@ public class Action
     {
         return UmUtil.StringToEnum<ActionType>(_actionData.actionType);
     }
+
+    public string GetActionName()
+    {
+        return _actionData.actionName;
+    }
+
+    public string GetClipPath()
+    {
+        return _actionData.clipPath;
+    }
 }

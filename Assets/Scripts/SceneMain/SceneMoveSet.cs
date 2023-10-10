@@ -39,9 +39,7 @@ namespace SceneMain
             {
                 Debug.Log($"[testum]uiManager({_uiManager}) fail");
             }
-            
-            _moveSetCharacter.Init();
-            
+
             // 필요 UI 명세별 생성
             _uiManager.actionPlayerPage = _uiManager.CreateUI<UIActionPlayerPage>("Prefabs/UI/ActionPlayerPage", UILayerType.LayerNormal);
             _uiManager.actionPlayerPage.Init(_moveSetCharacter);

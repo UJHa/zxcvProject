@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Animancer;
 using DG.Tweening;
 using Item;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -41,8 +42,7 @@ public enum eWallDirection
 [Serializable]
 public class ColliderCube
 {
-    public Vector3 colliderSize;
-    public Vector3 colliderPos;
+    public Vector3 Size;
     public Vector3 gizmoPos;
 }
 [Serializable]
@@ -111,21 +111,16 @@ public class Character : MonoBehaviour
     [Header("Ground Collider")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
     {
-        colliderSize = new(0.2f, 0.03f, 0.2f),
-        colliderPos = default,
+        Size = new(0.2f, 0.03f, 0.2f),
         gizmoPos = default
     };
     [Header("Wall Collider")]
     [SerializeField] private ColliderCube _wallCollider = new ColliderCube
     {
-        colliderSize = new(0.1f, 1.5f, 0.05f),
-        colliderPos = default,
+        Size = new(0.1f, 1.5f, 0.05f), // (width, height, thinckness)
         gizmoPos = default
     };
-    [SerializeField] public float _wallBoxThickness = 0.05f;
-    [SerializeField] public float _wallBoxWidth = 0.1f;
-    [SerializeField] public float _wallBoxHeight = 1.5f;
-    
+
     [Header("Hit Collider")]
     [SerializeField] private List<HitCollider> _hitColliders = new();
     private Dictionary<HitColliderType, HitCollider> _hitColliderMap = new();
@@ -147,12 +142,15 @@ public class Character : MonoBehaviour
     protected float sliderScale = 1.0f;
 
     protected Vector3 _directionVector = Vector3.zero;
+    protected Vector3 _damagedDirectionVector = Vector3.zero;
 
     protected Dictionary<eState, State> _stateMap = new();
 
     [SerializeField] protected eState _prevState;
     [SerializeField] protected eState _curState;
     [SerializeField] protected eRole _curRole = eRole.FIGHTER;
+
+    protected DrawDebugCharacter _drawDebug;
 
     public bool _isGround = false;
     private bool _checkGround = true;
@@ -181,6 +179,11 @@ public class Character : MonoBehaviour
     
     private void Awake()
     {
+        _drawDebug = new();
+        _drawDebug.Init(this);
+        _drawDebug.SetGroundCollider(_groundCollider);
+        _drawDebug.SetWallCollider(_wallCollider);
+        
         _animancer = GetComponent<AnimancerComponent>();
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
         MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
@@ -355,35 +358,7 @@ public class Character : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        DrawGroundCheckBox();
-        DrawWallCheckBox();
-    }
-
-    private void DrawGroundCheckBox()
-    {
-        Vector3 center = new(0f, - _groundCollider.colliderSize.y / 2, 0f);
-        _groundCollider.gizmoPos = center;
-        Gizmos.matrix = Matrix4x4.TRS(transform.position, Quaternion.identity, Vector3.one);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(center, _groundCollider.colliderSize);
-    }
-
-    private void DrawWallCheckBox()
-    {
-        if (TryGetComponent<CapsuleCollider>(out var collider))
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                var rotateAngle = i * 45;
-                var characterCenterPos = transform.position + collider.center; 
-                var pivot = 0.5f;
-                var pivotPos = _wallCollider.colliderSize.z / 2;
-                Gizmos.matrix = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one);
-                Gizmos.color = Color.red;
-                var cubePos = Vector3.forward * (collider.radius + _wallCollider.colliderSize.z / 2);
-                Gizmos.DrawWireCube(cubePos, _wallCollider.colliderSize);
-            }
-        }
+        _drawDebug?.DrawUpdate();
     }
 
     public float GetAttackedMaxHeight()
@@ -596,11 +571,16 @@ public class Character : MonoBehaviour
     public void SetDirectionByVector3(Vector3 argVector, float rotateTime = 0.1f)
     {
         _directionVector = argVector;
-        var euler = GetEuler(_directionVector);
+        // var euler = GetEuler(_directionVector);
         if (null != _rotationTween)
             _rotationTween.Kill();
         var rot = GetRotation(_directionVector);
         _rotationTween = transform.DORotateQuaternion(rot, rotateTime);
+    }
+    
+    public Vector3 GetDirectionVector()
+    {
+        return _directionVector;
     }
 
     void SetDamage(float damage)
@@ -612,11 +592,17 @@ public class Character : MonoBehaviour
             _curHp = 0f;
         }
     }
-
-    public Vector3 GetDirectionVector()
+    
+    public void SetDamagedDirectionVector(Vector3 vector)
     {
-        return _directionVector;
+        _damagedDirectionVector = vector;
     }
+    
+    public Vector3 GetDamagedDirectionVector()
+    {
+        return _damagedDirectionVector;
+    }
+    
     
     public float GetJumpUpMaxTimer()
     {
@@ -768,14 +754,14 @@ public class Character : MonoBehaviour
                 _airborneUpTime = hitboxInfo.airborneUpTime;
                 var damage = hitboxInfo.damageRatio * attacker._strength;
                 SetDamage(damage);
+                var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+                var hitFxObj = Instantiate(hitFx);
+                hitFxObj.transform.position = closePos;
                 switch (attackType)
                 {
                     case AttackType.NONE:
                         break;
                     case AttackType.NORMAL:
-                        var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
-                        var hitFxObj = Instantiate(hitFx);
-                        hitFxObj.transform.position = closePos;
                         Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
                         // 엄todo: isGround 및 피격 여부로 체크 변경하기
                         if (false == _isGround)
@@ -795,6 +781,12 @@ public class Character : MonoBehaviour
                         break;
                     case AttackType.AIR_POWER_DOWN:
                         ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
+                        break;
+                    case AttackType.KNOCK_BACK:
+                        RotateToAttacker(attacker);
+                        SetDamagedDirectionVector(attacker.GetDirectionVector());
+                        Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
+                        ChangeState(eState.KNOCK_BACK_DAMAGED);
                         break;
                 }
             }
@@ -834,7 +826,7 @@ public class Character : MonoBehaviour
     public RaycastHit[] GetGroundCheckObjects()
     {
         int layerMask = 1 << LayerMask.NameToLayer("Ground");
-        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.colliderSize / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.Size / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         return hits;
     }
     
@@ -848,9 +840,9 @@ public class Character : MonoBehaviour
         var to = direction;
         float rotateAngle = Vector3.SignedAngle(from, to, transform.up);
         var characterCenterPos = transform.position + collider.center;
-        var wallPos = direction * (collider.radius + _wallCollider.colliderSize.z / 2);
+        var wallPos = direction * (collider.radius + _wallCollider.Size.z / 2);
         var boxCenter = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one).GetPosition();
-        RaycastHit[] hits = Physics.BoxCastAll(boxCenter-wallPos, _wallCollider.colliderSize / 2, direction, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        RaycastHit[] hits = Physics.BoxCastAll(boxCenter-wallPos, _wallCollider.Size / 2, direction, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         return hits;
     }
     
@@ -870,7 +862,7 @@ public class Character : MonoBehaviour
         var characterCenterPos = transform.position + collider.center;
         var boxCenter = Matrix4x4.TRS(characterCenterPos, Quaternion.Euler(0, rotateAngle, 0), Vector3.one).GetPosition();
         
-        RaycastHit[] hits = Physics.BoxCastAll(boxCenter, _wallCollider.colliderSize / 2, Vector3.forward, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        RaycastHit[] hits = Physics.BoxCastAll(boxCenter, _wallCollider.Size / 2, Vector3.forward, Quaternion.identity, 0f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         Debug.Log($"[testum][{direction}]wall collision size({hits.Length})");
         return hits;
     }
@@ -905,13 +897,13 @@ public class Character : MonoBehaviour
 
     private Vector3 GetGroundBoxHalfSize()
     {
-        return _groundCollider.colliderSize / 2;
+        return _groundCollider.Size / 2;
     }
     
     private Vector3 GetGroundBoxCenter()
     {
         Vector3 boxCenter = transform.position;
-        boxCenter.y -= _groundCollider.colliderSize.y / 2;
+        boxCenter.y -= _groundCollider.Size.y / 2;
         return boxCenter;
     }
     
@@ -923,7 +915,7 @@ public class Character : MonoBehaviour
             return Vector3.zero;
         }
         Vector3 boxCenter = transform.position + collider.center;   // 캐릭터 캡슐의 중앙
-        boxCenter -= normVector * (collider.radius + (_wallBoxThickness / 2));    // 캐릭터 중앙에서 Wall Box 중앙 구하기
+        boxCenter -= normVector * (collider.radius + (_wallCollider.Size.z / 2));    // 캐릭터 중앙에서 Wall Box 중앙 구하기
         Debug.Log($"[testum]boxCenter({boxCenter})");
             
         // var wallBox = new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth);
@@ -960,16 +952,16 @@ public class Character : MonoBehaviour
 
     public void ActiveAttackColliders(bool enable)
     {
-        foreach (var partData in _attackPartDatas)
+        foreach (var rangeType in _attackColliderMap.Keys)
         {
-            partData.attackCollider.gameObject.SetActive(enable);
+            _attackColliderMap[rangeType].EnableCollider(enable);
         }
     }
     public void ActiveAttackCollider(bool enable, AttackRangeType colliderType, HitboxInfo hitboxInfo)
     {
         if (false == _attackColliderMap.ContainsKey(colliderType))
             return;
-        _attackColliderMap[colliderType].gameObject.SetActive(enable);
+        _attackColliderMap[colliderType].EnableCollider(enable);
         _attackColliderMap[colliderType].SetAttackInfo(hitboxInfo);
     }
     
@@ -982,7 +974,7 @@ public class Character : MonoBehaviour
     
     private Vector3 GetLeftRightWallBoxSize()
     {
-        return new Vector3(_wallBoxThickness, _wallBoxHeight, _wallBoxWidth) / 2;
+        return new Vector3(_wallCollider.Size.z, _wallCollider.Size.y, _wallCollider.Size.x) / 2;
     }
 
     public void RefreshHitBoxKey()
@@ -1016,7 +1008,36 @@ public class Character : MonoBehaviour
             RegisterState(eState.RAPIER_JUMP_UP, typeof(JumpUpState));
             RegisterState(eState.RAPIER_JUMP_DOWN, typeof(JumpDownState));
             RegisterState(eState.RAPIER_LANDING, typeof(LandingState));
+            RegisterState(eState.RAPIER_WEEK_ATTACK1, typeof(WeekAttackState));
+            RegisterState(eState.RAPIER_WEEK_ATTACK2, typeof(WeekAttackState));
+            RegisterState(eState.RAPIER_WEEK_ATTACK3, typeof(WeekAttackState));
+            RegisterState(eState.RAPIER_STRONG_ATTACK1, typeof(StrongAttackState));
+            RegisterState(eState.RAPIER_STRONG_ATTACK2, typeof(StrongAttackState));
+            RegisterState(eState.RAPIER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
+            RegisterState(eState.RAPIER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
+            RegisterState(eState.RAPIER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
             _moveSet.RegisterEnableInputMap(KeyBindingType.JUMP, new[] { eState.RAPIER_IDLE, eState.RAPIER_WALK, eState.RAPIER_RUN }, eState.RAPIER_JUMP_UP);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_IDLE}, eState.RAPIER_WEEK_ATTACK1);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_ATTACK1}, eState.RAPIER_WEEK_ATTACK2);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_ATTACK2}, eState.RAPIER_WEEK_ATTACK3);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.RAPIER_IDLE}, eState.RAPIER_STRONG_ATTACK1);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.RAPIER_STRONG_ATTACK1}, eState.RAPIER_STRONG_ATTACK2);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_JUMP_UP}, eState.RAPIER_WEEK_AIR_ATTACK1);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK1}, eState.RAPIER_WEEK_AIR_ATTACK2);
+            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK2}, eState.RAPIER_WEEK_AIR_ATTACK3);
+            SettingAttackInfo(eState.RAPIER_WEEK_ATTACK1, AttackRangeType.SWORD, 1f, 0.18f, 0.25f, AttackType.NORMAL, 0.1f , 0.2f);
+            SettingAttackInfo(eState.RAPIER_WEEK_ATTACK2, AttackRangeType.SWORD, 1f, 0.18f, 0.3f, AttackType.NORMAL, 0.1f, 0.2f);
+            SettingAttackInfo(eState.RAPIER_WEEK_ATTACK3, AttackRangeType.SWORD, 1f, 0.18f, 0.3f, AttackType.AIRBORNE, 3.5f, 1f);
+            SettingAttackInfo(eState.RAPIER_STRONG_ATTACK1, AttackRangeType.SWORD, 1f, 0.18f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
+            SettingAttackInfo(eState.RAPIER_STRONG_ATTACK2, AttackRangeType.SWORD, 1f, 0.3f, 0.42f, AttackType.NORMAL, 0.2f, 0.3f);
+            SettingAttackInfo(eState.RAPIER_WEEK_AIR_ATTACK1, AttackRangeType.SWORD, 1f, 0.3f, 0.5f, AttackType.NORMAL, 0.1f, 0.2f);
+            SettingAttackInfo(eState.RAPIER_WEEK_AIR_ATTACK2, AttackRangeType.SWORD, 1f, 0.3f, 0.5f, AttackType.NORMAL, 0.1f, 0.2f);
+            SettingAttackInfo(eState.RAPIER_WEEK_AIR_ATTACK3, AttackRangeType.SWORD, 1f, 0.3f, 0.5f, AttackType.AIR_POWER_DOWN, 0.0f, 0.0f);
+            if (false == _attackColliderMap.ContainsKey(AttackRangeType.SWORD))
+                _attackColliderMap.Add(AttackRangeType.SWORD, equipItem.GetComponent<AttackCollider>());
+            _attackColliderMap[AttackRangeType.SWORD].SetOwner(this);
+            _attackColliderMap[AttackRangeType.SWORD].EnableCollider(false);
+
             Destroy(dropItem.gameObject);
         }
     }
@@ -1025,5 +1046,15 @@ public class Character : MonoBehaviour
     {
         State state = Activator.CreateInstance(type, this, argState) as State;
         _stateMap.Add(argState, state);
+    }
+    
+    protected void SettingAttackInfo(eState argState, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    {
+        var action = GameManager.Instance.GetAction(argState);
+        ActionType aType = action.GetActionType();
+        if (aType == ActionType.ATTACK)
+        {
+            action.CreateHitboxInfo($"{GetInstanceID()}_{argState}", attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
+        }
     }
 }
