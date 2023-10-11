@@ -111,9 +111,9 @@ public class MoveSet
         _curAnimancerState.NormalizedTime = _curAction.GetEndRatio();
     }
 
-    public bool IsCollisionEnable()
+    public bool IsCollisionEnable(AttackInfoData attackInfoData)
     {
-        return _curAction.IsCollisionEnable(_curAnimancerState.NormalizedTime);
+        return _curAnimancerState.NormalizedTime >= attackInfoData.startRatio && _curAnimancerState.NormalizedTime <= attackInfoData.endRatio;
     }
 
     public bool IsEqualClip(Action action)

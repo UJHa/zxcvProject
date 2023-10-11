@@ -7,7 +7,6 @@ public class Action
     private readonly eState _state;
     protected AnimationClip _animClip;
     private ActionData _actionData;
-    private HitboxInfo _hitboxInfo;
     
     public Action(string state)
     {
@@ -24,11 +23,6 @@ public class Action
     public void SetActionData(ActionData actionData)
     {
         _actionData = actionData;
-    }
-    
-    public void CreateHitboxInfo(string hitboxKey, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
-    {
-        _hitboxInfo = new(hitboxKey, attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
     }
 
     public eState GetState()
@@ -62,21 +56,6 @@ public class Action
     {
         var result = null != _actionData ? _actionData.endTimeRatio : 1f;
         return result;
-    }
-    
-    public bool IsCollisionEnable(float normTime)
-    {
-        return normTime >= _hitboxInfo.GetStartRate() && normTime <= _hitboxInfo.GetEndRate();
-    }
-
-    public AttackRangeType GetHitColliderType()
-    {
-        return _hitboxInfo.GetRangeType();
-    }
-    
-    public HitboxInfo GetaAttackInfo()
-    {
-        return _hitboxInfo;
     }
 
     public ActionType GetActionType()

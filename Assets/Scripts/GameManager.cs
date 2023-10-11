@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     private string clearText = "성공";
     
     private Dictionary<eState, Action> _actionMap = new();
+    private Dictionary<eState, AttackInfoData> _attackInfoMap = new();
     private Dictionary<eRole, Role> _baseRoleMap = new();
 
     public void Init()
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
         DataTable.LoadJsonData();
         LoadRoleState();
         LoadActions();
+        LoadAttackInfo();
     }
 
     void Start()
@@ -162,6 +164,22 @@ public class GameManager : MonoBehaviour
             var action = new Action(actionData.actionName);
             action.Init();
             _actionMap.Add(state, action);
+        }
+    }
+    
+    private void LoadAttackInfo()
+    {
+        foreach (var action in _actionMap.Values)
+        {
+            var stateName = action.GetActionName();
+            eState state = UmUtil.StringToEnum<eState>(stateName);
+            if (_attackInfoMap.ContainsKey(state))
+            {
+                Debug.LogError($"Error _attackInfoMap contains key({state})");
+                continue;
+            }
+            // action.CreateHitboxInfo()
+            _attackInfoMap.Add(state, AttackInfoTable.GetAttackInfoData(stateName));
         }
     }
     

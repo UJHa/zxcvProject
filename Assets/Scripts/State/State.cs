@@ -1,3 +1,5 @@
+using DataClass;
+
 public enum eState
 {
     NONE,
@@ -48,6 +50,7 @@ public abstract class State
     protected readonly eState _eState;
     protected readonly MoveSet _moveSet;
     protected Action _action;
+    protected AttackInfoData _attackInfoData;
 
     public State(Character character, eState eState)
     {
@@ -61,6 +64,7 @@ public abstract class State
         _character.ActiveAttackColliders(false);
         _character.ActiveHitCollider(true, HitColliderType.STAND);
         _action = GameManager.Instance.GetAction(_eState);
+        _attackInfoData = AttackInfoTable.GetAttackInfoData(_eState.ToString());
     }
     public abstract void UpdateState();
     public abstract void FixedUpdateState();

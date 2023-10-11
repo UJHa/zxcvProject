@@ -1,3 +1,5 @@
+using Utils;
+
 public class WeekAttackState : AttackState
 {
     private KeyBindingType _bindingType = KeyBindingType.WEEK_ATTACK;
@@ -34,8 +36,8 @@ public class WeekAttackState : AttackState
                 _character.ChangeRoleState(eRoleState.IDLE);
             }
 
-            bool collisionEnable = _moveSet.IsCollisionEnable();
-            _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
+            bool collisionEnable = _moveSet.IsCollisionEnable(_attackInfoData);
+            _character.ActiveAttackCollider(collisionEnable, UmUtil.StringToEnum<HitboxType>(_attackInfoData.hitboxType), _attackInfoData);
         }
     }
 }

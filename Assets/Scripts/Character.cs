@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Animancer;
+using DataClass;
 using DG.Tweening;
 using Item;
 using Unity.VisualScripting;
@@ -48,7 +49,7 @@ public class ColliderCube
 [Serializable]
 public struct AttackPartData
 {
-    public AttackRangeType attackPart;
+    public HitboxType attackPart;
     public AttackCollider attackCollider;
 }
 
@@ -127,7 +128,7 @@ public class Character : MonoBehaviour
     
     [Header("Attack Collider")]
     [SerializeField] private List<AttackPartData> _attackPartDatas = new();
-    private Dictionary<AttackRangeType, AttackCollider> _attackColliderMap = new();
+    private Dictionary<HitboxType, AttackCollider> _attackColliderMap = new();
     
     [Header("Attack Collider")]
     [SerializeField] private List<PartColliderData> _partColliderDatas = new();
@@ -743,16 +744,18 @@ public class Character : MonoBehaviour
             var attacker = attackCollider.GetOwner();
             if (attacker != this)
             {
-                HitboxInfo hitboxInfo = attackCollider.GetAttackInfo();
+                AttackInfoData attackInfo = attackCollider.GetAttackInfo();
                 // 동일한 대상이 동일한 state로 공격 판정 시 무시 처리
-                string hitboxKey = hitboxInfo.GetHitboxKey();
+                string hitboxKey = attackCollider.GetHitKey();
+                var sameTxt = hitboxKey.Equals(curHitboxKey) ? "SAME" : "NOT SAME";
+                Debug.Log($"[{name}]Attacked attackername({attacker.name})({sameTxt})({hitboxKey})({curHitboxKey}) State({attackInfo.stateName})");
                 if (curHitboxKey.Equals(hitboxKey))
                     return;
                 curHitboxKey = hitboxKey;
-                AttackType attackType = hitboxInfo.GetAttackType();
-                _attackedMaxHeight = hitboxInfo.attackHeight;
-                _airborneUpTime = hitboxInfo.airborneUpTime;
-                var damage = hitboxInfo.damageRatio * attacker._strength;
+                AttackType attackType = UmUtil.StringToEnum<AttackType>(attackInfo.attackType);
+                _attackedMaxHeight = attackInfo.airborneHeight;
+                _airborneUpTime = attackInfo.airborneTime;
+                var damage = attackInfo.damageRatio * attacker._strength;
                 SetDamage(damage);
                 var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
                 var hitFxObj = Instantiate(hitFx);
@@ -762,7 +765,7 @@ public class Character : MonoBehaviour
                     case AttackType.NONE:
                         break;
                     case AttackType.NORMAL:
-                        Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
+                        // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
                         // 엄todo: isGround 및 피격 여부로 체크 변경하기
                         if (false == _isGround)
                             ChangeState(eState.AIRBORNE_DAMAGED);
@@ -957,12 +960,12 @@ public class Character : MonoBehaviour
             _attackColliderMap[rangeType].EnableCollider(enable);
         }
     }
-    public void ActiveAttackCollider(bool enable, AttackRangeType colliderType, HitboxInfo hitboxInfo)
+    public void ActiveAttackCollider(bool enable, HitboxType colliderType, AttackInfoData attackInfoData)
     {
         if (false == _attackColliderMap.ContainsKey(colliderType))
             return;
         _attackColliderMap[colliderType].EnableCollider(enable);
-        _attackColliderMap[colliderType].SetAttackInfo(hitboxInfo);
+        _attackColliderMap[colliderType].SetAttackInfo($"{GetInstanceID()}_{attackInfoData.stateName}", attackInfoData);
     }
     
     public void ActiveHitCollider(bool enable, HitColliderType colliderType)
@@ -1025,18 +1028,10 @@ public class Character : MonoBehaviour
             _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_JUMP_UP}, eState.RAPIER_WEEK_AIR_ATTACK1);
             _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK1}, eState.RAPIER_WEEK_AIR_ATTACK2);
             _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK2}, eState.RAPIER_WEEK_AIR_ATTACK3);
-            SettingAttackInfo(eState.RAPIER_WEEK_ATTACK1, AttackRangeType.SWORD, 1f, 0.18f, 0.25f, AttackType.NORMAL, 0.1f , 0.2f);
-            SettingAttackInfo(eState.RAPIER_WEEK_ATTACK2, AttackRangeType.SWORD, 1f, 0.18f, 0.3f, AttackType.NORMAL, 0.1f, 0.2f);
-            SettingAttackInfo(eState.RAPIER_WEEK_ATTACK3, AttackRangeType.SWORD, 1f, 0.18f, 0.3f, AttackType.AIRBORNE, 3.5f, 1f);
-            SettingAttackInfo(eState.RAPIER_STRONG_ATTACK1, AttackRangeType.SWORD, 1f, 0.18f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
-            SettingAttackInfo(eState.RAPIER_STRONG_ATTACK2, AttackRangeType.SWORD, 1f, 0.3f, 0.42f, AttackType.NORMAL, 0.2f, 0.3f);
-            SettingAttackInfo(eState.RAPIER_WEEK_AIR_ATTACK1, AttackRangeType.SWORD, 1f, 0.3f, 0.5f, AttackType.NORMAL, 0.1f, 0.2f);
-            SettingAttackInfo(eState.RAPIER_WEEK_AIR_ATTACK2, AttackRangeType.SWORD, 1f, 0.3f, 0.5f, AttackType.NORMAL, 0.1f, 0.2f);
-            SettingAttackInfo(eState.RAPIER_WEEK_AIR_ATTACK3, AttackRangeType.SWORD, 1f, 0.3f, 0.5f, AttackType.AIR_POWER_DOWN, 0.0f, 0.0f);
-            if (false == _attackColliderMap.ContainsKey(AttackRangeType.SWORD))
-                _attackColliderMap.Add(AttackRangeType.SWORD, equipItem.GetComponent<AttackCollider>());
-            _attackColliderMap[AttackRangeType.SWORD].SetOwner(this);
-            _attackColliderMap[AttackRangeType.SWORD].EnableCollider(false);
+            if (false == _attackColliderMap.ContainsKey(HitboxType.SWORD))
+                _attackColliderMap.Add(HitboxType.SWORD, equipItem.GetComponent<AttackCollider>());
+            _attackColliderMap[HitboxType.SWORD].SetOwner(this);
+            _attackColliderMap[HitboxType.SWORD].EnableCollider(false);
 
             Destroy(dropItem.gameObject);
         }
@@ -1046,15 +1041,5 @@ public class Character : MonoBehaviour
     {
         State state = Activator.CreateInstance(type, this, argState) as State;
         _stateMap.Add(argState, state);
-    }
-    
-    protected void SettingAttackInfo(eState argState, AttackRangeType attackRangeType, float damageRatio, float argStartRate, float argEndRate, AttackType attackType, float attackHeight, float airborneUpTime)
-    {
-        var action = GameManager.Instance.GetAction(argState);
-        ActionType aType = action.GetActionType();
-        if (aType == ActionType.ATTACK)
-        {
-            action.CreateHitboxInfo($"{GetInstanceID()}_{argState}", attackRangeType, damageRatio, argStartRate, argEndRate, attackType, attackHeight, airborneUpTime);
-        }
     }
 }

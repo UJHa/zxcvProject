@@ -1,24 +1,38 @@
+using DataClass;
+using Utils;
+
 public class HitboxInfo
 {
-    private string _hitboxKey;
+    private eState _state;
     private float _startRate;
     private float _endRate;
     private AttackType _attackType;
-    private AttackRangeType _attackRangeType;
+    private HitboxType _hitboxType;
     public float damageRatio;
     public float attackHeight;
     public float airborneUpTime;
 
-    public HitboxInfo(string hitboxKey, AttackRangeType attackRangeType, float damageRatio, float startRate, float endRate, AttackType attackType, float attackHeight, float airborneUpTime)
+    public HitboxInfo(eState state, HitboxType hitboxType, float damageRatio, float startRate, float endRate, AttackType attackType, float attackHeight, float airborneUpTime)
     {
-        _hitboxKey = hitboxKey;
-        _attackRangeType = attackRangeType;
+        _state = state; // 엄todo 지울것!
+        _hitboxType = hitboxType;
         this.damageRatio = damageRatio;
         _startRate = startRate;
         _endRate = endRate;
         _attackType = attackType;
         this.attackHeight = attackHeight;
         this.airborneUpTime = airborneUpTime;
+    }
+    
+    public HitboxInfo(AttackInfoData attackInfoData)
+    {
+        _hitboxType = UmUtil.StringToEnum<HitboxType>(attackInfoData.hitboxType);
+        damageRatio = attackInfoData.damageRatio;
+        _startRate = attackInfoData.startRatio;
+        _endRate = attackInfoData.endRatio;
+        _attackType = UmUtil.StringToEnum<AttackType>(attackInfoData.attackType);
+        attackHeight = attackInfoData.airborneHeight;
+        airborneUpTime = attackInfoData.airborneTime;
     }
 
     public float GetStartRate()
@@ -31,9 +45,9 @@ public class HitboxInfo
         return _endRate;
     }
 
-    public AttackRangeType GetRangeType()
+    public HitboxType GetRangeType()
     {
-        return _attackRangeType;
+        return _hitboxType;
     }
 
     public AttackType GetAttackType()
@@ -41,8 +55,8 @@ public class HitboxInfo
         return _attackType;
     }
 
-    public string GetHitboxKey()
+    public eState GetState()
     {
-        return _hitboxKey;
+        return _state;
     }
 }

@@ -1,7 +1,8 @@
+using DataClass;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum AttackRangeType
+public enum HitboxType
 {
     NONE,
     PUNCH_A,
@@ -13,9 +14,10 @@ public enum AttackRangeType
 
 public class AttackCollider : MonoBehaviour
 {
-    [SerializeField] private AttackRangeType _colliderType = AttackRangeType.NONE;
+    [SerializeField] private HitboxType _colliderType = HitboxType.NONE;
     private Character _ownCharacter = null;
-    private HitboxInfo _hitboxInfo;
+    private AttackInfoData _attackInfoData;
+    private string _hitKey;
 
     public void SetOwner(Character character)
     {
@@ -27,19 +29,25 @@ public class AttackCollider : MonoBehaviour
         return _ownCharacter;
     }
 
-    public void SetAttackInfo(HitboxInfo hitboxInfo)
+    public void SetAttackInfo(string hitKey, AttackInfoData attackInfoData)
     {
-        _hitboxInfo = hitboxInfo;
+        _attackInfoData = attackInfoData;
+        _hitKey = hitKey;
     }
 
-    public HitboxInfo GetAttackInfo()
+    public AttackInfoData GetAttackInfo()
     {
-        return _hitboxInfo;
+        return _attackInfoData;
     }
 
     public void EnableCollider(bool enable)
     {
         if (TryGetComponent<Collider>(out var collider))
             collider.enabled = enable;
+    }
+
+    public string GetHitKey()
+    {
+        return _hitKey;
     }
 }

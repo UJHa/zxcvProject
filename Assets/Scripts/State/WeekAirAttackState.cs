@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utils;
 
 public class WeekAirAttackState : AttackState
 {
@@ -33,7 +34,7 @@ public class WeekAirAttackState : AttackState
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
 
-        bool collisionEnable = _moveSet.IsCollisionEnable();
-        _character.ActiveAttackCollider(collisionEnable, _action.GetHitColliderType(), _action.GetaAttackInfo());
+        bool collisionEnable = _moveSet.IsCollisionEnable(_attackInfoData);
+        _character.ActiveAttackCollider(collisionEnable, UmUtil.StringToEnum<HitboxType>(_attackInfoData.hitboxType), _attackInfoData);
     }
 }

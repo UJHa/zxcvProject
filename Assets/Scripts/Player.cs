@@ -57,16 +57,6 @@ public class Player : Character
         _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.FIGHTER_STRONG_ATTACK1}, eState.FIGHTER_STRONG_ATTACK2);
         
         _moveSet.RegisterEnableInputMap(KeyBindingType.INTERACTION, new[]{eState.FIGHTER_IDLE}, eState.GET_ITEM);
-
-        SettingAttackInfo(eState.FIGHTER_WEEK_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0.15f, 0.4f, AttackType.NORMAL, 0.1f , 0.2f);
-        SettingAttackInfo(eState.FIGHTER_WEEK_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0.0f, 0.3f, AttackType.NORMAL, 0.1f, 0.2f);
-        SettingAttackInfo(eState.FIGHTER_WEEK_ATTACK3, AttackRangeType.PUNCH_B, 1f, 0.1f, 0.2f, AttackType.AIRBORNE, 3.5f, 1f);
-        SettingAttackInfo(eState.FIGHTER_STRONG_ATTACK1, AttackRangeType.KICK_B, 1f, 0.25f, 0.3f, AttackType.NORMAL, 0.2f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_STRONG_ATTACK2, AttackRangeType.KICK_A, 1f, 0.15f, 0.18f, AttackType.KNOCK_BACK, 0.2f, 0.3f);
-        SettingAttackInfo(eState.FIGHTER_WEEK_AIR_ATTACK1, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.2f);
-        SettingAttackInfo(eState.FIGHTER_WEEK_AIR_ATTACK2, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.NORMAL, 0.1f, 0.2f);
-        SettingAttackInfo(eState.FIGHTER_WEEK_AIR_ATTACK3, AttackRangeType.PUNCH_A, 1f, 0f, 1f, AttackType.AIR_POWER_DOWN, 0.0f, 0.0f);
-
         _curState = eState.FIGHTER_IDLE;
 
         _stateMap[_curState].StartState();
