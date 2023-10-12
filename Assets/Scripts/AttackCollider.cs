@@ -10,6 +10,8 @@ public enum HitboxType
     KICK_A,
     KICK_B,
     SWORD,
+    SWORD_A,
+    SWORD_B,
 }
 
 public class AttackCollider : MonoBehaviour
@@ -17,7 +19,6 @@ public class AttackCollider : MonoBehaviour
     [SerializeField] private HitboxType _colliderType = HitboxType.NONE;
     private Character _ownCharacter = null;
     private AttackInfoData _attackInfoData;
-    private string _hitKey;
 
     public void SetOwner(Character character)
     {
@@ -29,10 +30,9 @@ public class AttackCollider : MonoBehaviour
         return _ownCharacter;
     }
 
-    public void SetAttackInfo(string hitKey, AttackInfoData attackInfoData)
+    public void SetAttackInfo(AttackInfoData attackInfoData)
     {
         _attackInfoData = attackInfoData;
-        _hitKey = hitKey;
     }
 
     public AttackInfoData GetAttackInfo()
@@ -44,10 +44,5 @@ public class AttackCollider : MonoBehaviour
     {
         if (TryGetComponent<Collider>(out var collider))
             collider.enabled = enable;
-    }
-
-    public string GetHitKey()
-    {
-        return _hitKey;
     }
 }

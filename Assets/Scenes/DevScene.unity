@@ -153,7 +153,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7721654
 MonoBehaviour:
@@ -1468,7 +1468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19247aa12964dd2b8bf4ad2ef9b9ce3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _resouarcePath: Prefabs/Character/Player
+  _resouarcePath: Prefabs/Character/LowPolyCharacter
   _prefabName: PlayerMain
 --- !u!4 &845560607
 Transform:
@@ -1638,7 +1638,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 885296071429854329, guid: 6be0fd1bc6af37443bf213dc2e1bb0b5, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 885296071429854329, guid: 6be0fd1bc6af37443bf213dc2e1bb0b5, type: 3}
       propertyPath: m_LocalPosition.x

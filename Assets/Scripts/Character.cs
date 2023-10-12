@@ -4,7 +4,6 @@ using Animancer;
 using DataClass;
 using DG.Tweening;
 using Item;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -170,16 +169,18 @@ public class Character : MonoBehaviour
     protected MoveSet _moveSet = new();
     protected AnimancerComponent _animancer;
 
+    private List<Collider> _onHitQueue = new();
+
     protected float _attackedMaxHeight = 0f;
     protected float _airborneUpTime = 0f;
-
-    protected string curHitboxKey = ""; // 피격 시 공격한 정보 저장용
 
     // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
     private GameObject hitFx;
     
     private void Awake()
     {
+        _rigidbody = GetComponent<Rigidbody>();
+        
         _drawDebug = new();
         _drawDebug.Init(this);
         _drawDebug.SetGroundCollider(_groundCollider);
@@ -210,6 +211,7 @@ public class Character : MonoBehaviour
 
         foreach (var partColliderData in _partColliderDatas)
         {
+            // 엄todo : 현재 미사용 로우폴리 캐릭터 파츠 장착 시 다시 개발 필요
             partColliderData.Collider.SetOwner(this);
             if (false == _partColliderMap.ContainsKey(partColliderData.Type))
                 _partColliderMap.Add(partColliderData.Type, partColliderData.Collider);
@@ -399,6 +401,66 @@ public class Character : MonoBehaviour
             _changeStates.Clear();
         }
         _stateMap[_curState].UpdateState();
+
+        while (_onHitQueue.Count > 0)
+        {
+            var hitboxCollider = _onHitQueue[0];
+            ProcessHit(hitboxCollider);
+            _onHitQueue.RemoveAt(0);
+        }
+    }
+    
+    private void ProcessHit(Collider other)
+    {
+        if (other.TryGetComponent<AttackCollider>(out var attackCollider))
+        {
+            Debug.Log($"[testum][name:{name}]be hit other({other.name})");
+            var attacker = attackCollider.GetOwner();
+            if (attacker != this)
+            {
+                AttackInfoData attackInfo = attackCollider.GetAttackInfo();
+                AttackType attackType = UmUtil.StringToEnum<AttackType>(attackInfo.attackType);
+                _attackedMaxHeight = attackInfo.airborneHeight;
+                _airborneUpTime = attackInfo.airborneTime;
+                var damage = attackInfo.damageRatio * attacker._strength;
+                SetDamage(damage);
+                var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+                var hitFxObj = Instantiate(hitFx);
+                hitFxObj.transform.position = closePos;
+                switch (attackType)
+                {
+                    case AttackType.NONE:
+                        break;
+                    case AttackType.NORMAL:
+                        // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
+                        // 엄todo: isGround 및 피격 여부로 체크 변경하기
+                        if (false == _isGround)
+                            ChangeState(eState.AIRBORNE_DAMAGED);
+                        else
+                        {
+                            if (IsDead())
+                                ChangeState(eState.DEAD);
+                            else
+                                ChangeState(eState.NORMAL_DAMAGED);
+                        }
+                        break;
+                    case AttackType.AIRBORNE:
+                        // 방향을 때린 상대의 방향으로 회전시키기
+                        RotateToAttacker(attacker);
+                        ChangeState(eState.AIRBORNE_DAMAGED);
+                        break;
+                    case AttackType.AIR_POWER_DOWN:
+                        ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
+                        break;
+                    case AttackType.KNOCK_BACK:
+                        RotateToAttacker(attacker);
+                        SetDamagedDirectionVector(attacker.GetDirectionVector());
+                        Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
+                        ChangeState(eState.KNOCK_BACK_DAMAGED);
+                        break;
+                }
+            }
+        }
     }
 
     private eState SelectNextState()
@@ -738,62 +800,7 @@ public class Character : MonoBehaviour
             return;
         // 피해 받았을때 진입
         // other : attacker
-        if (other.TryGetComponent<AttackCollider>(out var attackCollider))
-        {
-            Debug.Log($"[testum][name:{name}]be hit other({other.name})");
-            var attacker = attackCollider.GetOwner();
-            if (attacker != this)
-            {
-                AttackInfoData attackInfo = attackCollider.GetAttackInfo();
-                // 동일한 대상이 동일한 state로 공격 판정 시 무시 처리
-                string hitboxKey = attackCollider.GetHitKey();
-                var sameTxt = hitboxKey.Equals(curHitboxKey) ? "SAME" : "NOT SAME";
-                Debug.Log($"[{name}]Attacked attackername({attacker.name})({sameTxt})({hitboxKey})({curHitboxKey}) State({attackInfo.stateName})");
-                if (curHitboxKey.Equals(hitboxKey))
-                    return;
-                curHitboxKey = hitboxKey;
-                AttackType attackType = UmUtil.StringToEnum<AttackType>(attackInfo.attackType);
-                _attackedMaxHeight = attackInfo.airborneHeight;
-                _airborneUpTime = attackInfo.airborneTime;
-                var damage = attackInfo.damageRatio * attacker._strength;
-                SetDamage(damage);
-                var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
-                var hitFxObj = Instantiate(hitFx);
-                hitFxObj.transform.position = closePos;
-                switch (attackType)
-                {
-                    case AttackType.NONE:
-                        break;
-                    case AttackType.NORMAL:
-                        // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
-                        // 엄todo: isGround 및 피격 여부로 체크 변경하기
-                        if (false == _isGround)
-                            ChangeState(eState.AIRBORNE_DAMAGED);
-                        else
-                        {
-                            if (IsDead())
-                                ChangeState(eState.DEAD);
-                            else
-                                ChangeState(eState.NORMAL_DAMAGED);
-                        }
-                        break;
-                    case AttackType.AIRBORNE:
-                        // 방향을 때린 상대의 방향으로 회전시키기
-                        RotateToAttacker(attacker);
-                        ChangeState(eState.AIRBORNE_DAMAGED);
-                        break;
-                    case AttackType.AIR_POWER_DOWN:
-                        ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
-                        break;
-                    case AttackType.KNOCK_BACK:
-                        RotateToAttacker(attacker);
-                        SetDamagedDirectionVector(attacker.GetDirectionVector());
-                        Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
-                        ChangeState(eState.KNOCK_BACK_DAMAGED);
-                        break;
-                }
-            }
-        }
+        _onHitQueue.Add(other);
     }
 
     private void RotateToAttacker(Character attacker)
@@ -965,7 +972,7 @@ public class Character : MonoBehaviour
         if (false == _attackColliderMap.ContainsKey(colliderType))
             return;
         _attackColliderMap[colliderType].EnableCollider(enable);
-        _attackColliderMap[colliderType].SetAttackInfo($"{GetInstanceID()}_{attackInfoData.stateName}", attackInfoData);
+        _attackColliderMap[colliderType].SetAttackInfo(attackInfoData);
     }
     
     public void ActiveHitCollider(bool enable, HitColliderType colliderType)
@@ -978,11 +985,6 @@ public class Character : MonoBehaviour
     private Vector3 GetLeftRightWallBoxSize()
     {
         return new Vector3(_wallCollider.Size.z, _wallCollider.Size.y, _wallCollider.Size.x) / 2;
-    }
-
-    public void RefreshHitBoxKey()
-    {
-        curHitboxKey = "";
     }
 
     public void EquipDropItem(DropItem dropItem)
@@ -1028,10 +1030,10 @@ public class Character : MonoBehaviour
             _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_JUMP_UP}, eState.RAPIER_WEEK_AIR_ATTACK1);
             _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK1}, eState.RAPIER_WEEK_AIR_ATTACK2);
             _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK2}, eState.RAPIER_WEEK_AIR_ATTACK3);
-            if (false == _attackColliderMap.ContainsKey(HitboxType.SWORD))
-                _attackColliderMap.Add(HitboxType.SWORD, equipItem.GetComponent<AttackCollider>());
-            _attackColliderMap[HitboxType.SWORD].SetOwner(this);
-            _attackColliderMap[HitboxType.SWORD].EnableCollider(false);
+            // if (false == _attackColliderMap.ContainsKey(HitboxType.SWORD))
+            //     _attackColliderMap.Add(HitboxType.SWORD, equipItem.GetComponent<AttackCollider>());
+            // _attackColliderMap[HitboxType.SWORD].SetOwner(this);
+            // _attackColliderMap[HitboxType.SWORD].EnableCollider(false);
 
             Destroy(dropItem.gameObject);
         }

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class DamagedState : State
 {
     public DamagedState(Character character, eState eState) : base(character, eState)
@@ -15,7 +17,6 @@ public class DamagedState : State
 
     public override void EndState()
     {
-        _character.RefreshHitBoxKey();
     }
 
     public override void UpdateState()
