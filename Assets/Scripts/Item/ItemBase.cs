@@ -1,9 +1,6 @@
 using UnityEngine;
 
-namespace Item
+public class ItemBase : MonoBehaviour
 {
-    public class ItemBase : MonoBehaviour
-    {
-        
-    }
+    
 }

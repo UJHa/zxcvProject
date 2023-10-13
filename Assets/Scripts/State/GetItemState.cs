@@ -1,4 +1,3 @@
-using Item;
 using Debug = UnityEngine.Debug;
 
 public class GetItemState : State

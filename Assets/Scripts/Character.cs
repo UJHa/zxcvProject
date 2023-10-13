@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Animancer;
 using DataClass;
 using DG.Tweening;
-using Item;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -78,7 +77,7 @@ public struct PartColliderData
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
-    [Header("Stats")]
+    [Header("[ Stats ]")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _curHp = 0f;
     [SerializeField] private float _attackPower = 30f;
@@ -95,11 +94,11 @@ public class Character : MonoBehaviour
     [SerializeField] public float runStart = 0.07f;
     [SerializeField] public float jumpEnd = 0.07f;
 
-    [Header("Move Speed Stats")]
+    [Header("[ Move Speed Stats ]")]
     [SerializeField] private float _walkSpeed = 2f;
     [SerializeField] private float _runSpeed = 6f;
     [SerializeField] private float _moveSpeed = 0.0f;
-    [Header("Jump Stats")]
+    [Header("[ Jump Stats ]")]
     [SerializeField] private AnimationCurve _jumpUp = new ();
     [SerializeField] private AnimationCurve _jumpDown = new ();
     [SerializeField] private AnimationCurve _airBoneUp = new ();
@@ -108,35 +107,38 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpUpMaxTimer = 2f;
     [SerializeField] private float _jumpDownMaxTimer = 1f;
     
-    [Header("Ground Collider")]
+    [Header("[ Ground Collider ]")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
     {
         Size = new(0.2f, 0.03f, 0.2f),
         gizmoPos = default
     };
-    [Header("Wall Collider")]
+    [Header("[ Wall Collider ]")]
     [SerializeField] private ColliderCube _wallCollider = new ColliderCube
     {
         Size = new(0.1f, 1.5f, 0.05f), // (width, height, thinckness)
         gizmoPos = default
     };
+    
+    [Header("[ RootPrefab ]")]
+    [SerializeField] private Transform _rootTransform;
 
-    [Header("Hit Collider")]
+    [Header("[ Hit Collider ]")]
     [SerializeField] private List<HitCollider> _hitColliders = new();
     private Dictionary<HitColliderType, HitCollider> _hitColliderMap = new();
     
-    [Header("Attack Collider")]
+    [Header("[ Attack Collider ]")]
     [SerializeField] private List<AttackPartData> _attackPartDatas = new();
     private Dictionary<HitboxType, AttackCollider> _attackColliderMap = new();
     
-    [Header("Attack Collider")]
+    [Header("[ Attack Collider ]")]
     [SerializeField] private List<PartColliderData> _partColliderDatas = new();
     private Dictionary<ColliderType, PartCollider> _partColliderMap = new();
 
-    [Header("3D Phygics Component")] 
+    [Header("[ 3D Phygics Component ]")] 
     [SerializeField] private Rigidbody _rigidbody;
 
-    [Header("UI")]
+    [Header("[ UI ]")]
     protected Slider slider;
     
     protected float sliderScale = 1.0f;
@@ -179,14 +181,20 @@ public class Character : MonoBehaviour
     
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        if (TryGetComponent<Rigidbody>(out var rigidbody))
+            _rigidbody = rigidbody;
         
         _drawDebug = new();
         _drawDebug.Init(this);
         _drawDebug.SetGroundCollider(_groundCollider);
         _drawDebug.SetWallCollider(_wallCollider);
         
-        _animancer = GetComponent<AnimancerComponent>();
+        if (TryGetComponent<AnimancerComponent>(out var animancer))
+            _animancer = animancer;
+        
+        // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
+        TestEquip();
+
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
         MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
         MakeFixedDeltaTimeCurve(_airBoneUp, _jumpUpMaxTimer);
@@ -219,6 +227,102 @@ public class Character : MonoBehaviour
 
         InitStats();
         hitFx = Resources.Load<GameObject>("Prefabs/StatusFx/Hits/Hit_01");
+    }
+
+    private void TestEquip()
+    {
+        Dictionary<string, HumanBodyBones> testBoneTypes = new();
+        Dictionary<HumanBodyBones, Transform> testBones = new();
+
+        var tempAnimator = Resources.Load<Animator>("Prefabs/Character/PT_Lowpoly_Armors_Male");
+        tempAnimator = Instantiate(tempAnimator);
+        tempAnimator.name = "testAnim";
+        
+        foreach (HumanBodyBones boneType in Enum.GetValues(typeof(HumanBodyBones)))
+        {
+            if (boneType != HumanBodyBones.LastBone)
+            {
+                Debug.Log($"[bone]({boneType})");
+                Debug.Log($"[bone]({tempAnimator.GetBoneTransform(boneType)})");
+                testBones.Add(boneType, tempAnimator.GetBoneTransform(boneType));
+            }
+        }
+
+        foreach (var boneType in testBones.Keys)
+        {
+            Debug.Log($"[testbone]({boneType})({testBones[boneType]})");
+        }
+
+        Debug.Log($"[ttestbone]({tempAnimator.avatar.humanDescription})");
+        foreach (var humanBone in tempAnimator.avatar.humanDescription.human)
+        {
+            var humanName = humanBone.humanName.Replace(" ", string.Empty);
+            Debug.Log($"[ttestbone]human({humanBone.boneName})({humanName})({UmUtil.StringToEnum<HumanBodyBones>(humanName).ToString().Equals(humanName)})");
+        }
+        foreach (var skeletonBone in tempAnimator.avatar.humanDescription.skeleton)
+        {
+            Debug.Log($"[ttestbone]skel({skeletonBone.name})");
+        }
+        // var temp = AvatarBuilder.BuildHumanAvatar(gameObject, tempAnimator.avatar.humanDescription);
+        // Debug.Log($"[ttestbone]({temp})");
+
+        var helmet = Resources.Load<ItemHelmet>("Prefabs/Armor/Helmet_Male");
+        var helmetObj = Instantiate(helmet.GetMeshRenderer(), transform) as SkinnedMeshRenderer;
+        helmetObj.rootBone = _rootTransform;
+        helmetObj.name = "testHelmet";
+        helmetObj.material = Instantiate(helmetObj.material, helmetObj.transform);
+        // var helmet = Resources.Load<ItemHelmet>("Prefabs/Armor/MeshHelmet");
+        // var helmetObj = Instantiate(helmet.GetMeshRenderer(), transform) as MeshRenderer;
+        // helmetObj.name = "testHelmet";
+        // helmetObj.material = Instantiate(helmetObj.material, helmetObj.transform);
+        string logString = "";
+        foreach (var bone in helmetObj.bones)
+        {
+            string prt = $"[bone][{helmetObj}]{bone.name}";
+            Debug.Log(prt);
+            logString += $"{prt}\n";
+        }
+        Debug.Log($"[bone]=================================================");
+        logString += "[bone]=================================================\n";
+
+        // if (transform.Find("Mesh").Find("Accessories").Find("Underwear")
+        if (transform.Find("Mesh").Find("Body").Find("Head")
+            .TryGetComponent<SkinnedMeshRenderer>(out var skinnedMeshRenderer))
+        {
+            foreach (var bone in skinnedMeshRenderer.bones)
+            {
+                string prt = $"[bone][{skinnedMeshRenderer}]{bone.name}";
+                Debug.Log(prt);
+                logString += $"{prt}\n";
+            }
+
+            helmetObj.bones = skinnedMeshRenderer.bones;
+        }
+
+        logString += "[bone]=================================================\n";
+        Debug.Log($"[bonetemp]{logString}");
+        logString = "";
+        foreach (Transform child in _rootTransform)
+        {
+            logString += $"{child}\n";
+        }
+        Debug.Log($"[bonetemp]{logString}");
+        Debug.Log($"[bone]=================================================");
+        if (TryGetComponent<Animator>(out var animator))
+        {
+            foreach (HumanBodyBones bone in Enum.GetValues(typeof(HumanBodyBones)))
+            {
+                if (bone != HumanBodyBones.LastBone)
+                {
+                    Debug.Log($"[bone]({bone})");
+                    Debug.Log($"[bone]({animator.GetBoneTransform(bone)})({testBones[bone]})");
+                    if (null != animator.GetBoneTransform(bone) && null != testBones[bone])
+                        testBones[bone].name = animator.GetBoneTransform(bone).name;
+                }
+            }
+        }
+        
+        //////////////////////////// bones 인덱스 보장됬다고 치고 작성해보기
     }
 
     protected virtual void InitStats()

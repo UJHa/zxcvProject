@@ -1438,6 +1438,7 @@ MonoBehaviour:
   _wallCollider:
     Size: {x: 0.1, y: 1.5, z: 0.05}
     gizmoPos: {x: 0, y: 0, z: 0}
+  _rootTransform: {fileID: 3268498204713983127}
   _hitColliders:
   - {fileID: 2657497764359330394}
   - {fileID: 4957421886917870948}
@@ -1503,7 +1504,7 @@ Animator:
   m_GameObject: {fileID: 1782702501690864755}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: de13a7420582ded45a8d7d3f96889aca, type: 3}
-  m_Controller: {fileID: 9100000, guid: 4c7fe8e1a3919c549a79a706afefd1ce, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

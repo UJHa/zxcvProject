@@ -1992,9 +1992,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6075579074077276540}
   - component: {fileID: 6959148477336218040}
-  - component: {fileID: 799451575762307867}
   m_Layer: 0
-  m_Name: PT_Male_Armor_05_C_helmet
+  m_Name: Helmet_Male
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2029,27 +2028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b270804bfb324f6a9f7e56507d0537ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _meshRenderer: {fileID: 0}
---- !u!95 &799451575762307867
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6853100218831627206}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 45f944a4396b0a54398eb1abe6743296, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  _meshRenderer: {fileID: 2334076378164575592}
 --- !u!1 &7039524268884017000
 GameObject:
   m_ObjectHideFlags: 0
