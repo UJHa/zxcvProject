@@ -1,14 +1,11 @@
 using UnityEngine;
 
-namespace Item
+public class DropItem : MonoBehaviour
 {
-    public class DropItem : MonoBehaviour
+    [SerializeField] private ItemBase _item;
+    
+    public ItemBase GetItem()
     {
-        [SerializeField] private ItemBase _item;
-        
-        public ItemBase GetItem()
-        {
-            return _item;
-        }
+        return _item;
     }
 }

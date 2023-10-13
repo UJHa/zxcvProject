@@ -2242,6 +2242,7 @@ MonoBehaviour:
   _wallCollider:
     Size: {x: 0.1, y: 1.5, z: 0.05}
     gizmoPos: {x: 0, y: 0, z: 0}
+  _rootTransform: {fileID: 3861058366054779276}
   _hitColliders:
   - {fileID: 2001029440010266184}
   - {fileID: 2707670309046875429}
