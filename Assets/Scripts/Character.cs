@@ -231,38 +231,93 @@ public class Character : MonoBehaviour
 
     private void TestEquip()
     {
-        Dictionary<string, HumanBodyBones> testBoneTypes = new();
+        string logString = "";
+
+        // 오리지널 캐릭터 뼈대
+        Dictionary<HumanBodyBones, Transform> originBones = new();
+
+        if (TryGetComponent<Animator>(out var animator))
+        {
+            foreach (HumanBodyBones boneType in Enum.GetValues(typeof(HumanBodyBones)))
+            {
+                if (boneType != HumanBodyBones.LastBone)
+                {
+                    var boneTfm = animator.GetBoneTransform(boneType);
+                    if (null == boneTfm)
+                        continue;
+                    logString += $"[originbones]{boneType}/{boneTfm}\n";
+                    originBones.Add(boneType, boneTfm);
+                }
+            }
+        }
+
+        Debug.Log($"{logString}");
+
+        logString = $"";
+
+        // 붙여넣을 헬멧 캐릭터 뼈대
         Dictionary<HumanBodyBones, Transform> testBones = new();
 
         var tempAnimator = Resources.Load<Animator>("Prefabs/Character/PT_Lowpoly_Armors_Male");
         tempAnimator = Instantiate(tempAnimator);
         tempAnimator.name = "testAnim";
-        
+
         foreach (HumanBodyBones boneType in Enum.GetValues(typeof(HumanBodyBones)))
         {
             if (boneType != HumanBodyBones.LastBone)
             {
-                Debug.Log($"[bone]({boneType})");
-                Debug.Log($"[bone]({tempAnimator.GetBoneTransform(boneType)})");
-                testBones.Add(boneType, tempAnimator.GetBoneTransform(boneType));
+                var boneTfm = tempAnimator.GetBoneTransform(boneType);
+                if (null == boneTfm)
+                    continue;
+                logString += $"[helmetbones]{boneType}/{boneTfm}\n";
+                testBones.Add(boneType, boneTfm);
             }
         }
 
-        foreach (var boneType in testBones.Keys)
+        Debug.Log($"{logString}");
+        // 오리지널 fbx 프리팹 전체 로깅(엄todo : 재귀로 child transform list 가져오자)
+        logString = $"";
+        var originTfm = transform;
+
+        logString += $"[AlloriginTfms]{originTfm}/{originTfm.childCount}\n";
+        for (int i = 0; i < originTfm.childCount; i++)
         {
-            Debug.Log($"[testbone]({boneType})({testBones[boneType]})");
+            var child = originTfm.GetChild(i);
+            logString += $"[AlloriginTfms]{child}/{child.childCount}\n";
         }
 
-        Debug.Log($"[ttestbone]({tempAnimator.avatar.humanDescription})");
+        Debug.Log($"{logString}");
+
+        // 오리지널 스켈레톤 본 로깅
+        logString = $"";
+        var originSkeleton = animator.avatar.humanDescription.skeleton;
+        for (int i = 0; i < originSkeleton.Length; i++)
+        {
+            logString += $"[originskelbones]{originSkeleton[i].name}/{originSkeleton[i]}\n";
+        }
+
+        Debug.Log($"{logString}");
+
+        // 헬멧 스켈레톤 본 로깅
+        logString = $"";
+        var helmetSkeleton = tempAnimator.avatar.humanDescription.skeleton;
+        for (int i = 0; i < helmetSkeleton.Length; i++)
+        {
+            logString += $"[helmetskelbones]{helmetSkeleton[i].name}/{helmetSkeleton[i]}\n";
+        }
+
+        Debug.Log($"{logString}");
+
+        // 헬멧 본 transform 이름, HumanBodyBones 매칭 테스트 코드
+        logString = "";
         foreach (var humanBone in tempAnimator.avatar.humanDescription.human)
         {
+            var boneName = humanBone.boneName;
             var humanName = humanBone.humanName.Replace(" ", string.Empty);
-            Debug.Log($"[ttestbone]human({humanBone.boneName})({humanName})({UmUtil.StringToEnum<HumanBodyBones>(humanName).ToString().Equals(humanName)})");
+            logString += $"[checkhelmetbones]human({boneName})({humanName})({UmUtil.StringToEnum<HumanBodyBones>(humanName).ToString().Equals(humanName)})";
         }
-        foreach (var skeletonBone in tempAnimator.avatar.humanDescription.skeleton)
-        {
-            Debug.Log($"[ttestbone]skel({skeletonBone.name})");
-        }
+        Debug.Log($"{logString}\n({tempAnimator.avatar.humanDescription})humanLength({tempAnimator.avatar.humanDescription.human.Length})skelLength({tempAnimator.avatar.humanDescription.skeleton.Length})");
+        
         // var temp = AvatarBuilder.BuildHumanAvatar(gameObject, tempAnimator.avatar.humanDescription);
         // Debug.Log($"[ttestbone]({temp})");
 
@@ -271,58 +326,63 @@ public class Character : MonoBehaviour
         helmetObj.rootBone = _rootTransform;
         helmetObj.name = "testHelmet";
         helmetObj.material = Instantiate(helmetObj.material, helmetObj.transform);
+        Dictionary<string, HumanBodyBones> transformBones = new();
+        foreach (var boneType in testBones.Keys)
+        {
+            if (null == testBones[boneType])
+                continue;
+            string tfmName = testBones[boneType].name;
+            if (false == transformBones.ContainsKey(tfmName))
+                transformBones.Add(tfmName, boneType);
+        }
+
+        string boneLog = "";
+        Transform[] tempTfmBones = new Transform[helmetObj.bones.Length];
+
+        for (int i = 0; i < helmetObj.bones.Length; i++)
+        {
+            var boneTfm = helmetObj.bones[i];
+            boneLog += $"[bone({i})]{boneTfm.name}/t\n";
+            if (false == transformBones.ContainsKey(boneTfm.name))
+                continue;
+            var type = transformBones[boneTfm.name];
+            if (false == originBones.ContainsKey(type))
+                tempTfmBones[i] = null;
+            else
+                tempTfmBones[i] = originBones[type];
+        }
+
+        Debug.Log($"{boneLog}\nlength({helmetObj.bones.Length})");
+        boneLog = "";
+        helmetObj.bones = tempTfmBones;
+        for (int i = 0; i < helmetObj.bones.Length; i++)
+        {
+            var boneTfm = helmetObj.bones[i];
+            boneLog += $"[result skinMeshRdrbones]({i}){boneTfm}\n";
+        }
+
+        Debug.Log($"{boneLog}\nlength({helmetObj.bones.Length})");
         // var helmet = Resources.Load<ItemHelmet>("Prefabs/Armor/MeshHelmet");
         // var helmetObj = Instantiate(helmet.GetMeshRenderer(), transform) as MeshRenderer;
         // helmetObj.name = "testHelmet";
         // helmetObj.material = Instantiate(helmetObj.material, helmetObj.transform);
-        string logString = "";
-        foreach (var bone in helmetObj.bones)
-        {
-            string prt = $"[bone][{helmetObj}]{bone.name}";
-            Debug.Log(prt);
-            logString += $"{prt}\n";
-        }
-        Debug.Log($"[bone]=================================================");
-        logString += "[bone]=================================================\n";
 
+        // logString += "[bone]=================================================\n";
         // if (transform.Find("Mesh").Find("Accessories").Find("Underwear")
-        if (transform.Find("Mesh").Find("Body").Find("Head")
-            .TryGetComponent<SkinnedMeshRenderer>(out var skinnedMeshRenderer))
-        {
-            foreach (var bone in skinnedMeshRenderer.bones)
-            {
-                string prt = $"[bone][{skinnedMeshRenderer}]{bone.name}";
-                Debug.Log(prt);
-                logString += $"{prt}\n";
-            }
-
-            helmetObj.bones = skinnedMeshRenderer.bones;
-        }
-
-        logString += "[bone]=================================================\n";
-        Debug.Log($"[bonetemp]{logString}");
-        logString = "";
-        foreach (Transform child in _rootTransform)
-        {
-            logString += $"{child}\n";
-        }
-        Debug.Log($"[bonetemp]{logString}");
-        Debug.Log($"[bone]=================================================");
-        if (TryGetComponent<Animator>(out var animator))
-        {
-            foreach (HumanBodyBones bone in Enum.GetValues(typeof(HumanBodyBones)))
-            {
-                if (bone != HumanBodyBones.LastBone)
-                {
-                    Debug.Log($"[bone]({bone})");
-                    Debug.Log($"[bone]({animator.GetBoneTransform(bone)})({testBones[bone]})");
-                    if (null != animator.GetBoneTransform(bone) && null != testBones[bone])
-                        testBones[bone].name = animator.GetBoneTransform(bone).name;
-                }
-            }
-        }
-        
-        //////////////////////////// bones 인덱스 보장됬다고 치고 작성해보기
+        // if (transform.Find("Mesh").Find("Body").Find("Head")
+        //     .TryGetComponent<SkinnedMeshRenderer>(out var skinnedMeshRenderer))
+        // {
+        //     foreach (var bone in skinnedMeshRenderer.bones)
+        //     {
+        //         string prt = $"[bone][{skinnedMeshRenderer}]{bone.name}";
+        //         Debug.Log(prt);
+        //         logString += $"{prt}\n";
+        //     }
+        //
+        //     helmetObj.bones = skinnedMeshRenderer.bones;
+        // 
+        // logString += "[bone]=================================================\n";
+        // Debug.Log($"[bonetemp]{logString}");
     }
 
     protected virtual void InitStats()
