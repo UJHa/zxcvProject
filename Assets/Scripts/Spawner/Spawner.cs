@@ -13,12 +13,12 @@ public class Spawner : MonoBehaviour
             Debug.LogError($"[testum]SpawnObject({loadPrefab}) fail");
             return null;
         }
+        if (false == _prefabName.Equals(""))
+            loadPrefab.name = _prefabName;
     
         Debug.Log($"[testum]SpawnObject({loadPrefab}) success");
         var resultObj = Instantiate(loadPrefab);
         resultObj.transform.position = transform.position;
-        if (false == _prefabName.Equals(""))
-            resultObj.name = _prefabName;
         return resultObj;
     }
 }

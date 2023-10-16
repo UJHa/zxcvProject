@@ -5443,7 +5443,7 @@ GameObject:
   - component: {fileID: 6054352333160314984}
   - component: {fileID: 208658213488173586}
   m_Layer: 0
-  m_Name: PT_Lowpoly_Armors_Male
+  m_Name: PT_Lowpoly_Armors_Male_Avatar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5504,7 +5504,7 @@ Animator:
   m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 

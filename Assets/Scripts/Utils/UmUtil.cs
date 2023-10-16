@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -76,6 +77,26 @@ namespace Utils
                 Debug.LogError($"StringToFloat Failed! num({num})");
                 return 0f;
             }
+        }
+        
+        public static List<Transform> GetAllChildList(Transform originTfm)
+        {
+            List<Transform> allChilds = new();
+            Stack<Transform> stackTfms = new();
+
+            stackTfms.Push(originTfm);
+            while (stackTfms.Count > 0)
+            {
+                var curChild = stackTfms.Pop();
+                allChilds.Add(curChild);
+
+                foreach (Transform child in curChild)
+                {
+                    stackTfms.Push(child);
+                }
+            }
+
+            return allChilds;
         }
     }
 }

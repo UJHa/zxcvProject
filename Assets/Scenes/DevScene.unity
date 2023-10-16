@@ -799,63 +799,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2442182450252382605, guid: 663704a2508284c498d22906edf7f7d3, type: 3}
   m_PrefabInstance: {fileID: 2442182450733815483}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &606339647
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 9105521502983059749, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_Name
-      value: SkinnedHelmet
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_RootOrder
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9105521502983059802, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: ec862b2b23dadc84f9e6cd34ac860f88, type: 3}
 --- !u!1 &611564407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,13 +1129,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 634355718}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.67, y: 1, z: 0.63}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &655616112
 GameObject:
@@ -2837,6 +2780,52 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51b87d0f29695e643b94929e0b2455c7, type: 3}
+--- !u!1 &1674804456
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1674804458}
+  - component: {fileID: 1674804457}
+  m_Layer: 0
+  m_Name: PlayerSpawner3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1674804457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674804456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19247aa12964dd2b8bf4ad2ef9b9ce3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _resouarcePath: Prefabs/Character/PT_Lowpoly_Armors_Male_Moduar
+  _prefabName: PlayerSub
+--- !u!4 &1674804458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1674804456}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.67, y: 2, z: 0.63}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1760132867
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Animancer;
 using DataClass;
 using DG.Tweening;
@@ -231,205 +232,125 @@ public class Character : MonoBehaviour
 
     private void TestEquip()
     {
-        string logString = "";
-
-        // 오리지널 캐릭터 뼈대
-        Dictionary<HumanBodyBones, Transform> originBones = new();
-
-        if (TryGetComponent<Animator>(out var animator))
-        {
-            foreach (HumanBodyBones boneType in Enum.GetValues(typeof(HumanBodyBones)))
-            {
-                if (boneType != HumanBodyBones.LastBone)
-                {
-                    var boneTfm = animator.GetBoneTransform(boneType);
-                    if (null == boneTfm)
-                        continue;
-                    logString += $"[originbones]{boneType}/{boneTfm}\n";
-                    originBones.Add(boneType, boneTfm);
-                }
-            }
-        }
-        Debug.Log($"{logString}");
-        //=======================================================================
+        LoadPlayerSubBones();
+        Debug.Log($"[testName]{name}");
+        // 헬멧 생성
+        // var helmet = Resources.Load<ItemHelmet>("Prefabs/Armor/Helmet_Male");
+        // var helmetObj = Instantiate(helmet.GetMeshRenderer(), transform) as SkinnedMeshRenderer;
         
-        // 붙여넣을 헬멧 캐릭터 뼈대
-        logString = $"";
-        Dictionary<HumanBodyBones, Transform> helmetBones = new();
+        // 헬멧 장착 코드
+        if (name.Contains("PlayerMain"))
+        {
+            // 엄todo 헬멧 장착할 소켓 transform은 character가 가지도록 구조 개선 필요
+            Transform headSlot = null;
+            List<Transform> tfmRootChilds = UmUtil.GetAllChildList(_rootTransform);
+            foreach (var prefabTfm in tfmRootChilds)
+            {
+                if (prefabTfm.name.Equals("HeadEnd_M"))
+                    headSlot = prefabTfm;
+            }
+            
+            var armorHelmet = Resources.Load<MeshFilter>("Prefabs/Armor/ArmorHelmet");
+            armorHelmet = Instantiate(armorHelmet, headSlot);
+            Mesh helmetMesh = armorHelmet.mesh;
+            List<Vector3> verticals = new();
+            for (int i = 0; i < helmetMesh.vertexCount; i++)
+            {
+                Debug.Log($"[rappingHelmet]helmetMesh vertical[{i}]({helmetMesh.vertices[i]})");
+                Vector3 vertice = helmetMesh.vertices[i];
+                vertice.y -= helmetMesh.bounds.center.y;
+                verticals.Add(vertice);
+            }
+            helmetMesh.SetVertices(verticals);
+            Bounds bounds = new();
+            bounds = helmetMesh.bounds;
+            bounds.center = Vector3.zero;
+            bounds.extents = Vector3.zero;
+            helmetMesh.bounds = bounds;
+            
+            // 상의 장착 코드
+            string tempLog = "";
+            string tempLog2 = "";
+            var SkinnedMeshBody = Resources.Load<GameObject>("Prefabs/Armor/SkinnedMeshBody");
+            var bodyArmor = SkinnedMeshBody.transform.GetChild(1);
+            if (bodyArmor.TryGetComponent<SkinnedMeshRenderer>(out var bodySkinRdr))
+            {
+                List<Transform> boneTfms = bodySkinRdr.bones.ToList();
+                for (int i = 0; i < bodySkinRdr.bones.Length; i++)
+                {
+                    tempLog += $"[testbodyEquipPrev][{i}]{bodySkinRdr.bones[i].name}/{boneTfms[i]}\n";
+                    if (false == _boneNames.ContainsKey(bodySkinRdr.bones[i].name))
+                        continue;
+                    boneTfms[i] = _animancer.Animator.GetBoneTransform(_boneNames[bodySkinRdr.bones[i].name]);
+                }
+                for (int i = 0; i < bodySkinRdr.bones.Length; i++)
+                {
+                    string type = _boneNames.ContainsKey(bodySkinRdr.bones[i].name) ? _boneNames[bodySkinRdr.bones[i].name].ToString() : "NONE";
+                    tempLog2 += $"[testbodyEquip][{i}]{bodySkinRdr.bones[i].name}/{type}/{boneTfms[i]}\n";
+                }
 
-        var tempAnimator = Resources.Load<Animator>("Prefabs/Character/PT_Lowpoly_Armors_Male");
-        tempAnimator = Instantiate(tempAnimator);
-        tempAnimator.name = "testAnim";
+                bodySkinRdr.bones = boneTfms.ToArray();
+                bodySkinRdr.rootBone = _rootTransform;
+            }
+            Debug.Log($"{tempLog}");
+            Debug.Log($"{tempLog2}");
+            var obj = Instantiate(bodyArmor.gameObject, transform);
+        }
+        
+        // 상의 장착 코드
+        {
+            // 엄todo 헬멧 장착할 소켓 transform은 character가 가지도록 구조 개선 필요
+            Transform topSlot = null;
+            List<Transform> tfmRootChilds = UmUtil.GetAllChildList(_rootTransform);
+            foreach (var prefabTfm in tfmRootChilds)
+            {
+                if (prefabTfm.name.Equals("HeadEnd_M"))
+                    topSlot = prefabTfm;
+            }
+            
+            // mesh 방식은 힘듬
+            // var armorTop = Resources.Load<MeshFilter>("Prefabs/Armor/ArmorTop");
+            // armorTop = Instantiate(armorTop, topSlot);
+            // Mesh topMesh = armorTop.mesh;
+            // List<Vector3> verticals = new();
+            // for (int i = 0; i < topMesh.vertexCount; i++)
+            // {
+            //     Debug.Log($"[rappingHelmet]helmetMesh vertical[{i}]({topMesh.vertices[i]})");
+            //     Vector3 vertice = topMesh.vertices[i];
+            //     vertice.y -= topMesh.bounds.center.y;
+            //     verticals.Add(vertice);
+            // }
+            
+            // helmetMesh.SetVertices(verticals);
+            // Bounds bounds = new();
+            // bounds = topMesh.bounds;
+            // bounds.center = Vector3.zero;
+            // bounds.extents = Vector3.zero;
+            // topMesh.bounds = bounds;
+        }
+    }
+    
+    Dictionary<string, HumanBodyBones> _boneNames = new();
 
+    private void LoadPlayerSubBones()
+    {
+        var loadSubPlayer = Resources.Load<GameObject>("Prefabs/Character/PT_Lowpoly_Armors_Male_Avatar");
+        loadSubPlayer = Instantiate(loadSubPlayer, transform);
+
+        string bodyLog = "";
+        bodyLog = "";
         foreach (HumanBodyBones boneType in Enum.GetValues(typeof(HumanBodyBones)))
         {
-            if (boneType != HumanBodyBones.LastBone)
-            {
-                var boneTfm = tempAnimator.GetBoneTransform(boneType);
-                if (null == boneTfm)
-                    continue;
-                logString += $"[helmetbones]{boneType}/{boneTfm}\n";
-                helmetBones.Add(boneType, boneTfm);
-            }
+            if (boneType == HumanBodyBones.LastBone)
+                continue;
+            var result = loadSubPlayer.GetComponent<Animator>().GetBoneTransform(boneType);
+            bodyLog += $"[testbodyName]{boneType}/{result?.name}\n";
+            if (null == result)
+                continue;
+            _boneNames.Add(result.name, boneType);
         }
-        Debug.Log($"{logString}");
-        //=======================================================================
-
-        // 오리지널 fbx 프리팹 전체 로깅
-        logString = $"";
-
-        List<Transform> prefabTfms = GetAllChildTfmList(_rootTransform);
-        foreach (var prefabTfm in prefabTfms)
-        {
-            logString += $"[AlloriginTfms]{prefabTfm}/{prefabTfm.childCount}\n";
-        }
-
-        Debug.Log($"{logString}");
-        //=======================================================================
-
-        // 오리지널 스켈레톤 본 로깅
-        logString = $"";
-        var originSkeleton = animator.avatar.humanDescription.skeleton;
-        for (int i = 0; i < originSkeleton.Length; i++)
-        {
-            logString += $"[originskelbones]{originSkeleton[i].name}/{originSkeleton[i]}\n";
-        }
-
-        Debug.Log($"{logString}");
-        //=======================================================================
-
-        // 헬멧 스켈레톤 본 로깅
-        logString = $"";
-        var helmetSkeleton = tempAnimator.avatar.humanDescription.skeleton;
-        for (int i = 0; i < helmetSkeleton.Length; i++)
-        {
-            logString += $"[helmetskelbones]{helmetSkeleton[i].name}/{helmetSkeleton[i]}\n";
-        }
-
-        Debug.Log($"{logString}");
-        //=======================================================================
-
-        // 헬멧 본 transform 이름, HumanBodyBones 매칭 테스트 코드
-        logString = "";
-        foreach (var humanBone in tempAnimator.avatar.humanDescription.human)
-        {
-            var boneName = humanBone.boneName;
-            var humanName = humanBone.humanName.Replace(" ", string.Empty);
-            logString += $"[checkhelmetbones]human({boneName})({humanName})({UmUtil.StringToEnum<HumanBodyBones>(humanName).ToString().Equals(humanName)})\n";
-        }
-        Debug.Log($"{logString}\n({tempAnimator.avatar.humanDescription})humanLength({tempAnimator.avatar.humanDescription.human.Length})skelLength({tempAnimator.avatar.humanDescription.skeleton.Length})");
-        //=======================================================================
-
-        // var temp = AvatarBuilder.BuildHumanAvatar(gameObject, tempAnimator.avatar.humanDescription);
-
-        // 헬멧 생성
-        var helmet = Resources.Load<ItemHelmet>("Prefabs/Armor/Helmet_Male");
-        var helmetObj = Instantiate(helmet.GetMeshRenderer(), transform) as SkinnedMeshRenderer;
-        
-        // 헬멧의 bone을 구성하는 모든 prefab 가져오기
-        logString = $"";
-        var helmetBonePrefabs = GetAllChildTfmList(helmetObj.rootBone);
-        Dictionary<string, Transform> helmetTransforms = new();
-        foreach (var helmetBoneTfm in helmetBonePrefabs)
-        {
-            logString += $"[AllHelmetTfms]{helmetBoneTfm}/{helmetBoneTfm.childCount}\n";
-            helmetTransforms.Add(helmetBoneTfm.name, helmetBoneTfm);
-        }
-        Debug.Log($"{logString}");
-        //=======================================================================
-
-        helmetObj.rootBone = _rootTransform;
-        helmetObj.name = "testHelmet";
-        helmetObj.material = Instantiate(helmetObj.material, helmetObj.transform);
-        Dictionary<string, HumanBodyBones> helmetBoneNames = new();
-        foreach (var boneType in helmetBones.Keys)
-        {
-            string tfmName = helmetBones[boneType].name;
-            if (false == helmetBoneNames.ContainsKey(tfmName))
-                helmetBoneNames.Add(tfmName, boneType);
-        }
-
-        // 본 transform이름의 HumanBodyBones 타입 정보 로그
-        string boneLog = "";
-        for (int i = 0; i < helmetObj.bones.Length; i++)
-        {
-            var boneTfm = helmetObj.bones[i];
-            var boneTfmName = boneTfm.name;
-            string boneType = GetBoneType(boneTfm, helmetBoneNames, helmetTransforms);
-            boneLog += $"[bone({i})]{boneTfmName}\t({boneType})\n";
-        }
-
-        Debug.Log($"{boneLog}\nlength({helmetObj.bones.Length})");
-        //=======================================================================
-        // helmet bone을 기존 bone으로 적용하기
-        boneLog = "";
-        Transform[] tempTfmBones = new Transform[helmetObj.bones.Length];
-
-        for (int i = 0; i < helmetObj.bones.Length; i++)
-        {
-
-            var boneTfm = helmetObj.bones[i];
-            var boneTfmName = boneTfm.name;
-            string boneType = GetBoneType(boneTfm, helmetBoneNames, helmetTransforms);
-
-            var type = UmUtil.StringToEnum<HumanBodyBones>(boneType);;
-            if (false == originBones.ContainsKey(type))
-            {
-                tempTfmBones[i] = null;
-                boneLog += $"[bone({i})]{boneTfmName}\t({boneType})\n";
-            }
-            else
-            {
-                // neck 존재할 때 하위를 빈 오브젝트로 채워 보자
-                if (type == HumanBodyBones.Neck)
-                {
-                    var obj = new GameObject(originBones[type].name);
-                    var objReal = Instantiate(obj, originBones[type].transform.parent);
-                    tempTfmBones[i] = objReal.transform;
-                }
-                else
-                {
-                    tempTfmBones[i] = originBones[type];
-                }
-            }
-        }
-
-        Debug.Log($"{boneLog}\nlength({helmetObj.bones.Length})");
-        //=======================================================================
-
-        // helmet bone 변경 결과 로그
-        boneLog = "";
-        helmetObj.bones = tempTfmBones;
-        for (int i = 0; i < helmetObj.bones.Length; i++)
-        {
-            var boneTfm = helmetObj.bones[i];
-            boneLog += $"[result skinMeshRdrbones]({i}){boneTfm}\n";
-        }
-
-        Debug.Log($"{boneLog}\nlength({helmetObj.bones.Length})");
-        //=======================================================================
-
-        // var helmet = Resources.Load<ItemHelmet>("Prefabs/Armor/MeshHelmet");
-        // var helmetObj = Instantiate(helmet.GetMeshRenderer(), transform) as MeshRenderer;
-        // helmetObj.name = "testHelmet";
-        // helmetObj.material = Instantiate(helmetObj.material, helmetObj.transform);
-
-        // logString += "[bone]=================================================\n";
-        // if (transform.Find("Mesh").Find("Accessories").Find("Underwear")
-        // if (transform.Find("Mesh").Find("Body").Find("Head")
-        //     .TryGetComponent<SkinnedMeshRenderer>(out var skinnedMeshRenderer))
-        // {
-        //     foreach (var bone in skinnedMeshRenderer.bones)
-        //     {
-        //         string prt = $"[bone][{skinnedMeshRenderer}]{bone.name}";
-        //         Debug.Log(prt);
-        //         logString += $"{prt}\n";
-        //     }
-        //
-        //     helmetObj.bones = skinnedMeshRenderer.bones;
-        // 
-        // logString += "[bone]=================================================\n";
-        // Debug.Log($"[bonetemp]{logString}");
+        Debug.Log($"{bodyLog}");
+        loadSubPlayer.SetActive(false);
     }
 
     private string GetBoneType(Transform boneTfm, Dictionary<string, HumanBodyBones> helmetBoneNames, Dictionary<string, Transform> helmetTransforms)
@@ -452,26 +373,6 @@ public class Character : MonoBehaviour
             }
         }
         return boneType;
-    }
-
-    private List<Transform> GetAllChildTfmList(Transform originTfm)
-    {
-        List<Transform> allChilds = new();
-        Stack<Transform> stackTfms = new();
-
-        stackTfms.Push(originTfm);
-        while (stackTfms.Count > 0)
-        {
-            var curChild = stackTfms.Pop();
-            allChilds.Add(curChild);
-
-            foreach (Transform child in curChild)
-            {
-                stackTfms.Push(child);
-            }
-        }
-
-        return allChilds;
     }
 
     protected virtual void InitStats()
