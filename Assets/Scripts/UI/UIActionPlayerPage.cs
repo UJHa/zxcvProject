@@ -99,7 +99,7 @@ namespace UI
 
         private void SaveJsonFile()
         {
-            ActionTable.SetActionData(_selectActionName, new(_actions[_selectActionName]));
+            ActionTable.SetData(_selectActionName, new(_actions[_selectActionName]));
             ActionTable.Export();
         }
 
@@ -133,7 +133,7 @@ namespace UI
 
         private void InitActionBtnList()
         {
-            var allActions = ActionTable.GetActionList();
+            var allActions = ActionTable.GetList();
             foreach (var actionData in allActions)
             {
                 if (actionData.actionName == eState.NONE.ToString())
@@ -185,7 +185,7 @@ namespace UI
                     uiButton.SetText(uiButton.name.Split("(")[0]);
                 }
 
-                _actions[actionName] = ActionTable.GetActionData(actionName);
+                _actions[actionName] = ActionTable.GetData(actionName);
             }
 
             var actionData = _actions[_selectActionName];

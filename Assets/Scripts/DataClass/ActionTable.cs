@@ -17,17 +17,17 @@ namespace DataClass
         {
             
         }
-        public ActionData(ActionData actionData)
+        public ActionData(ActionData argData)
         {
-            id = actionData.id;
-            actionName = actionData.actionName;
-            roleState = actionData.roleState;
-            actionType = actionData.actionType;
-            clipPath = actionData.clipPath;
-            speed = actionData.speed;
-            startTimeRatio = actionData.startTimeRatio;
-            endTimeRatio = actionData.endTimeRatio;
-            damageRatio = actionData.damageRatio;
+            id = argData.id;
+            actionName = argData.actionName;
+            roleState = argData.roleState;
+            actionType = argData.actionType;
+            clipPath = argData.clipPath;
+            speed = argData.speed;
+            startTimeRatio = argData.startTimeRatio;
+            endTimeRatio = argData.endTimeRatio;
+            damageRatio = argData.damageRatio;
         }
 
         public int id { get; set; }
@@ -47,48 +47,51 @@ namespace DataClass
 
     public class ActionTable : DataTable
     {
+        private static Type tableType = typeof(ActionTable);
+        private static string dataName = $"{typeof(ActionData)}";
+        private static string jsonFileName = "Action.json";
         private static ActionTable _instance = null;
         
         // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
         public Dictionary<int, ActionData> IndexDictionary = new();
-        public Dictionary<string, ActionData> actionNameDictionary = new();
+        public Dictionary<string, ActionData> nameDictionary = new();
         protected override void Init(JArray dataList)
         {
             base.Init(dataList);
             _instance = this;
             foreach (var jToken in dataList)
             {
-                var actionData = JsonConvert.DeserializeObject<ActionData>(jToken.ToString());
-                Debug.Log($"[testumJsonTable][{GetType()}]override.SaveData save obj data({actionData})");
-                if (IndexDictionary.ContainsKey(actionData.id))
+                var jsonData = JsonConvert.DeserializeObject<ActionData>(jToken.ToString());
+                Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+                if (IndexDictionary.ContainsKey(jsonData.id))
                 {
-                    Debug.LogError($"ActionData have same id({actionData.id})");
+                    Debug.LogError($"{dataName} have same id({jsonData.id})");
                     continue;
                 }
-                IndexDictionary.Add(actionData.id, actionData);
+                IndexDictionary.Add(jsonData.id, jsonData);
                 
-                if (actionNameDictionary.ContainsKey(actionData.actionName))
+                if (nameDictionary.ContainsKey(jsonData.actionName))
                 {
-                    Debug.LogError($"ActionData have same actionName({actionData.actionName})");
+                    Debug.LogError($"dataName have same key({jsonData.actionName})");
                     continue;
                 }
-                actionNameDictionary.Add(actionData.actionName, actionData);
+                nameDictionary.Add(jsonData.actionName, jsonData);
             }
         }
 
-        public static ActionData GetActionData(string actionName)
+        public static ActionData GetData(string argData)
         {
-            if (false == DataTable.Tables.ContainsKey(typeof(ActionTable)))
+            if (false == DataTable.Tables.ContainsKey(tableType))
                 return null;
-            ActionTable actionTable = DataTable.Tables[typeof(ActionTable)] as ActionTable;
+            ActionTable actionTable = DataTable.Tables[tableType] as ActionTable;
             if (null == actionTable)
                 return null;
-            if (false == actionTable.actionNameDictionary.ContainsKey(actionName))
+            if (false == actionTable.nameDictionary.ContainsKey(argData))
                 return null;
-            return new(actionTable.actionNameDictionary[actionName]);
+            return new(actionTable.nameDictionary[argData]);
         }
 
-        public static List<ActionData> GetActionList()
+        public static List<ActionData> GetList()
         {
             if (null == _instance)
             {
@@ -106,29 +109,29 @@ namespace DataClass
             return result;
         }
 
-        public static void SetActionData(string actionName, ActionData action)
+        public static void SetData(string actionName, ActionData action)
         {
-            if (false == _instance.actionNameDictionary.ContainsKey(actionName))
+            if (false == _instance.nameDictionary.ContainsKey(actionName))
             {
                 Debug.LogError($"Don't have actionName({actionName})");
                 return;
             }
 
-            _instance.actionNameDictionary[actionName] = action;
+            _instance.nameDictionary[actionName] = action;
             _instance.IndexDictionary[action.id] = action;
         }
 
         public static void Export()
         {
             string writeText = "[\n";
-            foreach (var actionData in _instance.IndexDictionary.Values)
+            foreach (var data in _instance.IndexDictionary.Values)
             {
-                writeText += JsonConvert.SerializeObject(actionData) + ",\n";
-                Debug.Log($"[ExportTest]{actionData}\n{JsonConvert.SerializeObject(actionData)}");
+                writeText += JsonConvert.SerializeObject(data) + ",\n";
+                Debug.Log($"[ExportTest]{data}\n{JsonConvert.SerializeObject(data)}");
             }
 
             writeText += "]";
-            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), "action.json");
+            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
             Debug.Log(jsonPath);
             // 파일 생성 및 저장
             File.WriteAllText(jsonPath, writeText);

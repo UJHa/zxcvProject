@@ -85,19 +85,15 @@ public class Character : MonoBehaviour
     [SerializeField] protected float _hp = 5f;
     [SerializeField] protected float _mp = 5f;
     [SerializeField] protected float _strength = 5f;
-    [SerializeField] protected float _agility = 5f;
+    [SerializeField] protected float _agility = 6f;
     [SerializeField] protected float _intellect = 5f;
     
     [Header("[ Anim CrossFadeTime ]")]
-    [SerializeField] public float jumpUpStart = 0.07f;
-    [SerializeField] public float idleStart = 0.07f;
-    [SerializeField] public float walkStart = 0.07f;
-    [SerializeField] public float runStart = 0.07f;
-    [SerializeField] public float jumpEnd = 0.07f;
+    [SerializeField] private string animFadeInfoKey = "Default";
 
     [Header("[ Move Speed Stats ]")]
-    [SerializeField] private float _walkSpeed = 2f;
-    [SerializeField] private float _runSpeed = 6f;
+    [SerializeField] private float _walkSpeedRatio = 0.3f;
+    [SerializeField] private float _runSpeedRatio = 1f;
     [SerializeField] private float _moveSpeed = 0.0f;
     [Header("[ Jump Stats ]")]
     [SerializeField] private AnimationCurve _jumpUp = new ();
@@ -154,6 +150,7 @@ public class Character : MonoBehaviour
     [SerializeField] protected eRole _curRole = eRole.FIGHTER;
 
     protected DrawDebugCharacter _drawDebug;
+    protected HumanBoneInfo _humanBoneInfo = new();
 
     public bool _isGround = false;
     private bool _checkGround = true;
@@ -192,9 +189,11 @@ public class Character : MonoBehaviour
         
         if (TryGetComponent<AnimancerComponent>(out var animancer))
             _animancer = animancer;
+
+        _humanBoneInfo.Init(_animancer.Animator);
         
         // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
-        TestEquip();
+        TestHelmetEquip();
 
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
         MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
@@ -230,14 +229,8 @@ public class Character : MonoBehaviour
         hitFx = Resources.Load<GameObject>("Prefabs/StatusFx/Hits/Hit_01");
     }
 
-    private void TestEquip()
+    private void TestHelmetEquip()
     {
-        LoadPlayerSubBones();
-        Debug.Log($"[testName]{name}");
-        // 헬멧 생성
-        // var helmet = Resources.Load<ItemHelmet>("Prefabs/Armor/Helmet_Male");
-        // var helmetObj = Instantiate(helmet.GetMeshRenderer(), transform) as SkinnedMeshRenderer;
-        
         // 헬멧 장착 코드
         if (name.Contains("PlayerMain"))
         {
@@ -267,112 +260,7 @@ public class Character : MonoBehaviour
             bounds.center = Vector3.zero;
             bounds.extents = Vector3.zero;
             helmetMesh.bounds = bounds;
-            
-            // 상의 장착 코드
-            string tempLog = "";
-            string tempLog2 = "";
-            var SkinnedMeshBody = Resources.Load<GameObject>("Prefabs/Armor/SkinnedMeshBody");
-            var bodyArmor = SkinnedMeshBody.transform.GetChild(1);
-            if (bodyArmor.TryGetComponent<SkinnedMeshRenderer>(out var bodySkinRdr))
-            {
-                List<Transform> boneTfms = bodySkinRdr.bones.ToList();
-                for (int i = 0; i < bodySkinRdr.bones.Length; i++)
-                {
-                    tempLog += $"[testbodyEquipPrev][{i}]{bodySkinRdr.bones[i].name}/{boneTfms[i]}\n";
-                    if (false == _boneNames.ContainsKey(bodySkinRdr.bones[i].name))
-                        continue;
-                    boneTfms[i] = _animancer.Animator.GetBoneTransform(_boneNames[bodySkinRdr.bones[i].name]);
-                }
-                for (int i = 0; i < bodySkinRdr.bones.Length; i++)
-                {
-                    string type = _boneNames.ContainsKey(bodySkinRdr.bones[i].name) ? _boneNames[bodySkinRdr.bones[i].name].ToString() : "NONE";
-                    tempLog2 += $"[testbodyEquip][{i}]{bodySkinRdr.bones[i].name}/{type}/{boneTfms[i]}\n";
-                }
-
-                bodySkinRdr.bones = boneTfms.ToArray();
-                bodySkinRdr.rootBone = _rootTransform;
-            }
-            Debug.Log($"{tempLog}");
-            Debug.Log($"{tempLog2}");
-            var obj = Instantiate(bodyArmor.gameObject, transform);
         }
-        
-        // 상의 장착 코드
-        {
-            // 엄todo 헬멧 장착할 소켓 transform은 character가 가지도록 구조 개선 필요
-            Transform topSlot = null;
-            List<Transform> tfmRootChilds = UmUtil.GetAllChildList(_rootTransform);
-            foreach (var prefabTfm in tfmRootChilds)
-            {
-                if (prefabTfm.name.Equals("HeadEnd_M"))
-                    topSlot = prefabTfm;
-            }
-            
-            // mesh 방식은 힘듬
-            // var armorTop = Resources.Load<MeshFilter>("Prefabs/Armor/ArmorTop");
-            // armorTop = Instantiate(armorTop, topSlot);
-            // Mesh topMesh = armorTop.mesh;
-            // List<Vector3> verticals = new();
-            // for (int i = 0; i < topMesh.vertexCount; i++)
-            // {
-            //     Debug.Log($"[rappingHelmet]helmetMesh vertical[{i}]({topMesh.vertices[i]})");
-            //     Vector3 vertice = topMesh.vertices[i];
-            //     vertice.y -= topMesh.bounds.center.y;
-            //     verticals.Add(vertice);
-            // }
-            
-            // helmetMesh.SetVertices(verticals);
-            // Bounds bounds = new();
-            // bounds = topMesh.bounds;
-            // bounds.center = Vector3.zero;
-            // bounds.extents = Vector3.zero;
-            // topMesh.bounds = bounds;
-        }
-    }
-    
-    Dictionary<string, HumanBodyBones> _boneNames = new();
-
-    private void LoadPlayerSubBones()
-    {
-        var loadSubPlayer = Resources.Load<GameObject>("Prefabs/Character/PT_Lowpoly_Armors_Male_Avatar");
-        loadSubPlayer = Instantiate(loadSubPlayer, transform);
-
-        string bodyLog = "";
-        bodyLog = "";
-        foreach (HumanBodyBones boneType in Enum.GetValues(typeof(HumanBodyBones)))
-        {
-            if (boneType == HumanBodyBones.LastBone)
-                continue;
-            var result = loadSubPlayer.GetComponent<Animator>().GetBoneTransform(boneType);
-            bodyLog += $"[testbodyName]{boneType}/{result?.name}\n";
-            if (null == result)
-                continue;
-            _boneNames.Add(result.name, boneType);
-        }
-        Debug.Log($"{bodyLog}");
-        loadSubPlayer.SetActive(false);
-    }
-
-    private string GetBoneType(Transform boneTfm, Dictionary<string, HumanBodyBones> helmetBoneNames, Dictionary<string, Transform> helmetTransforms)
-    {
-        string boneType = helmetBoneNames.ContainsKey(boneTfm.name)
-            ? helmetBoneNames[boneTfm.name].ToString()
-            : "NONE";
-
-        Transform moveTfm = boneTfm;
-        while (boneType.Equals("NONE"))
-        {
-            if (null == moveTfm)
-                break;
-            moveTfm = moveTfm.parent;
-            if (helmetTransforms.ContainsKey(moveTfm.name))
-            {
-                boneType = helmetBoneNames.ContainsKey(moveTfm.name)
-                    ? helmetBoneNames[moveTfm.name].ToString()
-                    : "NONE";
-            }
-        }
-        return boneType;
     }
 
     protected virtual void InitStats()
@@ -380,7 +268,7 @@ public class Character : MonoBehaviour
         _hp = 5f;
         _mp = 5f;
         _strength = 5f;
-        _agility = 5f;
+        _agility = 6f;
         _intellect = 5f;
         CalculateStats();
     }
@@ -388,6 +276,7 @@ public class Character : MonoBehaviour
     public void CalculateStats()
     {
         // stats 변경에 따른 데이터 연산용 함수
+        _curHp = _fullHp;
     }
 
     private void MakeFixedDeltaTimeCurve(AnimationCurve curve, float argMaxTime)
@@ -475,7 +364,6 @@ public class Character : MonoBehaviour
 
     protected void StartUI()
     {
-        _curHp = _fullHp;
         UIManagerInGame.Instance.hudManager.AddPlayerSlider(GetHashCode(), this);
     }
 
@@ -871,22 +759,12 @@ public class Character : MonoBehaviour
 
     public void SetMoveSpeedToWalk()
     {
-        _moveSpeed = _walkSpeed;
+        _moveSpeed = _walkSpeedRatio * _agility;
     }
 
     public void SetMoveSpeedToRun()
     {
-        _moveSpeed = _runSpeed;
-    }
-
-    public void SetWalkSpeed(float walkSpeed)
-    {
-        _walkSpeed = walkSpeed;
-    }
-
-    public void SetRunSpeed(float runSpeed)
-    {
-        _runSpeed = runSpeed;
+        _moveSpeed = _runSpeedRatio * _agility;
     }
 
     public float GetMoveSpeed()
@@ -1197,5 +1075,13 @@ public class Character : MonoBehaviour
     {
         State state = Activator.CreateInstance(type, this, argState) as State;
         _stateMap.Add(argState, state);
+    }
+
+    public AnimationFadeInfoData GetAnimFadeInfoData()
+    {
+        var result = AnimationFadeInfoTable.GetData(animFadeInfoKey);
+        if (null == result)
+            result = AnimationFadeInfoTable.GetData("Default");
+        return result;
     }
 }

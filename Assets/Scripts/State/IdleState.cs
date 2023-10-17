@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using DataClass;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -19,7 +20,8 @@ public class IdleState : State
         if (false == _moveSet.IsEqualClip(_action))
         {
             // 재생중이던 clip이 idle clip과 동일할 때
-            _moveSet.Play(_action, _character.idleStart);
+            AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
+            _moveSet.Play(_action, data.idleStart);
         }
         
         _inputTimer.Start();

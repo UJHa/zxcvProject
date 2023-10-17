@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using DataClass;
 using UnityEngine;
 
 public class LandingState : State
@@ -16,7 +17,8 @@ public class LandingState : State
         base.StartState();
         _character.ResetMoveSpeed();
         _character._isGround = true;
-        _moveSet.Play(_action, _character.jumpEnd);
+        AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
+        _moveSet.Play(_action, data.jumpEnd);
         _inputTimer.Start();
 
         _character.UpdateGroundHeight();

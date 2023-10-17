@@ -64,7 +64,7 @@ public abstract class State
         _character.ActiveAttackColliders(false);
         _character.ActiveHitCollider(true, HitColliderType.STAND);
         _action = GameManager.Instance.GetAction(_eState);
-        _attackInfoData = AttackInfoTable.GetAttackInfoData(_eState.ToString());
+        _attackInfoData = AttackInfoTable.GetData(_eState.ToString());
     }
     public abstract void UpdateState();
     public abstract void FixedUpdateState();

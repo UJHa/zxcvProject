@@ -11,58 +11,53 @@ using Utils;
 namespace DataClass
 {
     [Serializable]
-    public class AttackInfoData
+    public class AnimationFadeInfoData
     {
-        public AttackInfoData()
+        public AnimationFadeInfoData()
         {
             
         }
-        public AttackInfoData(AttackInfoData argData)
+        public AnimationFadeInfoData(AnimationFadeInfoData argData)
         {
             id = argData.id;
-            stateName = argData.stateName;
-            hitboxType = argData.hitboxType;
-            damageRatio = argData.damageRatio;
-            startRatio = argData.startRatio;
-            endRatio = argData.endRatio;
-            attackType = argData.attackType;
-            airborneHeight = argData.airborneHeight;
-            airborneTime = argData.airborneTime;
+            playerType = argData.playerType;
+            idleStart = argData.idleStart;
+            walkStart = argData.walkStart;
+            runStart = argData.runStart;
+            jumpUpStart = argData.jumpUpStart;
+            jumpEnd = argData.jumpEnd;
         }
 
         public int id { get; set; }
-        public string stateName { get; set; }
-        public string hitboxType { get; set; }
-        public float damageRatio { get; set; }
-        public float startRatio { get; set; }
-        public float endRatio { get; set; }
-        public string attackType { get; set; }
-        public float airborneHeight { get; set; }
-        public float airborneTime { get; set; }
+        public string playerType { get; set; }
+        public float idleStart { get; set; }
+        public float walkStart { get; set; }
+        public float runStart { get; set; }
+        public float jumpUpStart { get; set; }
+        public float jumpEnd { get; set; }
         public override string ToString()
         {
-            return $"id({id})stateName({stateName})rangeType({hitboxType})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})airborneHeight({airborneHeight})airborneTime({airborneTime})";
+            return $"id({id})playerType({playerType})idleStart({idleStart})walkStart({walkStart})runStart({runStart})jumpUpStart({jumpUpStart})jumpEnd({jumpEnd})";
         }
     }
 
-    public class AttackInfoTable : DataTable
+    public class AnimationFadeInfoTable : DataTable
     {
-        private static Type tableType = typeof(AttackInfoTable);
-        private static string dataName = $"{typeof(AttackInfoData)}";
-        private static string jsonFileName = "AttackInfo.json";
-        private static AttackInfoTable _instance = null;
+        private static Type tableType = typeof(AnimationFadeInfoTable);
+        private static string dataName = $"{typeof(AnimationFadeInfoData)}";
+        private static string jsonFileName = "AnimationFadeInfo.json";
+        private static AnimationFadeInfoTable _instance = null;
         
         // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
-        public Dictionary<int, AttackInfoData> IndexDictionary = new();
-        public Dictionary<string, AttackInfoData> nameDictionary = new();
+        public Dictionary<int, AnimationFadeInfoData> IndexDictionary = new();
+        public Dictionary<string, AnimationFadeInfoData> nameDictionary = new();
         protected override void Init(JArray dataList)
         {
-            var dataType = typeof(AttackInfoData).Assembly;
             base.Init(dataList);
             _instance = this;
             foreach (var jToken in dataList)
             {
-                var jsonData = JsonConvert.DeserializeObject<AttackInfoData>(jToken.ToString());
+                var jsonData = JsonConvert.DeserializeObject<AnimationFadeInfoData>(jToken.ToString());
                 Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
@@ -71,38 +66,38 @@ namespace DataClass
                 }
                 IndexDictionary.Add(jsonData.id, jsonData);
                 
-                if (nameDictionary.ContainsKey(jsonData.stateName))
+                if (nameDictionary.ContainsKey(jsonData.playerType))
                 {
-                    Debug.LogError($"{dataName} have same key({jsonData.stateName})");
+                    Debug.LogError($"{dataName} have same key({jsonData.playerType})");
                     continue;
                 }
-                nameDictionary.Add(jsonData.stateName, jsonData);
+                nameDictionary.Add(jsonData.playerType, jsonData);
             }
         }
 
-        public static AttackInfoData GetData(string argKeyName)
+        public static AnimationFadeInfoData GetData(string argKeyName)
         {
             if (false == DataTable.Tables.ContainsKey(tableType))
                 return null;
-            AttackInfoTable attackInfoTable = DataTable.Tables[tableType] as AttackInfoTable;
-            if (null == attackInfoTable)
+            AnimationFadeInfoTable table = DataTable.Tables[tableType] as AnimationFadeInfoTable;
+            if (null == table)
                 return null;
-            if (false == attackInfoTable.nameDictionary.ContainsKey(argKeyName))
+            if (false == table.nameDictionary.ContainsKey(argKeyName))
                 return null;
-            return new(attackInfoTable.nameDictionary[argKeyName]);
+            return new(table.nameDictionary[argKeyName]);
         }
 
-        public static List<AttackInfoData> GetList()
+        public static List<AnimationFadeInfoData> GetList()
         {
             if (null == _instance)
             {
-                Debug.LogError($"AttackInfoTable is not instantiate!");
+                Debug.LogError($"{tableType} is not instantiate!");
                 return null;
             }
 
-            List<AttackInfoData> result = new();
+            List<AnimationFadeInfoData> result = new();
 
-            // 값 복사를 통해서 AttackInfoTable 값과 분리하여 전달
+            // 값 복사를 통해서 Table 값과 분리하여 전달
             foreach (var data in _instance.IndexDictionary.Values)
             {
                 result.Add(new (data));
@@ -110,7 +105,7 @@ namespace DataClass
             return result;
         }
 
-        public static void SetData(string argKeyName, AttackInfoData argData)
+        public static void SetData(string argKeyName, AnimationFadeInfoData argData)
         {
             if (false == _instance.nameDictionary.ContainsKey(argKeyName))
             {

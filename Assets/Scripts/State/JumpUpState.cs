@@ -1,3 +1,4 @@
+using DataClass;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -15,7 +16,8 @@ public class JumpUpState : State
         base.StartState();
         _jumpTimer = 0f;
         Debug.Log($"[State] jumpup start");
-        _moveSet.Play(_action, _character.jumpUpStart);
+        AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
+        _moveSet.Play(_action, data.jumpUpStart);
         _character._isGround = false;
         _moveVelocity = Vector3.zero;
         Debug.Log($"[testum]speed({_character.GetMoveSpeed()})");

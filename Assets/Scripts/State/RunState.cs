@@ -1,3 +1,4 @@
+using DataClass;
 using UnityEngine;
 
 public class RunState : State
@@ -10,7 +11,8 @@ public class RunState : State
     {
         base.StartState();
         _character.SetMoveSpeedToRun();
-        _moveSet.Play(_action, _character.runStart);
+        AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
+        _moveSet.Play(_action, data.runStart);
     }
 
     public override void FixedUpdateState()

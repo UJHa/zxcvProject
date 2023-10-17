@@ -157,7 +157,7 @@ public class GameManager : MonoBehaviour
 
     private void LoadActions()
     {
-        var allActions = ActionTable.GetActionList();
+        var allActions = ActionTable.GetList();
         foreach (var actionData in allActions)
         {
             var state = UmUtil.StringToEnum<eState>(actionData.actionName);
@@ -179,7 +179,7 @@ public class GameManager : MonoBehaviour
                 continue;
             }
             // action.CreateHitboxInfo()
-            _attackInfoMap.Add(state, AttackInfoTable.GetAttackInfoData(stateName));
+            _attackInfoMap.Add(state, AttackInfoTable.GetData(stateName));
         }
     }
     

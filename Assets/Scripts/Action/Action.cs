@@ -11,7 +11,7 @@ public class Action
     public Action(string state)
     {
         _state = UmUtil.StringToEnum<eState>(state);
-        _actionData = ActionTable.GetActionData(_state.ToString());
+        _actionData = ActionTable.GetData(_state.ToString());
         _animClip = Resources.Load<AnimationClip>(_actionData.clipPath);
     }
     

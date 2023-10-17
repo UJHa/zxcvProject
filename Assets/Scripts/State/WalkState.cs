@@ -1,3 +1,4 @@
+using DataClass;
 using UnityEngine;
 
 public class WalkState : State
@@ -10,8 +11,8 @@ public class WalkState : State
     {
         base.StartState();
         _character.SetMoveSpeedToWalk();
-
-        _moveSet.Play(_action, _character.walkStart);
+        AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
+        _moveSet.Play(_action, data.walkStart);
     }
 
     public override void FixedUpdateState()

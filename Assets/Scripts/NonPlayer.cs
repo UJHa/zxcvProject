@@ -10,9 +10,6 @@ public class NonPlayer : Character
         StartUI();
         slider.gameObject.SetActive(true);
 
-        SetWalkSpeed(0.003f);
-        SetRunSpeed(0.012f);
-
         _directionVector = Vector3.back;
 
         _stateMap.Add(eState.FIGHTER_IDLE, new NpcIdleState(this, eState.FIGHTER_IDLE));

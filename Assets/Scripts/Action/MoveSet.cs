@@ -135,7 +135,7 @@ public class MoveSet
 
     public eRoleState GetRoleState(eState prevState)
     {
-        var actionState = ActionTable.GetActionData(prevState.ToString());
+        var actionState = ActionTable.GetData(prevState.ToString());
         if (null == actionState)
             return eRoleState.NONE;
         return UmUtil.StringToEnum<eRoleState>(actionState.roleState);
