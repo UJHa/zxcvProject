@@ -81,12 +81,12 @@ public class Character : MonoBehaviour
     [Header("[ Stats ]")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _curHp = 0f;
-    [SerializeField] private float _attackPower = 30f;
-    [SerializeField] protected float _hp = 5f;
-    [SerializeField] protected float _mp = 5f;
-    [SerializeField] protected float _strength = 5f;
-    [SerializeField] protected float _agility = 6f;
-    [SerializeField] protected float _intellect = 5f;
+    [SerializeField] private float _hp = 5f;
+    [SerializeField] private float _mp = 5f;
+    [SerializeField] private float _strength = 5f;
+    [SerializeField] private float _agility = 6f;
+    [SerializeField] private float _intellect = 5f;
+    [SerializeField] private string _statKey = "Default";
     
     [Header("[ Anim CrossFadeTime ]")]
     [SerializeField] private string animFadeInfoKey = "Default";
@@ -263,18 +263,21 @@ public class Character : MonoBehaviour
         }
     }
 
-    protected virtual void InitStats()
+    protected void InitStats()
     {
-        _hp = 5f;
-        _mp = 5f;
-        _strength = 5f;
-        _agility = 6f;
-        _intellect = 5f;
+        // 엄todo 스탯 정보는 _statKey 기반으로 가져오도록 변경하기(각 Player가 수정한 값 기준)
+        var statData = GetStatData();
+        _hp = statData.health;
+        _mp = statData.mana;
+        _strength = statData.strength;
+        _agility = statData.agility;
+        _intellect = statData.intellect;
         CalculateStats();
     }
 
     public void CalculateStats()
     {
+        _fullHp = _hp * 20f;
         // stats 변경에 따른 데이터 연산용 함수
         _curHp = _fullHp;
     }
@@ -854,11 +857,6 @@ public class Character : MonoBehaviour
             ChangeState(eState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
     }
 
-    public float GetAttackDamage()
-    {
-        return _attackPower;
-    }
-
     public virtual void DeadDisable()
     {
         // 이건 deadState 이후 시체가 사라질 때 처리하는 함수로 쓰자.
@@ -1077,6 +1075,14 @@ public class Character : MonoBehaviour
         _stateMap.Add(argState, state);
     }
 
+    public CharacterStatData GetStatData()
+    {
+        var result = CharacterStatTable.GetData(_statKey);
+        if (null == result)
+            result = CharacterStatTable.GetData("Default");
+        return result;
+    }
+    
     public AnimationFadeInfoData GetAnimFadeInfoData()
     {
         var result = AnimationFadeInfoTable.GetData(animFadeInfoKey);

@@ -62,16 +62,6 @@ public class Player : Character
         _stateMap[_curState].StartState();
     }
 
-    protected override void InitStats()
-    {
-        _hp = 5f;
-        _mp = 5f;
-        _strength = 5f;
-        _agility = 5f;
-        _intellect = 5f;
-        CalculateStats();
-    }
-
     public override void DeadDisable()
     {
         base.DeadDisable();

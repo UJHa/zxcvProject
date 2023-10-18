@@ -9,57 +9,55 @@ using Utils;
 namespace DataClass
 {
     [Serializable]
-    public class AttackInfoData
+    public class CharacterStatData
     {
-        public AttackInfoData()
+        public CharacterStatData()
         {
             
         }
-        public AttackInfoData(AttackInfoData argData)
+        public CharacterStatData(CharacterStatData argData)
         {
             id = argData.id;
-            stateName = argData.stateName;
-            hitboxType = argData.hitboxType;
-            damageRatio = argData.damageRatio;
-            startRatio = argData.startRatio;
-            endRatio = argData.endRatio;
-            attackType = argData.attackType;
-            airborneHeight = argData.airborneHeight;
-            airborneTime = argData.airborneTime;
+            profileName = argData.profileName;
+            health = argData.health;
+            mana = argData.mana;
+            strength = argData.strength;
+            agility = argData.agility;
+            intellect = argData.intellect;
+            defense = argData.defense;
         }
 
         public int id { get; set; }
-        public string stateName { get; set; }
-        public string hitboxType { get; set; }
-        public float damageRatio { get; set; }
-        public float startRatio { get; set; }
-        public float endRatio { get; set; }
-        public string attackType { get; set; }
-        public float airborneHeight { get; set; }
-        public float airborneTime { get; set; }
+        public string profileName { get; set; }
+        public float health { get; set; }
+        public float mana { get; set; }
+        public float strength { get; set; }
+        public float agility { get; set; }
+        public float intellect { get; set; }
+        public float defense { get; set; }
         public override string ToString()
         {
-            return $"id({id})stateName({stateName})rangeType({hitboxType})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})airborneHeight({airborneHeight})airborneTime({airborneTime})";
+            return $"id({id})profileName({profileName})health({health})mana({mana})strength({strength})agility({agility})intellect({intellect})defense({defense})";
         }
     }
 
-    public class AttackInfoTable : DataTable
+    public class CharacterStatTable : DataTable
     {
-        private static Type tableType = typeof(AttackInfoTable);
-        private static string dataName = $"{typeof(AttackInfoData)}";
-        private static string jsonFileName = "AttackInfo.json";
-        private static AttackInfoTable _instance = null;
+        private static Type tableType = typeof(CharacterStatTable);
+        private static string dataName = $"{typeof(CharacterStatData)}";
+        private static string jsonFileName = "CharacterStat.json";
+        private static CharacterStatTable _instance = null;
         
         // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
-        public Dictionary<int, AttackInfoData> IndexDictionary = new();
-        public Dictionary<string, AttackInfoData> nameDictionary = new();
+        public Dictionary<int, CharacterStatData> IndexDictionary = new();
+        public Dictionary<string, CharacterStatData> nameDictionary = new();
         protected override void Init(JArray dataList)
         {
             base.Init(dataList);
             _instance = this;
             foreach (var jToken in dataList)
             {
-                var jsonData = JsonConvert.DeserializeObject<AttackInfoData>(jToken.ToString());
+                var jsonData = JsonConvert.DeserializeObject<CharacterStatData>(jToken.ToString());
                 Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
@@ -68,20 +66,20 @@ namespace DataClass
                 }
                 IndexDictionary.Add(jsonData.id, jsonData);
                 
-                if (nameDictionary.ContainsKey(jsonData.stateName))
+                if (nameDictionary.ContainsKey(jsonData.profileName))
                 {
-                    Debug.LogError($"{dataName} have same key({jsonData.stateName})");
+                    Debug.LogError($"{dataName} have same key({jsonData.profileName})");
                     continue;
                 }
-                nameDictionary.Add(jsonData.stateName, jsonData);
+                nameDictionary.Add(jsonData.profileName, jsonData);
             }
         }
 
-        public static AttackInfoData GetData(string argKeyName)
+        public static CharacterStatData GetData(string argKeyName)
         {
             if (false == DataTable.Tables.ContainsKey(tableType))
                 return null;
-            AttackInfoTable table = DataTable.Tables[tableType] as AttackInfoTable;
+            CharacterStatTable table = DataTable.Tables[tableType] as CharacterStatTable;
             if (null == table)
                 return null;
             if (false == table.nameDictionary.ContainsKey(argKeyName))
@@ -89,7 +87,7 @@ namespace DataClass
             return new(table.nameDictionary[argKeyName]);
         }
 
-        public static List<AttackInfoData> GetList()
+        public static List<CharacterStatData> GetList()
         {
             if (null == _instance)
             {
@@ -97,7 +95,7 @@ namespace DataClass
                 return null;
             }
 
-            List<AttackInfoData> result = new();
+            List<CharacterStatData> result = new();
 
             // 값 복사를 통해서 Table 값과 분리하여 전달
             foreach (var data in _instance.IndexDictionary.Values)
@@ -107,7 +105,7 @@ namespace DataClass
             return result;
         }
 
-        public static void SetData(string argKeyName, AttackInfoData argData)
+        public static void SetData(string argKeyName, CharacterStatData argData)
         {
             if (false == _instance.nameDictionary.ContainsKey(argKeyName))
             {
