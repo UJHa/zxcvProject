@@ -1765,7 +1765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hitColliderType: 0
-  _character: {fileID: 6136724877743868282}
+  _character: {fileID: 0}
 --- !u!1 &5642997034812241467
 GameObject:
   m_ObjectHideFlags: 0
@@ -1840,7 +1840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hitColliderType: 1
-  _character: {fileID: 6136724877743868282}
+  _character: {fileID: 0}
 --- !u!1 &5790358877147444695
 GameObject:
   m_ObjectHideFlags: 0
@@ -2072,13 +2072,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6136724877743868231}
-  - component: {fileID: 6136724877743868282}
+  - component: {fileID: 6418750299226572596}
   - component: {fileID: 6136724877743868229}
   - component: {fileID: 6136724877743868283}
   - component: {fileID: 3647786310916378707}
   - component: {fileID: 1194379238202812944}
   m_Layer: 8
-  m_Name: Player
+  m_Name: BotPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2109,7 +2109,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6136724877743868282
+--- !u!114 &6418750299226572596
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2118,7 +2118,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6136724877743868280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
+  m_Script: {fileID: 11500000, guid: 4ab8b3eb566f47c4a211491b0dd255de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _fullHp: 100
@@ -2126,7 +2126,7 @@ MonoBehaviour:
   _hp: 5
   _mp: 5
   _strength: 5
-  _agility: 5
+  _agility: 6
   _intellect: 5
   _statKey: Default
   animFadeInfoKey: Default
@@ -2234,31 +2234,15 @@ MonoBehaviour:
   _jumpDownMaxTimer: 0.6
   _groundCollider:
     Size: {x: 0.2, y: 0.03, z: 0.2}
-    gizmoPos: {x: 0, y: -0.015, z: 0}
+    gizmoPos: {x: 0, y: 0, z: 0}
   _wallCollider:
     Size: {x: 0.1, y: 1.5, z: 0.05}
     gizmoPos: {x: 0, y: 0, z: 0}
-  _rootTransform: {fileID: 3861058366054779276}
-  _hitColliders:
-  - {fileID: 2001029440010266184}
-  - {fileID: 2707670309046875429}
-  _attackPartDatas:
-  - attackPart: 1
-    attackCollider: {fileID: 6026300478117554533}
-  - attackPart: 2
-    attackCollider: {fileID: 858455694098392600}
-  - attackPart: 3
-    attackCollider: {fileID: 1159814235865960960}
-  - attackPart: 4
-    attackCollider: {fileID: 5427011001870460692}
-  - attackPart: 6
-    attackCollider: {fileID: 4297015552231950538}
-  - attackPart: 7
-    attackCollider: {fileID: 5259560378289483831}
-  _partColliderDatas:
-  - Type: 1
-    Collider: {fileID: 2162845328528910158}
-  _rigidbody: {fileID: 6136724877743868229}
+  _rootTransform: {fileID: 0}
+  _hitColliders: []
+  _attackPartDatas: []
+  _partColliderDatas: []
+  _rigidbody: {fileID: 0}
   _prevState: 0
   _curState: 0
   _curRole: 0
@@ -2831,7 +2815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hitColliderType: 1
-  _character: {fileID: 6136724877743868282}
+  _character: {fileID: 0}
 --- !u!1001 &3902471060903261821
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2846,7 +2830,7 @@ PrefabInstance:
     - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: _ownCharacter
       value: 
-      objectReference: {fileID: 6136724877743868282}
+      objectReference: {fileID: 0}
     - target: {fileID: 6627395681814851996, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: m_Name
       value: RightFistCollider
@@ -2916,7 +2900,7 @@ PrefabInstance:
     - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: _ownCharacter
       value: 
-      objectReference: {fileID: 6136724877743868282}
+      objectReference: {fileID: 0}
     - target: {fileID: 6627395681814851996, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: m_Name
       value: RightFootCollider
@@ -3042,17 +3026,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5133090017903628287, guid: e0b6ef1e5c4c21b4cbe05d045059c1fd, type: 3}
   m_PrefabInstance: {fileID: 6212107500741261856}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2162845328528910158 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5203397573325151598, guid: e0b6ef1e5c4c21b4cbe05d045059c1fd, type: 3}
-  m_PrefabInstance: {fileID: 6212107500741261856}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 502e913acb694c62bddcec446d74c8ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &7354837693487132960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3067,7 +3040,7 @@ PrefabInstance:
     - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: _ownCharacter
       value: 
-      objectReference: {fileID: 6136724877743868282}
+      objectReference: {fileID: 0}
     - target: {fileID: 6627395681814851996, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: m_Name
       value: LeftFootCollider
@@ -3145,7 +3118,7 @@ PrefabInstance:
     - target: {fileID: -7400498323691250655, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: _ownCharacter
       value: 
-      objectReference: {fileID: 6136724877743868282}
+      objectReference: {fileID: 0}
     - target: {fileID: 6627395681814851996, guid: 1a0cbf10e16173a42a0970b0ba0eb28c, type: 3}
       propertyPath: m_Name
       value: LeftFistCollider

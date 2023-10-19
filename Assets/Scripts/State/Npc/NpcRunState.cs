@@ -1,12 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 
-public class NpcRunState : State
+public class NpcRunState : RunState
 {
-    private bool _isJump = false;
-    private float _attackRange = 1.0f;
-    private AnimationClip _animClip;
-
     public NpcRunState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -14,40 +10,38 @@ public class NpcRunState : State
     public override void StartState()
     {
         base.StartState();
-        _isJump = false;
-
+        
         _character.SetMoveSpeedToRun();
-        // 엄todo : 봇 개발 이후 주석 부분 수정
-        // if (null == _animClip)
-        //     _animClip = Resources.Load<AnimationClip>("Animation/Run");
-        // _animancer.Play(_animClip, _character.runStart);
     }
 
     public override void FixedUpdateState()
     {
+        base.FixedUpdateState();
     }
 
     public override void EndState()
     {
+        base.EndState();
     }
 
     public override void UpdateState()
     {
         if(_character.GetTraceTarget() != null)
         {
-            _character.transform.LookAt(_character.GetTraceTarget().transform);
-            Vector3 temp = _character.transform.eulerAngles;
-            temp.x = 0.0f;
-            _character.transform.eulerAngles = temp;
             Vector3 traceDirection = (_character.GetTraceTarget().transform.position - _character.transform.position).normalized;
-            _character.transform.position += traceDirection * _character.GetMoveSpeed();
-            if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) <= _attackRange)
+            Debug.Log($"[botRotVector]{traceDirection}");
+            traceDirection.y = 0f;
+            _character.SetDirectionByVector3(traceDirection);
+            _character.MovePosition(traceDirection);
+            
+            // if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) <= _attackRange)
+            if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) <= 1f)
             {
-                _character.ChangeState(eState.FIGHTER_WEEK_ATTACK1);
+                _character.ChangeRoleState(eRoleState.IDLE);
             }
             if (_character.IsInRange())
             {
-                _character.SetTarget(null);
+                // _character.SetTarget(null);
                 _character.ChangeRoleState(eRoleState.IDLE);
             }
         }

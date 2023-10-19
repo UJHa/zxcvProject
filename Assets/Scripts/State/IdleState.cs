@@ -27,6 +27,7 @@ public class IdleState : State
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
+        // 엄todo : 이 함수 기반으로 점프 바닥 충돌 위치 보간 테스트하기
         _character.UpdateGroundHeight();
     }
 

@@ -101,8 +101,8 @@ public class Character : MonoBehaviour
     [SerializeField] private AnimationCurve _airBoneUp = new ();
     [SerializeField] private AnimationCurve _airBoneDown = new ();
     [SerializeField] private float _jumpMaxHeight = 2f;
-    [SerializeField] private float _jumpUpMaxTimer = 2f;
-    [SerializeField] private float _jumpDownMaxTimer = 1f;
+    [SerializeField] private float _jumpUpMaxTimer = 0.8f;
+    [SerializeField] private float _jumpDownMaxTimer = 0.6f;
     
     [Header("[ Ground Collider ]")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
