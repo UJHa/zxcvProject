@@ -193,7 +193,7 @@ public class Character : MonoBehaviour
         _humanBoneInfo.Init(_animancer.Animator);
         
         // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
-        TestHelmetEquip();
+        // TestHelmetEquip();
 
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
         MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);

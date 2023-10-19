@@ -7,7 +7,7 @@
 {"id":6,"actionName":"JUMP_UP","roleState":"JUMP_UP","actionType":"NONE","clipPath":"Animation/Fighter/Fighter_Jump_Start","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.6,"damageRatio":1.0},
 {"id":7,"actionName":"JUMP_DOWN","roleState":"JUMP_DOWN","actionType":"NONE","clipPath":"Animation/Fighter/Fighter_Jump_Start","speed":1.0,"startTimeRatio":0.6,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":8,"actionName":"LANDING","roleState":"LANDING","actionType":"NONE","clipPath":"Animation/Fighter/Fighter_Jump_End","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
-{"id":9,"actionName":"FIGHTER_WEEK_ATTACK1","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Lucy_FightFist01_1","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.7,"damageRatio":1.0},
+{"id":9,"actionName":"FIGHTER_WEEK_ATTACK1","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Lucy_FightFist01_1","speed":0.5,"startTimeRatio":0.1,"endTimeRatio":0.7,"damageRatio":1.0},
 {"id":10,"actionName":"FIGHTER_WEEK_ATTACK2","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Lucy_FightFist01_2","speed":1.0,"startTimeRatio":0.1,"endTimeRatio":0.5,"damageRatio":1.0},
 {"id":11,"actionName":"FIGHTER_WEEK_ATTACK3","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Lucy_FightFist02_2b_1","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.4,"damageRatio":1.0},
 {"id":12,"actionName":"FIGHTER_STRONG_ATTACK1","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Lucy_Kick13_Root","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.5,"damageRatio":1.0},

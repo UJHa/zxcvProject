@@ -6,6 +6,7 @@ zxcv 키 사용 게임 제작
     - 점프 : V
     - 주먹 공격 : C>C>C
     - 발차기 공격 : X>X
+    - 점프 공격 : V>C>C>C
 
 # 현재 개발 중인 Scene
     - DevScene
@@ -28,8 +29,21 @@ zxcv 키 사용 게임 제작
     - 에어본 공격 피격 모션(eState.AIRBORNE_DAMAGED)
     - 에어본 피격 도중 재피격 모션(eState.DAMAGED_AIRBORNE_LOOP)
     - 에어본 피격도중 바닥 충돌 모션(eState.DAMAGED_LANDING)
+    - 아이템 습득 모션(eState.GET_ITEM)
     - 기상 모션(eState.WAKE_UP)
     - 죽음 모션(eState.DEAD)
+
+# DevScene
+## 플레이 영상
+![DevScene_플레이.gif](DevScene_플레이.gif)
+# MoveSetScene
+## 액션 재생 및 제어
+![MoveSetScene_클립재생_속도조정.gif](MoveSetScene_클립재생_속도조정.gif)
+## 액션 수정 후 Json으로 저장
+![MoveSetScene_공격데이터_수정사항_저장.gif](MoveSetScene_공격데이터_수정사항_저장.gif)
+## 저장 결과
+![MoveSetScene_Json.png](MoveSetScene_Json.png)
+
 
 # 현재 진행 중인 작업
     - MoveSetScene을 통한 캐릭터 무브셋 툴 개발
