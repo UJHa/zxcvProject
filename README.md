@@ -43,8 +43,3 @@ zxcv 키 사용 게임 제작
 ![MoveSetScene_공격데이터_수정사항_저장.gif](MoveSetScene_공격데이터_수정사항_저장.gif)
 ## 저장 결과
 ![MoveSetScene_Json.png](MoveSetScene_Json.png)
-
-
-# 현재 진행 중인 작업
-    - MoveSetScene을 통한 캐릭터 무브셋 툴 개발
-![img.png](img.png)
