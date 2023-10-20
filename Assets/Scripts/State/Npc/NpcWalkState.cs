@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Diagnostics;
 
 public class NpcWalkState : WalkState
 {
@@ -25,7 +24,26 @@ public class NpcWalkState : WalkState
 
     public override void UpdateState()
     {
-        // _character.ChangeRoleState(eRoleState.RUN);
-        // base.UpdateState();
+        if(_character.GetTraceTarget() != null)
+        {
+            Vector3 traceDirection = (_character.GetTraceTarget().transform.position - _character.transform.position).normalized;
+            Debug.Log($"[botRotVector]{traceDirection}");
+            traceDirection.y = 0f;
+            _character.SetDirectionByVector3(traceDirection);
+            _character.MovePosition(traceDirection);
+            
+            if (_character.GetTraceTargetDistanceXZ() >= 3f)
+            {
+                _character.ChangeRoleState(eRoleState.RUN);
+            }
+            else if (_character.GetTraceTargetDistanceXZ() <= 1f)
+            {
+                _character.ChangeRoleState(eRoleState.IDLE);
+            }
+        }
+        else
+        {
+            _character.ChangeRoleState(eRoleState.IDLE);
+        }
     }
 }

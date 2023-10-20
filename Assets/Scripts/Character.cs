@@ -824,6 +824,15 @@ public class Character : MonoBehaviour
         return traceTarget;
     }
 
+    public float GetTraceTargetDistanceXZ()
+    {
+        Vector3 myPosXZ = transform.position;
+        myPosXZ.y = 0f;
+        Vector3 targetPosXZ = traceTarget.transform.position;
+        targetPosXZ.y = 0f;
+        return Vector3.Distance(myPosXZ, targetPosXZ);
+    }
+
     public bool IsInRange()
     {
         return (Vector3.Distance(traceTarget.transform.position, transform.position) > findRange);

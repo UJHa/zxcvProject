@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Diagnostics;
 
 public class NpcIdleState : IdleState
 {
@@ -26,9 +25,13 @@ public class NpcIdleState : IdleState
 
     public override void UpdateState()
     {
-        if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) > 1f)
+        if (_character.GetTraceTargetDistanceXZ() > 3f)
         {
             _character.ChangeRoleState(eRoleState.RUN);
+        }
+        else if (_character.GetTraceTargetDistanceXZ() > 1f)
+        {
+            _character.ChangeRoleState(eRoleState.WALK);
         }
         // base.UpdateState();
     }

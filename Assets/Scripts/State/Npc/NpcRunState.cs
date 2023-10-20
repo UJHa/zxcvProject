@@ -34,14 +34,8 @@ public class NpcRunState : RunState
             _character.SetDirectionByVector3(traceDirection);
             _character.MovePosition(traceDirection);
             
-            // if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) <= _attackRange)
-            if (Vector3.Distance(_character.GetTraceTarget().transform.position, _character.transform.position) <= 1f)
+            if (_character.GetTraceTargetDistanceXZ() <= 1f)
             {
-                _character.ChangeRoleState(eRoleState.IDLE);
-            }
-            if (_character.IsInRange())
-            {
-                // _character.SetTarget(null);
                 _character.ChangeRoleState(eRoleState.IDLE);
             }
         }
