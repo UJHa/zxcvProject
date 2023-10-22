@@ -36,14 +36,14 @@ public class LandingState : State
 
     public override void UpdateState()
     {
-        UpdateAnimation();
+        if (IsAnimationFinish())
+            _character.ChangeRoleState(eRoleState.IDLE);
         UpdateInput();
     }
 
-    private void UpdateAnimation()
+    protected bool IsAnimationFinish()
     {
-        if (_moveSet.IsAnimationFinish())
-            _character.ChangeRoleState(eRoleState.IDLE);
+        return _moveSet.IsAnimationFinish();
     }
 
     private void UpdateInput()
@@ -70,15 +70,6 @@ public class LandingState : State
                     break;
                 }
             }
-            // if(Input.GetKeyDown(InputManager.Instance.GetKeyCode(KeyBindingType.JUMP)))
-            // {
-            //     _character.ChangeState(eState.JUMP_UP, eStateType.INPUT);
-            // }
-            //
-            // if (Input.GetKeyDown(InputManager.Instance.GetKeyCode(KeyBindingType.WEEK_ATTACK)))
-            // {
-            //     _character.ChangeState(eState.ATTACK);
-            // }
         }
     }
     

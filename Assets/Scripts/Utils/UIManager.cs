@@ -55,10 +55,8 @@ namespace Utils
         private void Awake()
         {
             InitInstance();
-            Debug.Log($"uimanager awake");
             foreach (Transform tfm in transform)
             {
-                Debug.Log($"obj.name({tfm.name})");
                 if (Enum.TryParse<UILayerType>(tfm.name, out var uiLayerType))
                     _layerParents[uiLayerType] = tfm.gameObject;
             }

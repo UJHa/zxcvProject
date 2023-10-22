@@ -65,6 +65,5 @@ public class Player : Character
     public override void DeadDisable()
     {
         base.DeadDisable();
-        GameManager.Instance.OpenFinishDialog("실패");
     }
 }

@@ -277,7 +277,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3861058366054779277}
   m_LocalRotation: {x: 0.47294497, y: -0.52566445, z: -0.47294497, w: 0.52566445}
-  m_LocalPosition: {x: -2.1878564e-33, y: 1.0628308, z: 0.035129853}
+  m_LocalPosition: {x: 0, y: 1.0628308, z: 0.035129853}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1765,7 +1765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hitColliderType: 0
-  _character: {fileID: 0}
+  _character: {fileID: 6418750299226572596}
 --- !u!1 &5642997034812241467
 GameObject:
   m_ObjectHideFlags: 0
@@ -1840,7 +1840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hitColliderType: 1
-  _character: {fileID: 0}
+  _character: {fileID: 6418750299226572596}
 --- !u!1 &5790358877147444695
 GameObject:
   m_ObjectHideFlags: 0
@@ -2121,6 +2121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ab8b3eb566f47c4a211491b0dd255de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curVelocity: {x: 0, y: 0, z: 0}
   _fullHp: 100
   _curHp: 0
   _hp: 5
@@ -2239,9 +2240,19 @@ MonoBehaviour:
     Size: {x: 0.1, y: 1.5, z: 0.05}
     gizmoPos: {x: 0, y: 0, z: 0}
   _rootTransform: {fileID: 3861058366054779276}
-  _hitColliders: []
-  _attackPartDatas: []
-  _partColliderDatas: []
+  _hitColliders:
+  - {fileID: 2001029440010266184}
+  - {fileID: 2707670309046875429}
+  _attackCollisionRangeDatas:
+  - attackPart: 1
+    attackCollider: {fileID: 6026300478117554533}
+  - attackPart: 2
+    attackCollider: {fileID: 858455694098392600}
+  - attackPart: 3
+    attackCollider: {fileID: 1159814235865960960}
+  - attackPart: 4
+    attackCollider: {fileID: 5427011001870460692}
+  _equipPartColliderDatas: []
   _rigidbody: {fileID: 0}
   _prevState: 0
   _curState: 0
@@ -2271,9 +2282,9 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6136724877743868280}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 66ba0ad3497cb124da33c080e4701c07, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.2
   m_Height: 1.8
   m_Direction: 1

@@ -21,14 +21,14 @@ public class KnockBackDamagedState : DamagedState
     public override void FixedUpdateState()
     {
         _moveVelocity = _character.GetDamagedDirectionVector() * 1f;
-        _character.GetRigidbody().velocity = _moveVelocity;
+        _character.SetVelocity(_moveVelocity);
     }
 
     public override void EndState()
     {
         base.EndState();
         _knockBackTimer.Reset();
-        _character.GetRigidbody().velocity = Vector3.zero;
+        _character.SetVelocity(_moveVelocity);
         _character.SetDamagedDirectionVector(Vector3.zero);
     }
 

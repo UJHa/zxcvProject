@@ -35,7 +35,7 @@ public class AirborneDamagedState : DamagedState
         {
             _upMoveTimer += Time.fixedDeltaTime;
             _moveVelocity.y = _character.GetAirBoneUpVelocity(_upMoveTimer);
-            _character.GetRigidbody().velocity = _moveVelocity;
+            _character.SetVelocity(_moveVelocity);
         }
         Debug.Log($"[damageup]timer({_upMoveTimer}) GetVelocity({_character.GetJumpUpVelocity(_upMoveTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }

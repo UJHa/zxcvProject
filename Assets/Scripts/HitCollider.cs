@@ -14,7 +14,7 @@ public class HitCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[testOther]other({other.name})");
+        // Debug.Log($"[testOther]other({other.name})");
         if (null != _character)
         {
             if (other.TryGetComponent<AttackCollider>(out var attackCollider) && attackCollider.GetOwner())

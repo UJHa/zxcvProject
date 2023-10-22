@@ -60,7 +60,8 @@ namespace DataClass
             foreach (var jToken in dataList)
             {
                 var jsonData = JsonConvert.DeserializeObject<AttackInfoData>(jToken.ToString());
-                Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+                if (enableLog)
+                    Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
                     Debug.LogError($"{dataName} have same id({jsonData.id})");

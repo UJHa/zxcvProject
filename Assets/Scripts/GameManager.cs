@@ -32,11 +32,6 @@ public class GameManager : MonoBehaviour
     public GameObject mainPlayer;
     public Vector3 adjust_pos = new Vector3(0.0f, 0.1f, 4.0f);
     [SerializeField] private Canvas canvas;
-
-    private List<NonPlayer> enemies = new List<NonPlayer>();
-    private int enableCount = 0;
-    private int totalCount = 0;
-    private string clearText = "성공";
     
     private Dictionary<eState, Action> _actionMap = new();
     private Dictionary<eState, AttackInfoData> _attackInfoMap = new();
@@ -54,13 +49,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // GetComponent<Camera>().fieldOfView = GetComponent<Camera>().fieldOfView;
-        foreach(NonPlayer enemy in GameObject.FindObjectsOfType<NonPlayer>())
-        {
-            enemies.Add(enemy);
-        }
-
-        totalCount = enableCount = enemies.Count;
     }
 
     void Update()
@@ -73,21 +61,6 @@ public class GameManager : MonoBehaviour
     }
 
     public Transform GetCanvas() => canvas.transform;
-
-    public void UpdateEnemyCount()
-    {
-        int remain = 0;
-        foreach (NonPlayer enemy in enemies)
-        {
-            if (enemy.isActiveAndEnabled) remain++;
-        }
-        enableCount = remain;
-
-        if (enableCount == 0)
-        {
-            OpenFinishDialog("성공");
-        }
-    }
     
     private void LoadRoleState()
     {
@@ -118,19 +91,6 @@ public class GameManager : MonoBehaviour
             return null;
         return _baseRoleMap[role];
     }
-
-    public void OpenFinishDialog(string text)
-    {
-        clearText = text;
-        Transform clearObject = canvas.transform.Find("ClearDialog");
-        clearObject.gameObject.SetActive(true);
-    }
-
-    public string GetEnableCount() => enableCount.ToString();
-
-    public string GetTotalCount() => totalCount.ToString();
-
-    public string GetClearText() => clearText;
 
     public void Restart()
     {

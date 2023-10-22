@@ -5,6 +5,7 @@ using Animancer;
 using DataClass;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utils;
 
@@ -78,6 +79,8 @@ public struct PartColliderData
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
+    [Header("[ Test Speed ]")]
+    [SerializeField] private Vector3 curVelocity = Vector3.zero;
     [Header("[ Stats ]")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _curHp = 0f;
@@ -125,12 +128,14 @@ public class Character : MonoBehaviour
     private Dictionary<HitColliderType, HitCollider> _hitColliderMap = new();
     
     [Header("[ Attack Collider ]")]
-    [SerializeField] private List<AttackPartData> _attackPartDatas = new();
-    private Dictionary<HitboxType, AttackCollider> _attackColliderMap = new();
+    [FormerlySerializedAs("_attackPartDatas")]
+    [SerializeField] private List<AttackPartData> _attackCollisionRangeDatas = new();
+    private Dictionary<HitboxType, AttackCollider> _attackCollisionRangeMap = new();
     
     [Header("[ Attack Collider ]")]
-    [SerializeField] private List<PartColliderData> _partColliderDatas = new();
-    private Dictionary<ColliderType, PartCollider> _partColliderMap = new();
+    [FormerlySerializedAs("_partColliderDatas")]
+    [SerializeField] private List<PartColliderData> _equipPartColliderDatas = new();
+    private Dictionary<ColliderType, PartCollider> _equipPartColliderMap = new();
 
     [Header("[ 3D Phygics Component ]")] 
     [SerializeField] private Rigidbody _rigidbody;
@@ -195,16 +200,19 @@ public class Character : MonoBehaviour
         // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
         // TestHelmetEquip();
 
+        // 엄todo : 이 속도 보간 데이터를 코드 개선할 방법 생각해보기
+        // 1. 에디터 다른 컴포넌트 통해 받아오기
+        // 2. Make는 다른 컴포넌트 통해서 연산된 결과만 사용하기
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
         MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
         MakeFixedDeltaTimeCurve(_airBoneUp, _jumpUpMaxTimer);
         MakeFixedDeltaTimeCurve(_airBoneDown, _jumpDownMaxTimer);
 
-        foreach (var partData in _attackPartDatas)
+        foreach (var partData in _attackCollisionRangeDatas)
         {
             partData.attackCollider.SetOwner(this);
-            if (false == _attackColliderMap.ContainsKey(partData.attackPart))
-                _attackColliderMap.Add(partData.attackPart, partData.attackCollider);
+            if (false == _attackCollisionRangeMap.ContainsKey(partData.attackPart))
+                _attackCollisionRangeMap.Add(partData.attackPart, partData.attackCollider);
         }
 
         foreach (var hitCollider in _hitColliders)
@@ -217,12 +225,12 @@ public class Character : MonoBehaviour
             }
         }
 
-        foreach (var partColliderData in _partColliderDatas)
+        foreach (var partColliderData in _equipPartColliderDatas)
         {
             // 엄todo : 현재 미사용 로우폴리 캐릭터 파츠 장착 시 다시 개발 필요
             partColliderData.Collider.SetOwner(this);
-            if (false == _partColliderMap.ContainsKey(partColliderData.Type))
-                _partColliderMap.Add(partColliderData.Type, partColliderData.Collider);
+            if (false == _equipPartColliderMap.ContainsKey(partColliderData.Type))
+                _equipPartColliderMap.Add(partColliderData.Type, partColliderData.Collider);
         }
 
         InitStats();
@@ -302,7 +310,7 @@ public class Character : MonoBehaviour
         for (int i = 0; i < temp.Count; i++)
         {
             curve.AddKey(i * divideLength * argMaxTime, temp[i]);
-            Debug.Log($"[testum]key({i * Time.fixedDeltaTime * argMaxTime})/val({temp[i]})");
+            // Debug.Log($"[testum]key({i * Time.fixedDeltaTime * argMaxTime})/val({temp[i]})");
         }
     }
 
@@ -549,22 +557,17 @@ public class Character : MonoBehaviour
     
     public void MovePosition(Vector3 direction)
     {
-        Vector3 moveDirection = GetMoveDirectionVector(direction);
-
-        Vector3 moveVelocity = moveDirection * _moveSpeed;
-        Debug.Log($"[testumMove]moveDirection({moveDirection})moveVelocity({moveVelocity})");
-        
-        _rigidbody.velocity = moveVelocity;
+        MovePosition(direction, _moveSpeed);
     }
     
     public void MovePosition(Vector3 direction, float moveSpeed)
     {
         Vector3 moveDirection = GetMoveDirectionVector(direction);
+        Debug.Log($"[testWall][{name}]{moveDirection}");
 
         Vector3 moveVelocity = moveDirection * moveSpeed;
-        Debug.Log($"[testumMove]moveDirection({moveDirection})moveVelocity({moveVelocity})");
-        
-        _rigidbody.velocity = moveVelocity;
+
+        SetVelocity(moveVelocity);
     }
 
     public Vector3 GetMoveDirectionVector(Vector3 normDirection)
@@ -657,18 +660,33 @@ public class Character : MonoBehaviour
         return normDirection;
     }
 
+    // 엄todo : 여태 모든 문제를 PysicsMaterial로 해결됨... 타 Util 생성 후 필요한 내용 뽑고 로직 제거하기
     private Vector3 GetInterpolationWallDirection(Vector3 normDirection, Vector3 standard)
     {
+        string log = "";
+        float angle = Vector3.SignedAngle(Vector3.forward, normDirection, Vector3.up);
+        angle = Mathf.RoundToInt(angle / 45f) * 45;
+        log += $"[testAngle][{name}]기존 벡터 각도({angle})({normDirection})\n";
         Vector3 result = normDirection;
-        Vector3[] reverses = GetReverseVectors(standard);
-        foreach (var reverse in reverses)
-        {
-            if (reverse.normalized != result.normalized)
-                continue;
-            result -= standard * Vector3.Dot(result, standard);
-        }
+        // Vector3[] reverses = GetReverseVectors(standard);
+        // foreach (var reverse in reverses)
+        // {
+        //     float rAngle = Vector3.SignedAngle(Vector3.forward, reverse, Vector3.up);
+        //     rAngle = Mathf.Round(rAngle);
+        //     log += $"리버스 각도({rAngle})";
+        //     // if (reverse.normalized != result.normalized)
+        //     if (rAngle != angle)
+        //     {
+        //         log += $"리버스 실패!({rAngle})({angle})({reverse.normalized})({result.normalized})\n";
+        //         continue;
+        //     }
+        //     log += $"리버스 실행!({rAngle})({angle})({reverse.normalized})({result.normalized})\n";
+        //     result -= standard * Vector3.Dot(result, standard);
+        // }
+        // Debug.Log($"{log}");
+        result = result.normalized;
 
-        return result.normalized;
+        return result;
     }
 
     private Vector3[] GetReverseVectors(Vector3 vector)
@@ -757,7 +775,13 @@ public class Character : MonoBehaviour
     public void ResetMoveSpeed()
     {
         _moveSpeed = 0.0f;
-        _rigidbody.velocity = Vector3.zero;
+        SetVelocity(Vector3.zero);
+    }
+
+    public void SetVelocity(Vector3 argVelocity)
+    {
+        _rigidbody.velocity = argVelocity;
+        curVelocity = _rigidbody.velocity;
     }
 
     public void SetMoveSpeedToWalk()
@@ -1001,17 +1025,17 @@ public class Character : MonoBehaviour
 
     public void ActiveAttackColliders(bool enable)
     {
-        foreach (var rangeType in _attackColliderMap.Keys)
+        foreach (var rangeType in _attackCollisionRangeMap.Keys)
         {
-            _attackColliderMap[rangeType].EnableCollider(enable);
+            _attackCollisionRangeMap[rangeType].EnableCollider(enable);
         }
     }
     public void ActiveAttackCollider(bool enable, HitboxType colliderType, AttackInfoData attackInfoData)
     {
-        if (false == _attackColliderMap.ContainsKey(colliderType))
+        if (false == _attackCollisionRangeMap.ContainsKey(colliderType))
             return;
-        _attackColliderMap[colliderType].EnableCollider(enable);
-        _attackColliderMap[colliderType].SetAttackInfo(attackInfoData);
+        _attackCollisionRangeMap[colliderType].EnableCollider(enable);
+        _attackCollisionRangeMap[colliderType].SetAttackInfo(attackInfoData);
     }
     
     public void ActiveHitCollider(bool enable, HitColliderType colliderType)
@@ -1037,7 +1061,7 @@ public class Character : MonoBehaviour
         {
             var itemWeapon = item as ItemWeapon;
             var colliderType = itemWeapon.GetEquipColliderType(); // 
-            if (false == _partColliderMap.TryGetValue(colliderType, out var partCollider))
+            if (false == _equipPartColliderMap.TryGetValue(colliderType, out var partCollider))
             {
                 Debug.LogError($"Character doesn't have colliderType({colliderType})");
                 return;

@@ -15,13 +15,11 @@ public class JumpUpState : State
     {
         base.StartState();
         _jumpTimer = 0f;
-        Debug.Log($"[State] jumpup start");
         AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
         _moveSet.Play(_action, data.jumpUpStart);
         _character._isGround = false;
         _moveVelocity = Vector3.zero;
-        Debug.Log($"[testum]speed({_character.GetMoveSpeed()})");
-        _character.GetRigidbody().velocity = Vector3.zero;
+        _character.SetVelocity(_moveVelocity);
     }
 
     public override void UpdateState()
@@ -38,19 +36,18 @@ public class JumpUpState : State
     {
         if (_jumpTimer >= _character.GetJumpUpMaxTimer())
         {
-            Debug.Log($"[testlog] jump up update fin?");
+            // Debug.Log($"[testlog] jump up update fin?");
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
             return;
         }
         _jumpTimer += Time.fixedDeltaTime;
         _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer);
-        _character.GetRigidbody().velocity = _moveVelocity;
-        Debug.Log($"[jumpup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
+        _character.SetVelocity(_moveVelocity);
+        // Debug.Log($"[jumpup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
     public override void EndState()
     {
-        Debug.Log($"[State] jumpup end");
     }
     
     void UpdateMoveXZ()

@@ -16,7 +16,6 @@ public class JumpDownState : State
         _moveSet.Play(_action);
 
         _jumpTimer = 0f;
-        Debug.Log($"[State] jumpdown start");
     }
 
     public override void UpdateState()
@@ -29,7 +28,6 @@ public class JumpDownState : State
         var groundObjs = _character.GetGroundCheckObjects();
         if (groundObjs.Length > 0)
         {
-            Debug.Log("[testumLanding]isGround!");
             _character.ChangeRoleState(eRoleState.LANDING);
             return;
         }
@@ -38,12 +36,12 @@ public class JumpDownState : State
         
         _jumpTimer += Time.fixedDeltaTime;
         _moveVelocity.y = _character.GetJumpDownVelocity(_jumpTimer);
-        _character.GetRigidbody().velocity = _moveVelocity;
+        _character.SetVelocity(_moveVelocity);
     }
 
     public override void EndState()
     {
-        Debug.Log($"[State] jumpdown end");
+        
     }
     
     void UpdateMoveXZ()

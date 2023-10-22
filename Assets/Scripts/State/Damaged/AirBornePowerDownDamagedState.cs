@@ -21,7 +21,7 @@ public class AirBornePowerDownDamagedState : DamagedState
     public override void FixedUpdateState()
     {
         _moveVelocity.y = -15f;
-        _character.GetRigidbody().velocity = _moveVelocity;
+        _character.SetVelocity(_moveVelocity);
     }
 
     public override void EndState()

@@ -24,11 +24,9 @@ namespace SceneMain
             var canvasObj = GameObject.Find("Canvas");
             if (null != canvasObj)
             {
-                Debug.Log($"[testum]canvas obj name({canvasObj.name})");
                 if (canvasObj.TryGetComponent<Canvas>(out var canvas))
                 {
                     _canvas = canvas;
-                    Debug.Log($"[testum]canvas find success!");
                 }
             }
 
@@ -62,8 +60,7 @@ namespace SceneMain
                 Debug.LogError($"[testum]uiManager({loadPrefab}) fail");
                 return null;
             }
-        
-            Debug.Log($"[testum]uiManager({loadPrefab}) success");
+            
             var uiManagerObj = Instantiate(loadPrefab, _canvas.transform);
             if (null == uiManagerObj)
                 return null;

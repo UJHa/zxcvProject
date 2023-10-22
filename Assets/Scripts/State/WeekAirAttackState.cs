@@ -12,7 +12,7 @@ public class WeekAirAttackState : AttackState
     {
         base.StartState();
         _moveSet.Play(_action);
-        _character.GetRigidbody().velocity = Vector3.zero;
+        _character.SetVelocity(Vector3.zero);
     }
 
     public override void FixedUpdateState()

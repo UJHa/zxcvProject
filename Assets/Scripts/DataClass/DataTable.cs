@@ -12,18 +12,21 @@ namespace DataClass
 {
     public class DataTable
     {
+        protected static bool enableLog = false;
         public static Dictionary<Type, DataTable> Tables = new();
         public static void LoadJsonData()
         {
             string jsonPath = UmUtil.GetResourceJsonPath();
-            Debug.Log($"[testumJson]Application.dataPath({Application.dataPath})");
+            if (enableLog)
+                Debug.Log($"[testumJson]Application.dataPath({Application.dataPath})");
             var info = new DirectoryInfo(jsonPath);
             var fileInfo = info.GetFiles();
             foreach(var file in fileInfo)
             {
                 if (file.Name.Contains(".meta"))
                     continue;
-                Debug.Log($"[testumJson]fileName({file.Name})");
+                if (enableLog)
+                    Debug.Log($"[testumJson]fileName({file.Name})");
                 var filename = file.Name.Split('.')[0];
                 
                 string fileClassName = $"{filename}Table";

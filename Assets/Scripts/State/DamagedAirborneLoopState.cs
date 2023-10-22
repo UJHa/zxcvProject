@@ -24,8 +24,8 @@ public class DamagedAirborneLoopState : DamagedState
     {
         _airTimer += Time.fixedDeltaTime;
         _moveVelocity.y = _character.GetAirBoneDownVelocity(_airTimer);
-        _character.GetRigidbody().velocity = _moveVelocity;
-        Debug.Log($"[damagedown]timer({_airTimer}) GetVelocity({_character.GetAirBoneUpVelocity(_airTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
+        _character.SetVelocity(_moveVelocity);
+        // Debug.Log($"[damagedown]timer({_airTimer}) GetVelocity({_character.GetAirBoneUpVelocity(_airTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
     public override void EndState()

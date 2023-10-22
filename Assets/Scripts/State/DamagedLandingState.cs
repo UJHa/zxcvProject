@@ -13,7 +13,7 @@ public class DamagedLandingState : DamagedState
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(false, HitColliderType.AIRBORNE);
         _moveSet.Play(_action, 0.3f);
-        _character.GetRigidbody().velocity = Vector3.zero;
+        _character.SetVelocity(Vector3.zero);
         _character.UpdateGroundHeight(true);
         _character._isGround = true;
     }

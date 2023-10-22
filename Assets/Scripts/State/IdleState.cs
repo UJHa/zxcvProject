@@ -36,9 +36,9 @@ public class IdleState : State
         var groundObjs = _character.GetGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
-            Debug.Log("[testumAir]is not Ground!");
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
+        _character.SetVelocity(Vector3.zero);
     }
 
     public override void EndState()

@@ -1317,6 +1317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curVelocity: {x: 0, y: 0, z: 0}
   _fullHp: 100
   _curHp: 0
   _hp: 5
@@ -1519,7 +1520,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1782702501690864755}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.2
   m_Height: 1.8
   m_Direction: 1

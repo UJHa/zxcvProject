@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class NormalDamagedState : DamagedState
 {
 
@@ -8,6 +10,7 @@ public class NormalDamagedState : DamagedState
     public override void StartState()
     {
         base.StartState();
+        _character.SetVelocity(Vector3.zero);
         _moveSet.Play(_action);
     }
 

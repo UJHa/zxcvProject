@@ -16,9 +16,9 @@ public class BotPlayer : Character
         RegisterState(eState.FIGHTER_WALK, typeof(NpcWalkState));
         RegisterState(eState.FIGHTER_RUN, typeof(NpcRunState));
         RegisterState(eState.FIGHTER_RUN_STOP, typeof(RunStopState));
-        RegisterState(eState.JUMP_UP, typeof(JumpUpState));
-        RegisterState(eState.JUMP_DOWN, typeof(JumpDownState));
-        RegisterState(eState.LANDING, typeof(LandingState));
+        RegisterState(eState.JUMP_UP, typeof(NpcJumpUpState));
+        RegisterState(eState.JUMP_DOWN, typeof(NpcJumpDownState));
+        RegisterState(eState.LANDING, typeof(NpcLandingState));
 
         RegisterState(eState.FIGHTER_WEEK_ATTACK1, typeof(WeekAttackState));
         RegisterState(eState.FIGHTER_WEEK_ATTACK2, typeof(WeekAttackState));
@@ -43,20 +43,20 @@ public class BotPlayer : Character
         
         // 엄todo : MoveSet 공격 콤보 연결 노드 시스템 데이터 기반 제어 기능 개발 필요
         _moveSet.Init(gameObject);
-        _moveSet.RegisterEnableInputMap(KeyBindingType.JUMP, new[] { eState.FIGHTER_IDLE, eState.FIGHTER_WALK, eState.FIGHTER_RUN }, eState.JUMP_UP);
-        // GROUND WEEK ATTACK
-        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_IDLE}, eState.FIGHTER_WEEK_ATTACK1);
-        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_ATTACK1}, eState.FIGHTER_WEEK_ATTACK2);
-        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_ATTACK2}, eState.FIGHTER_WEEK_ATTACK3);
-        // AIR WEEK ATTACK
-        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.JUMP_UP}, eState.FIGHTER_WEEK_AIR_ATTACK1);
-        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_AIR_ATTACK1}, eState.FIGHTER_WEEK_AIR_ATTACK2);
-        _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_AIR_ATTACK2}, eState.FIGHTER_WEEK_AIR_ATTACK3);
-        // GROUND STRONG ATTACK
-        _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.FIGHTER_IDLE}, eState.FIGHTER_STRONG_ATTACK1);
-        _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.FIGHTER_STRONG_ATTACK1}, eState.FIGHTER_STRONG_ATTACK2);
-        
-        _moveSet.RegisterEnableInputMap(KeyBindingType.INTERACTION, new[]{eState.FIGHTER_IDLE}, eState.GET_ITEM);
+        // // _moveSet.RegisterEnableInputMap(KeyBindingType.JUMP, new[] { eState.FIGHTER_IDLE, eState.FIGHTER_WALK, eState.FIGHTER_RUN }, eState.JUMP_UP);
+        // // GROUND WEEK ATTACK
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_IDLE}, eState.FIGHTER_WEEK_ATTACK1);
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_ATTACK1}, eState.FIGHTER_WEEK_ATTACK2);
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_ATTACK2}, eState.FIGHTER_WEEK_ATTACK3);
+        // // AIR WEEK ATTACK
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.JUMP_UP}, eState.FIGHTER_WEEK_AIR_ATTACK1);
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_AIR_ATTACK1}, eState.FIGHTER_WEEK_AIR_ATTACK2);
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.FIGHTER_WEEK_AIR_ATTACK2}, eState.FIGHTER_WEEK_AIR_ATTACK3);
+        // // GROUND STRONG ATTACK
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.FIGHTER_IDLE}, eState.FIGHTER_STRONG_ATTACK1);
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.FIGHTER_STRONG_ATTACK1}, eState.FIGHTER_STRONG_ATTACK2);
+        //
+        // _moveSet.RegisterEnableInputMap(KeyBindingType.INTERACTION, new[]{eState.FIGHTER_IDLE}, eState.GET_ITEM);
         _curState = eState.FIGHTER_IDLE;
 
         _stateMap[_curState].StartState();
@@ -65,6 +65,5 @@ public class BotPlayer : Character
     public override void DeadDisable()
     {
         base.DeadDisable();
-        GameManager.Instance.OpenFinishDialog("실패");
     }
 }
