@@ -106,6 +106,8 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpMaxHeight = 2f;
     [SerializeField] private float _jumpUpMaxTimer = 0.8f;
     [SerializeField] private float _jumpDownMaxTimer = 0.6f;
+    [SerializeField] private float _airboneUpMaxTimer = 0.8f;
+    [SerializeField] private float _airboneDownMaxTimer = 0.6f;
     
     [Header("[ Ground Collider ]")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
@@ -139,11 +141,6 @@ public class Character : MonoBehaviour
 
     [Header("[ 3D Phygics Component ]")] 
     [SerializeField] private Rigidbody _rigidbody;
-
-    [Header("[ UI ]")]
-    protected Slider slider;
-    
-    protected float sliderScale = 1.0f;
 
     protected Vector3 _directionVector = Vector3.zero;
     protected Vector3 _damagedDirectionVector = Vector3.zero;
@@ -205,8 +202,8 @@ public class Character : MonoBehaviour
         // 2. Make는 다른 컴포넌트 통해서 연산된 결과만 사용하기
         MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
         MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
-        MakeFixedDeltaTimeCurve(_airBoneUp, _jumpUpMaxTimer);
-        MakeFixedDeltaTimeCurve(_airBoneDown, _jumpDownMaxTimer);
+        MakeFixedDeltaTimeCurve(_airBoneUp, _airboneUpMaxTimer);
+        MakeFixedDeltaTimeCurve(_airBoneDown, _airboneDownMaxTimer);
 
         foreach (var partData in _attackCollisionRangeDatas)
         {
@@ -294,7 +291,7 @@ public class Character : MonoBehaviour
     {
         // 초단위로 커브 만들고 maxTime 통해서 커브 시간 변경
         List<float> temp = new();
-        var divideLength = Time.fixedDeltaTime * 1f;
+        var divideLength = Time.fixedDeltaTime;
         var count = (int)(1f / divideLength);
         for (int i = 0; i < count; i++)
         {
@@ -310,7 +307,6 @@ public class Character : MonoBehaviour
         for (int i = 0; i < temp.Count; i++)
         {
             curve.AddKey(i * divideLength * argMaxTime, temp[i]);
-            // Debug.Log($"[testum]key({i * Time.fixedDeltaTime * argMaxTime})/val({temp[i]})");
         }
     }
 
