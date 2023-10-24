@@ -4439,13 +4439,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5113154260804747228}
-  - component: {fileID: -7827730011692406423}
   - component: {fileID: -211082690814684964}
   - component: {fileID: 1159041803483571622}
   - component: {fileID: 8915057993525650852}
   - component: {fileID: -1072653339777570990}
+  - component: {fileID: 7255037088797540037}
   m_Layer: 0
-  m_Name: PT_Lowpoly_Armors_Male_Moduar
+  m_Name: TestTempPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4493,163 +4493,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-7827730011692406423
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5601987662706304358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fullHp: 100
-  _curHp: 0
-  _attackPower: 30
-  _hp: 5
-  _mp: 5
-  _strength: 5
-  _agility: 5
-  _intellect: 5
-  jumpUpStart: 0.07
-  idleStart: 0.07
-  walkStart: 0.07
-  runStart: 0.07
-  jumpEnd: 0.07
-  _walkSpeed: 2
-  _runSpeed: 6
-  _moveSpeed: 0
-  _jumpUp:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _jumpDown:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _airBoneUp:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _airBoneDown:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _jumpMaxHeight: 2
-  _jumpUpMaxTimer: 0.8
-  _jumpDownMaxTimer: 0.6
-  _groundCollider:
-    Size: {x: 0.2, y: 0.03, z: 0.2}
-    gizmoPos: {x: 0, y: -0.015, z: 0}
-  _wallCollider:
-    Size: {x: 0.1, y: 1.5, z: 0.05}
-    gizmoPos: {x: 0, y: 0, z: 0}
-  _rootTransform: {fileID: 7694746682382484843}
-  _hitColliders:
-  - {fileID: 2657497764359330394, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  - {fileID: 4957421886917870948, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  _attackPartDatas:
-  - attackPart: 1
-    attackCollider: {fileID: 3849370861829417063, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  - attackPart: 2
-    attackCollider: {fileID: 201619298250856916, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  - attackPart: 3
-    attackCollider: {fileID: 6724062590205012439, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  - attackPart: 4
-    attackCollider: {fileID: 168115472895567084, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  - attackPart: 6
-    attackCollider: {fileID: 821052657099630020, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  - attackPart: 7
-    attackCollider: {fileID: 4318916673816008455, guid: be092b88bc1e2ff4eb589fa7022c3b8d, type: 3}
-  _partColliderDatas: []
-  _rigidbody: {fileID: -1072653339777570990}
-  _prevState: 0
-  _curState: 0
-  _curRole: 0
-  _isGround: 0
-  traceTarget: {fileID: 0}
 --- !u!114 &-211082690814684964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4714,6 +4557,76 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
+--- !u!114 &7255037088797540037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5601987662706304358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b306db20dfa6e5488757de092a80499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curVelocity: {x: 0, y: 0, z: 0}
+  _fullHp: 100
+  _curHp: 0
+  _hp: 5
+  _mp: 5
+  _strength: 5
+  _agility: 6
+  _intellect: 5
+  _statKey: Default
+  animFadeInfoKey: Default
+  _walkSpeedRatio: 0.3
+  _runSpeedRatio: 1
+  _moveSpeed: 0
+  _jumpUp:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _jumpDown:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _airBoneUp:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _airBoneDown:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _jumpMaxHeight: 2
+  _jumpUpMaxTimer: 0.8
+  _jumpDownMaxTimer: 0.6
+  _airboneUpMaxTimer: 0.8
+  _airboneDownMaxTimer: 0.6
+  _groundCollider:
+    Size: {x: 0.2, y: 0.03, z: 0.2}
+    gizmoPos: {x: 0, y: 0, z: 0}
+  _wallCollider:
+    Size: {x: 0.1, y: 1.5, z: 0.05}
+    gizmoPos: {x: 0, y: 0, z: 0}
+  _rootTransform: {fileID: 0}
+  _hitColliders: []
+  _attackCollisionRangeDatas: []
+  _equipPartColliderDatas: []
+  _rigidbody: {fileID: 0}
+  _prevState: 0
+  _curState: 0
+  _curRole: 0
+  _isGround: 0
+  traceTarget: {fileID: 0}
 --- !u!1 &5671764201819762652
 GameObject:
   m_ObjectHideFlags: 0

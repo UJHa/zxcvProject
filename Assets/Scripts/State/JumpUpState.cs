@@ -41,7 +41,8 @@ public class JumpUpState : State
             return;
         }
         _jumpTimer += Time.fixedDeltaTime;
-        _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer);
+        // _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer, _character.GetJumpUpMaxTimer(), _character.GetJumpMaxHeight());
+        _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer, _character.GetJumpUpMaxTimer(), _character.GetJumpMaxHeight());
         _character.SetVelocity(_moveVelocity);
         // Debug.Log($"[jumpup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }

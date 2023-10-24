@@ -17,15 +17,13 @@ public class DamagedAirborneLoopState : DamagedState
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _moveSet.Play(_action, 1f);
         _airTimer = 0f;
-        _character.ClearAttackInfoData();
     }
 
     public override void FixedUpdateState()
     {
         _airTimer += Time.fixedDeltaTime;
-        _moveVelocity.y = _character.GetAirBoneDownVelocity(_airTimer);
+        _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, _character.GetAttackedAirborneUpTime(), _character.GetAttackedMaxHeight());
         _character.SetVelocity(_moveVelocity);
-        // Debug.Log($"[damagedown]timer({_airTimer}) GetVelocity({_character.GetAirBoneUpVelocity(_airTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
     public override void EndState()

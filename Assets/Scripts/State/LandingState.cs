@@ -22,6 +22,7 @@ public class LandingState : State
         _inputTimer.Start();
 
         _character.UpdateGroundHeight();
+        _character.ClearAttackInfoData();
     }
 
     public override void FixedUpdateState()

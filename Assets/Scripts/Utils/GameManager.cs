@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     private Dictionary<eState, Action> _actionMap = new();
     private Dictionary<eState, AttackInfoData> _attackInfoMap = new();
     private Dictionary<eRole, Role> _baseRoleMap = new();
+    private AnimationCurveCollection _animationCurveCollection;
 
     public void Init()
     {
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
         LoadRoleState();
         LoadActions();
         LoadAttackInfo();
+        LoadAnimCurve();
     }
 
     void Start()
@@ -64,6 +66,7 @@ public class GameManager : MonoBehaviour
     
     private void LoadRoleState()
     {
+        // 엄todo : role 관리 json으로 분리하기
         var fightRole = new Role();
         fightRole.States.Add(eRoleState.IDLE, eState.FIGHTER_IDLE);
         fightRole.States.Add(eRoleState.WALK, eState.FIGHTER_WALK);
@@ -141,6 +144,41 @@ public class GameManager : MonoBehaviour
             // action.CreateHitboxInfo()
             _attackInfoMap.Add(state, AttackInfoTable.GetData(stateName));
         }
+    }
+
+    private void LoadAnimCurve()
+    {
+        var animCurveCollection = Resources.Load<AnimationCurveCollection>("Prefabs/Utils/AnimationCurveCollection");
+        _animationCurveCollection = Instantiate(animCurveCollection);
+    }
+
+    public AnimationCurve CreateAnimCurve(string key)
+    {
+        return _animationCurveCollection.CreateAnimCurve(key);
+    }
+    
+    public AnimationCurve CreateAnimCurve(string key, float xMaxValue)
+    {
+        return _animationCurveCollection.CreateAnimCurve(key, xMaxValue);
+    }
+    
+    public float GetCurveVelocity(AnimationCurve curve, float curDeltatime, float xMaxValue, float yMaxValue)
+    {
+        var curTime = Mathf.Clamp(curDeltatime, 0f, xMaxValue);
+        if (curDeltatime <= 0f)
+            return 0f;
+        
+        var xRate = 1f / xMaxValue;
+        var prevTime = curTime - Time.fixedDeltaTime;
+        
+        var dx = Time.fixedDeltaTime;
+        var dy = curve.Evaluate(curTime * xRate) - curve.Evaluate(prevTime * xRate);
+        return dy / dx * yMaxValue;
+    }
+    
+    public AnimationCurve GetAnimCurve(string key)
+    {
+        return _animationCurveCollection.GetAnimCurve(key);
     }
     
     public Action GetAction(eState curState)

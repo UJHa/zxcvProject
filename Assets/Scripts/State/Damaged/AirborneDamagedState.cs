@@ -19,7 +19,7 @@ public class AirborneDamagedState : DamagedState
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _moveSet.Play(_action);
         _maxUpHeight = _character.transform.position.y + _character.GetAttackedMaxHeight();
-        Debug.Log($"[testum]_maxUpHeight({_maxUpHeight})");
+        Debug.Log($"[testum][{_character.name}]_maxUpHeight({_maxUpHeight})");
         _upMoveTimer = 0f;
         _character._isGround = false;
     }
@@ -34,10 +34,9 @@ public class AirborneDamagedState : DamagedState
         else
         {
             _upMoveTimer += Time.fixedDeltaTime;
-            _moveVelocity.y = _character.GetAirBoneUpVelocity(_upMoveTimer);
+            _moveVelocity.y = _character.GetAirBoneUpVelocity(_upMoveTimer, _character.GetAttackedAirborneUpTime(), _character.GetAttackedMaxHeight());
             _character.SetVelocity(_moveVelocity);
         }
-        Debug.Log($"[damageup]timer({_upMoveTimer}) GetVelocity({_character.GetJumpUpVelocity(_upMoveTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 
     public override void EndState()

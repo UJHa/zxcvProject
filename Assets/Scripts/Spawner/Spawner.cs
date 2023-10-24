@@ -4,6 +4,7 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] private string _resouarcePath;
     [SerializeField] private string _prefabName = "";
+    public string temp = "hello";
 
     public GameObject SpawnObject()
     {
@@ -19,6 +20,7 @@ public class Spawner : MonoBehaviour
         Debug.Log($"[testum]SpawnObject({loadPrefab}) success");
         var resultObj = Instantiate(loadPrefab);
         resultObj.transform.position = transform.position;
+        
         return resultObj;
     }
 }

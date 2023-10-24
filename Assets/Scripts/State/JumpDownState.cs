@@ -35,7 +35,8 @@ public class JumpDownState : State
             _character.UpdateGroundHeight();
         
         _jumpTimer += Time.fixedDeltaTime;
-        _moveVelocity.y = _character.GetJumpDownVelocity(_jumpTimer);
+        // _moveVelocity.y = -1f * _character.GetJumpDownVelocity(_jumpTimer, _character.GetJumpDownMaxTimer(), _character.GetJumpMaxHeight());
+        _moveVelocity.y = -1f * _character.GetJumpDownVelocity(_jumpTimer, _character.GetJumpDownMaxTimer(), _character.GetJumpMaxHeight());
         _character.SetVelocity(_moveVelocity);
     }
 

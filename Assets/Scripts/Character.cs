@@ -174,7 +174,7 @@ public class Character : MonoBehaviour
     private List<Collider> _onHitQueue = new();
 
     protected float _attackedMaxHeight = 0f;
-    protected float _airborneUpTime = 0f;
+    protected float _attackedAirborneUpTime = 0f;
 
     // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
     private GameObject hitFx;
@@ -196,14 +196,10 @@ public class Character : MonoBehaviour
         
         // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
         // TestHelmetEquip();
-
-        // 엄todo : 이 속도 보간 데이터를 코드 개선할 방법 생각해보기
-        // 1. 에디터 다른 컴포넌트 통해 받아오기
-        // 2. Make는 다른 컴포넌트 통해서 연산된 결과만 사용하기
-        MakeFixedDeltaTimeCurve(_jumpUp, _jumpUpMaxTimer);
-        MakeFixedDeltaTimeCurve(_jumpDown, _jumpDownMaxTimer);
-        MakeFixedDeltaTimeCurve(_airBoneUp, _airboneUpMaxTimer);
-        MakeFixedDeltaTimeCurve(_airBoneDown, _airboneDownMaxTimer);
+        _jumpUp = GameManager.Instance.GetAnimCurve("jumpUp");
+        _jumpDown = GameManager.Instance.GetAnimCurve("jumpDown");
+        _airBoneUp = GameManager.Instance.GetAnimCurve("airBoneUp");
+        _airBoneDown = GameManager.Instance.GetAnimCurve("airBoneDown");
 
         foreach (var partData in _attackCollisionRangeDatas)
         {
@@ -286,87 +282,25 @@ public class Character : MonoBehaviour
         // stats 변경에 따른 데이터 연산용 함수
         _curHp = _fullHp;
     }
-
-    private void MakeFixedDeltaTimeCurve(AnimationCurve curve, float argMaxTime)
+    
+    public float GetJumpUpVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        // 초단위로 커브 만들고 maxTime 통해서 커브 시간 변경
-        List<float> temp = new();
-        var divideLength = Time.fixedDeltaTime;
-        var count = (int)(1f / divideLength);
-        for (int i = 0; i < count; i++)
-        {
-            temp.Add(curve.Evaluate(divideLength * i));
-        }
-        temp.Add(1f);
-        
-        while (curve.keys.Length > 0)
-        {
-            curve.RemoveKey(0);
-        }
-
-        for (int i = 0; i < temp.Count; i++)
-        {
-            curve.AddKey(i * divideLength * argMaxTime, temp[i]);
-        }
-    }
-
-    private void MakeReverseCurve(AnimationCurve origin, AnimationCurve reverse)
-    {
-        var maxX = origin[origin.length - 1].time;
-        var maxY = origin[origin.length - 1].value;
-        for (int i = 0; i < origin.length; i++)
-        {
-            Debug.Log($"i({i}) time({origin[i].time}) value({origin[i].value})");
-            reverse.AddKey(maxX-origin[i].time, maxY-origin[i].value);
-        }
-    }
-
-    public float GetJumpUpVelocity(float deltatime)
-    {
-        if (deltatime <= 0f)
-            return 0f;
-        var prevTime = deltatime - Time.fixedDeltaTime;
-        float dx = deltatime - prevTime;
-        float dy = _jumpUp.Evaluate(deltatime) - _jumpUp.Evaluate(prevTime);
-        return dy / dx * _jumpMaxHeight;
+        return GameManager.Instance.GetCurveVelocity(_jumpUp, curDeltatime, xMaxValue, yMaxValue);
     }
     
-    public float GetJumpDownVelocity(float deltatime)
+    public float GetJumpDownVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        if (deltatime <= 0f)
-            return 0f;
-        
-        var dx = Time.fixedDeltaTime;
-        var curTime = deltatime;
-        if (deltatime >= _jumpDownMaxTimer)
-            curTime = _jumpDownMaxTimer;
-        var dy = _jumpDown.Evaluate(curTime) - _jumpDown.Evaluate(curTime - dx);
-
-        return -1f * dy / dx * _jumpMaxHeight;
+        return GameManager.Instance.GetCurveVelocity(_jumpDown, curDeltatime, xMaxValue, yMaxValue);
     }
     
-    public float GetAirBoneUpVelocity(float deltatime)
+    public float GetAirBoneUpVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        if (deltatime <= 0f)
-            return 0f;
-        var prevTime = deltatime - Time.fixedDeltaTime;
-        float dx = deltatime - prevTime;
-        float dy = (_airBoneUp.Evaluate(deltatime) - _airBoneUp.Evaluate(prevTime)) / _airborneUpTime;
-        return dy / dx * _attackedMaxHeight;
+        return GameManager.Instance.GetCurveVelocity(_airBoneUp, curDeltatime, xMaxValue, yMaxValue);
     }
     
-    public float GetAirBoneDownVelocity(float deltatime)
+    public float GetAirBoneDownVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        if (deltatime <= 0f)
-            return 0f;
-        
-        var dx = Time.fixedDeltaTime;
-        var curTime = deltatime;
-        if (deltatime >= _jumpDownMaxTimer)
-            curTime = _jumpDownMaxTimer;
-        var dy = _airBoneDown.Evaluate(curTime) - _airBoneDown.Evaluate(curTime - dx);
-
-        return -1f * dy / dx * _jumpMaxHeight;
+        return GameManager.Instance.GetCurveVelocity(_airBoneDown, curDeltatime, xMaxValue, yMaxValue);
     }
 
     protected void StartUI()
@@ -412,16 +346,11 @@ public class Character : MonoBehaviour
     {
         _drawDebug?.DrawUpdate();
     }
-
-    public float GetAttackedMaxHeight()
-    {
-        return _attackedMaxHeight;
-    }
     
     public void ClearAttackInfoData()
     {
         _attackedMaxHeight = 0f;
-        _airborneUpTime = 0f;
+        _attackedAirborneUpTime = 0f;
     }
 
     // Update is called once per frame
@@ -470,7 +399,7 @@ public class Character : MonoBehaviour
                 AttackInfoData attackInfo = attackCollider.GetAttackInfo();
                 AttackType attackType = UmUtil.StringToEnum<AttackType>(attackInfo.attackType);
                 _attackedMaxHeight = attackInfo.airborneHeight;
-                _airborneUpTime = attackInfo.airborneTime;
+                _attackedAirborneUpTime = attackInfo.airborneTime;
                 var damage = attackInfo.damageRatio * attacker._strength;
                 SetDamage(damage);
                 var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
@@ -725,6 +654,10 @@ public class Character : MonoBehaviour
         return _damagedDirectionVector;
     }
     
+    public float GetJumpMaxHeight()
+    {
+        return _jumpMaxHeight;
+    }
     
     public float GetJumpUpMaxTimer()
     {
@@ -734,6 +667,26 @@ public class Character : MonoBehaviour
     public float GetJumpDownMaxTimer()
     {
         return _jumpDownMaxTimer;
+    }
+
+    public float GetAttackedAirborneUpTime()
+    {
+        return _attackedAirborneUpTime;
+    }
+    
+    public float GetAttackedMaxHeight()
+    {
+        return _attackedMaxHeight;
+    }
+    
+    public float GetAirboneUpMaxTimer()
+    {
+        return _airboneUpMaxTimer;
+    }
+
+    public float GetAirboneDownMaxTimer()
+    {
+        return _airboneDownMaxTimer;
     }
     
     public Rigidbody GetRigidbody()
@@ -978,6 +931,7 @@ public class Character : MonoBehaviour
     
     private Vector3 GetWallBoxCenter(Vector3 normVector)
     {
+        // 엄todo : CapsuleCollider를 stand type에 collider 키고 끄도록 추가하기 _hitColliderMap에 관리하기
         if (false == TryGetComponent<CapsuleCollider>(out var collider))
         {
             Debug.LogError($"[testum]캡슐 콜리더 없음!");
@@ -1118,5 +1072,15 @@ public class Character : MonoBehaviour
         if (null == result)
             result = AnimationFadeInfoTable.GetData("Default");
         return result;
+    }
+
+    public AnimationCurve GetJumpUpCurve()
+    {
+        return _jumpUp;
+    }
+    
+    public AnimationCurve GetJumpDownCurve()
+    {
+        return _jumpDown;
     }
 }
