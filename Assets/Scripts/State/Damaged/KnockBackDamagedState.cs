@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class KnockBackDamagedState : DamagedState
 {
+    private float _knockBackDeltaTime = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
-    private Stopwatch _knockBackTimer = new();
     private long _knockBackTimeMilliSec = 1000;
+    private float _knockBackTimeSec = 1f;
     
     public KnockBackDamagedState(Character character, eState eState) : base(character, eState)
     {
@@ -15,19 +16,20 @@ public class KnockBackDamagedState : DamagedState
     {
         base.StartState();
         _moveSet.Play(_action);
-        _knockBackTimer.Start();
+        _knockBackDeltaTime = 0f;
     }
 
     public override void FixedUpdateState()
     {
-        _moveVelocity = _character.GetDamagedDirectionVector() * 1f;
+        _knockBackDeltaTime += Time.fixedDeltaTime;
+        _moveVelocity = _character.GetDamagedDirectionVector() * _character.GetKnockBackVelocity(_knockBackDeltaTime, _knockBackTimeSec, 1f);
         _character.SetVelocity(_moveVelocity);
     }
 
     public override void EndState()
     {
         base.EndState();
-        _knockBackTimer.Reset();
+        // _knockBackTimer.Reset();
         _character.SetVelocity(_moveVelocity);
         _character.SetDamagedDirectionVector(Vector3.zero);
     }
@@ -37,7 +39,7 @@ public class KnockBackDamagedState : DamagedState
         if (_moveSet.IsAnimationFinish())
             _moveSet.PauseAnimation();
         
-        if (_knockBackTimer.ElapsedMilliseconds >= _knockBackTimeMilliSec)
+        if (_knockBackTimeSec <= _knockBackDeltaTime)
             _character.ChangeRoleState(eRoleState.IDLE);
     }
 }

@@ -99,15 +99,14 @@ public class Character : MonoBehaviour
     [SerializeField] private float _runSpeedRatio = 1f;
     [SerializeField] private float _moveSpeed = 0.0f;
     [Header("[ Jump Stats ]")]
-    [SerializeField] private AnimationCurve _jumpUp = new ();
-    [SerializeField] private AnimationCurve _jumpDown = new ();
-    [SerializeField] private AnimationCurve _airBoneUp = new ();
-    [SerializeField] private AnimationCurve _airBoneDown = new ();
     [SerializeField] private float _jumpMaxHeight = 2f;
     [SerializeField] private float _jumpUpMaxTimer = 0.8f;
     [SerializeField] private float _jumpDownMaxTimer = 0.6f;
     [SerializeField] private float _airboneUpMaxTimer = 0.8f;
     [SerializeField] private float _airboneDownMaxTimer = 0.6f;
+    
+    [SerializeField] private float _gravityDownTime = 0.6f;
+    [SerializeField] private float _gravityDownHeight = 2f;
     
     [Header("[ Ground Collider ]")]
     [SerializeField] private ColliderCube _groundCollider = new ColliderCube
@@ -127,7 +126,7 @@ public class Character : MonoBehaviour
 
     [Header("[ Hit Collider ]")]
     [SerializeField] private List<HitCollider> _hitColliders = new();
-    private Dictionary<HitColliderType, HitCollider> _hitColliderMap = new();
+    private Dictionary<HitColliderType, List<HitCollider>> _hitColliderMap = new();
     
     [Header("[ Attack Collider ]")]
     [FormerlySerializedAs("_attackPartDatas")]
@@ -196,10 +195,6 @@ public class Character : MonoBehaviour
         
         // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
         // TestHelmetEquip();
-        _jumpUp = GameManager.Instance.GetAnimCurve("jumpUp");
-        _jumpDown = GameManager.Instance.GetAnimCurve("jumpDown");
-        _airBoneUp = GameManager.Instance.GetAnimCurve("airBoneUp");
-        _airBoneDown = GameManager.Instance.GetAnimCurve("airBoneDown");
 
         foreach (var partData in _attackCollisionRangeDatas)
         {
@@ -211,11 +206,10 @@ public class Character : MonoBehaviour
         foreach (var hitCollider in _hitColliders)
         {
             var hitColliderType = hitCollider.GetHitType();
+            hitCollider.gameObject.SetActive(false);
             if (false == _hitColliderMap.ContainsKey(hitColliderType))
-            {
-                hitCollider.gameObject.SetActive(false);
-                _hitColliderMap.Add(hitCollider.GetHitType(), hitCollider);
-            }
+                _hitColliderMap.Add(hitColliderType, new());
+            _hitColliderMap[hitColliderType].Add(hitCollider);
         }
 
         foreach (var partColliderData in _equipPartColliderDatas)
@@ -285,22 +279,27 @@ public class Character : MonoBehaviour
     
     public float GetJumpUpVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        return GameManager.Instance.GetCurveVelocity(_jumpUp, curDeltatime, xMaxValue, yMaxValue);
+        return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("jumpUp"), curDeltatime, xMaxValue, yMaxValue);
     }
     
     public float GetJumpDownVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        return GameManager.Instance.GetCurveVelocity(_jumpDown, curDeltatime, xMaxValue, yMaxValue);
+        return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("jumpDown"), curDeltatime, xMaxValue, yMaxValue);
     }
     
     public float GetAirBoneUpVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        return GameManager.Instance.GetCurveVelocity(_airBoneUp, curDeltatime, xMaxValue, yMaxValue);
+        return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("airBoneUp"), curDeltatime, xMaxValue, yMaxValue);
     }
     
     public float GetAirBoneDownVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        return GameManager.Instance.GetCurveVelocity(_airBoneDown, curDeltatime, xMaxValue, yMaxValue);
+        return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("airBoneDown"), curDeltatime, xMaxValue, yMaxValue);
+    }
+    
+    public float GetKnockBackVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
+    {
+        return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("knockBack"), curDeltatime, xMaxValue, yMaxValue);
     }
 
     protected void StartUI()
@@ -992,7 +991,19 @@ public class Character : MonoBehaviour
     {
         if (false == _hitColliderMap.ContainsKey(colliderType))
             return;
-        _hitColliderMap[colliderType].gameObject.SetActive(enable);
+        var list = _hitColliderMap[colliderType];
+        foreach (var hitCollider in list)
+        {
+            hitCollider.gameObject.SetActive(enable);
+        }
+
+        // 엄todo : Collider들의 On/Off 관리용, HitCollider 관리용 분리하여 만들기
+        // Character 최상위 Prefab은
+        // 점프 시 On/Off로 에어본 데미지 바닥 도달을 부드럽게 개선(HitCollider는 아님)
+        if (TryGetComponent<CapsuleCollider>(out var capsuleCollider))
+        {
+            capsuleCollider.enabled = colliderType == HitColliderType.STAND;
+        }
     }
     
     private Vector3 GetLeftRightWallBoxSize()
@@ -1074,13 +1085,13 @@ public class Character : MonoBehaviour
         return result;
     }
 
-    public AnimationCurve GetJumpUpCurve()
+    public float GetGravityDownTime()
     {
-        return _jumpUp;
+        return _gravityDownTime;
     }
     
-    public AnimationCurve GetJumpDownCurve()
+    public float GetGravityDownHeight()
     {
-        return _jumpDown;
+        return _gravityDownHeight;
     }
 }

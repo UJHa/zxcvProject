@@ -22,7 +22,8 @@ public class DamagedAirborneLoopState : DamagedState
     public override void FixedUpdateState()
     {
         _airTimer += Time.fixedDeltaTime;
-        _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, _character.GetAttackedAirborneUpTime(), _character.GetAttackedMaxHeight());
+        // _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, _character.GetAttackedAirborneUpTime(), _character.GetAttackedMaxHeight());
+        _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, _character.GetGravityDownTime(), _character.GetGravityDownHeight());
         _character.SetVelocity(_moveVelocity);
     }
 

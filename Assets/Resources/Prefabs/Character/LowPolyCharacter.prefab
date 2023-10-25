@@ -831,6 +831,7 @@ GameObject:
   - component: {fileID: 6026694728101118943}
   - component: {fileID: 7883520139927122767}
   - component: {fileID: 2657497764359330394}
+  - component: {fileID: 4681637646032969766}
   m_Layer: 8
   m_Name: StandHitCollider
   m_TagString: Untagged
@@ -862,7 +863,7 @@ BoxCollider:
   m_GameObject: {fileID: 1042793738426535465}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.4, y: 1.8, z: 0.4}
   m_Center: {x: 0, y: 0.9, z: 0}
@@ -880,6 +881,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hitColliderType: 0
   _character: {fileID: 7427403268370265351}
+--- !u!136 &4681637646032969766
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1042793738426535465}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.2
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1 &1223673588909014577
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,105 +1345,13 @@ MonoBehaviour:
   _walkSpeedRatio: 0.3
   _runSpeedRatio: 1
   _moveSpeed: 0
-  _jumpUp:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _jumpDown:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _airBoneUp:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _airBoneDown:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   _jumpMaxHeight: 2
   _jumpUpMaxTimer: 0.8
   _jumpDownMaxTimer: 0.6
+  _airboneUpMaxTimer: 0.8
+  _airboneDownMaxTimer: 0.6
+  _gravityDownTime: 0.6
+  _gravityDownHeight: 2
   _groundCollider:
     Size: {x: 0.2, y: 0.03, z: 0.2}
     gizmoPos: {x: 0, y: -0.015, z: 0}
@@ -1439,7 +1362,7 @@ MonoBehaviour:
   _hitColliders:
   - {fileID: 2657497764359330394}
   - {fileID: 4957421886917870948}
-  _attackPartDatas:
+  _attackCollisionRangeDatas:
   - attackPart: 1
     attackCollider: {fileID: 3849370861829417063}
   - attackPart: 2
@@ -1452,7 +1375,7 @@ MonoBehaviour:
     attackCollider: {fileID: 821052657099630020}
   - attackPart: 7
     attackCollider: {fileID: 4318916673816008455}
-  _partColliderDatas:
+  _equipPartColliderDatas:
   - Type: 1
     Collider: {fileID: 6111661939076075691}
   _rigidbody: {fileID: 0}
@@ -6589,8 +6512,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8321745705471127050}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.4956056, y: -0.50435615, z: -0.4956056, w: 0.50435615}
+  m_LocalPosition: {x: -1.9709482e-17, y: 1.058651, z: -0.013022041}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

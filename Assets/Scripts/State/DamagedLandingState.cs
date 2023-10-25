@@ -1,8 +1,8 @@
+using DataClass;
 using UnityEngine;
 
 public class DamagedLandingState : DamagedState
 {
-
     public DamagedLandingState(Character character, eState eState) : base(character, eState)
     {
     }
@@ -12,7 +12,8 @@ public class DamagedLandingState : DamagedState
         base.StartState();
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(false, HitColliderType.AIRBORNE);
-        _moveSet.Play(_action, 0.3f);
+        AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
+        _moveSet.Play(_action, data.damageLandingStart);//0.1f
         _character.SetVelocity(Vector3.zero);
         _character.UpdateGroundHeight(true);
         _character._isGround = true;

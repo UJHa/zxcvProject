@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -26,6 +24,7 @@ namespace DataClass
             runStart = argData.runStart;
             jumpUpStart = argData.jumpUpStart;
             jumpEnd = argData.jumpEnd;
+            damageLandingStart = argData.damageLandingStart;
         }
 
         public int id { get; set; }
@@ -35,9 +34,10 @@ namespace DataClass
         public float runStart { get; set; }
         public float jumpUpStart { get; set; }
         public float jumpEnd { get; set; }
+        public float damageLandingStart { get; set; }
         public override string ToString()
         {
-            return $"id({id})playerType({playerType})idleStart({idleStart})walkStart({walkStart})runStart({runStart})jumpUpStart({jumpUpStart})jumpEnd({jumpEnd})";
+            return $"id({id})playerType({playerType})idleStart({idleStart})walkStart({walkStart})runStart({runStart})jumpUpStart({jumpUpStart})jumpEnd({jumpEnd})damageLandingStart({damageLandingStart})";
         }
     }
 
