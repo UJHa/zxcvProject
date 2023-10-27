@@ -829,7 +829,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6026694728101118943}
-  - component: {fileID: 7883520139927122767}
   - component: {fileID: 2657497764359330394}
   - component: {fileID: 4681637646032969766}
   m_Layer: 8
@@ -854,19 +853,6 @@ Transform:
   m_Father: {fileID: 1438546959266459337}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &7883520139927122767
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042793738426535465}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.4, y: 1.8, z: 0.4}
-  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &2657497764359330394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1289,7 +1275,7 @@ GameObject:
   - component: {fileID: 4540229000190281644}
   - component: {fileID: 5784950296977697872}
   m_Layer: 0
-  m_Name: LowPolyCharacter
+  m_Name: MainPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6598,7 +6584,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8153361533277341653}
   - component: {fileID: 4033066411215320675}
-  - component: {fileID: 2960908501450555968}
   - component: {fileID: 4957421886917870948}
   m_Layer: 8
   m_Name: AirborneHitCollider
@@ -6635,19 +6620,6 @@ CapsuleCollider:
   m_Radius: 0.2
   m_Height: 1.8
   m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
---- !u!65 &2960908501450555968
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8736494220987298719}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.4, y: 0.4, z: 0.4}
   m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &4957421886917870948
 MonoBehaviour:

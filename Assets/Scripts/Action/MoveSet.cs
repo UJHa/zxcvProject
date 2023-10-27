@@ -19,6 +19,7 @@ public enum AttackType
     AIRBORNE,
     AIR_POWER_DOWN,
     KNOCK_BACK,
+    FLY_AWAY,
 }
 
 public class InputEnableInfo
@@ -86,6 +87,7 @@ public class MoveSet
         {
             _curAnimancerState = _animancer.Play(action.GetClip(), fadeTime);
             _curAnimancerState.NormalizedTime = action.GetStartRatio();
+            SetSpeed(action.GetSpeed());
             _curAnimancerState.Speed = action.GetSpeed();
         }
         catch (Exception e)
@@ -100,6 +102,11 @@ public class MoveSet
     {
         return _curAnimancerState.NormalizedTime >= _curAction.GetEndRatio();
     }
+
+    public float GetCurNormTime()
+    {
+        return _curAnimancerState.NormalizedTime;
+    }
     
     public void PauseAnimation()
     {
@@ -109,6 +116,11 @@ public class MoveSet
     public void SetAnimationEndRatio()
     {
         _curAnimancerState.NormalizedTime = _curAction.GetEndRatio();
+    }
+
+    public void SetSpeed(float argSpeed)
+    {
+        _curAnimancerState.Speed = argSpeed;
     }
 
     public bool IsCollisionEnable(AttackInfoData attackInfoData)
@@ -125,7 +137,8 @@ public class MoveSet
     
     public float GetClipLength()
     {
-        return _curAnimancerState.Length;
+        var lengthRatio = _curAction.GetEndRatio() - _curAction.GetStartRatio();
+        return _curAnimancerState.Length * lengthRatio;
     }
 
     public float GetClipSpeed()

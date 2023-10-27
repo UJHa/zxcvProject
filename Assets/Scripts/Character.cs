@@ -81,6 +81,9 @@ public class Character : MonoBehaviour
 {
     [Header("[ Test Speed ]")]
     [SerializeField] private Vector3 curVelocity = Vector3.zero;
+    [Header("[ Test Bot Trace]")]
+    [SerializeField] private float _walkTraceDistance = 1f;
+    [SerializeField] private float _attackStartDistance = 4f;
     [Header("[ Stats ]")]
     [SerializeField] private float _fullHp = 100f;
     [SerializeField] private float _curHp = 0f;
@@ -222,6 +225,44 @@ public class Character : MonoBehaviour
 
         InitStats();
         hitFx = Resources.Load<GameObject>("Prefabs/StatusFx/Hits/Hit_01");
+
+        InitStates();
+        StartUI();
+    }
+
+    private void InitStates()
+    {
+        // 엄todo : 캐릭터의 eState가 아닌 eRoleState 기준으로 State 정의하도록 변경하기
+        // 엄todo : eRoleState에 연결되는 클래스 이름을 연결한 json 데이터 파일 만들기
+        RegisterState(eState.FIGHTER_IDLE, typeof(IdleState));
+        RegisterState(eState.FIGHTER_WALK, typeof(WalkState));
+        RegisterState(eState.FIGHTER_RUN, typeof(RunState));
+        RegisterState(eState.FIGHTER_RUN_STOP, typeof(RunStopState));
+        RegisterState(eState.JUMP_UP, typeof(JumpUpState));
+        RegisterState(eState.JUMP_DOWN, typeof(JumpDownState));
+        RegisterState(eState.LANDING, typeof(LandingState));
+
+        RegisterState(eState.FIGHTER_WEEK_ATTACK1, typeof(WeekAttackState));
+        RegisterState(eState.FIGHTER_WEEK_ATTACK2, typeof(WeekAttackState));
+        RegisterState(eState.FIGHTER_WEEK_ATTACK3, typeof(WeekAttackState));
+        RegisterState(eState.FIGHTER_STRONG_ATTACK1, typeof(StrongAttackState));
+        RegisterState(eState.FIGHTER_STRONG_ATTACK2, typeof(StrongAttackState));
+        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
+        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
+        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
+
+        RegisterState(eState.NORMAL_DAMAGED, typeof(NormalDamagedState));
+        RegisterState(eState.AIRBORNE_DAMAGED, typeof(AirborneDamagedState));
+        RegisterState(eState.AIRBORNE_POWER_DOWN_DAMAGED, typeof(AirBornePowerDownDamagedState));
+        RegisterState(eState.KNOCK_BACK_DAMAGED, typeof(KnockBackDamagedState));
+        RegisterState(eState.FLY_AWAY_DAMAGED, typeof(FlyAwayDamagedState));
+        RegisterState(eState.DAMAGED_AIRBORNE_LOOP, typeof(DamagedAirborneLoopState));
+        RegisterState(eState.DAMAGED_LANDING, typeof(DamagedLandingState));
+        
+        RegisterState(eState.WAKE_UP, typeof(WakeUpState));
+        RegisterState(eState.DEAD, typeof(DeadState));
+        
+        RegisterState(eState.GET_ITEM, typeof(GetItemState));
     }
 
     private void TestHelmetEquip()
@@ -301,10 +342,21 @@ public class Character : MonoBehaviour
     {
         return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("knockBack"), curDeltatime, xMaxValue, yMaxValue);
     }
-
-    protected void StartUI()
+    
+    public float GetFlyAwayGroundVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
-        UIManagerInGame.Instance.hudManager.AddPlayerSlider(GetHashCode(), this);
+        return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("flyAwayGround"), curDeltatime, xMaxValue, yMaxValue);
+    }
+    
+    public float GetFlyAwayHeightVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
+    {
+        return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("flyAwayHeight"), curDeltatime, xMaxValue, yMaxValue);
+    }
+
+    private void StartUI()
+    {
+        if (null != UIManagerInGame.Instance)
+            UIManagerInGame.Instance.hudManager.AddPlayerSlider(GetHashCode(), this);
     }
 
     private void FixedUpdate()
@@ -423,17 +475,23 @@ public class Character : MonoBehaviour
                         break;
                     case AttackType.AIRBORNE:
                         // 방향을 때린 상대의 방향으로 회전시키기
-                        RotateToAttacker(attacker);
+                        RotateToPosition(attacker.transform.position);
                         ChangeState(eState.AIRBORNE_DAMAGED);
                         break;
                     case AttackType.AIR_POWER_DOWN:
                         ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
                         break;
                     case AttackType.KNOCK_BACK:
-                        RotateToAttacker(attacker);
+                        RotateToPosition(attacker.transform.position);
                         SetDamagedDirectionVector(attacker.GetDirectionVector());
                         Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
                         ChangeState(eState.KNOCK_BACK_DAMAGED);
+                        break;
+                    case AttackType.FLY_AWAY:
+                        RotateToPosition(attacker.transform.position);
+                        SetDamagedDirectionVector(attacker.GetDirectionVector());
+                        Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
+                        ChangeState(eState.FLY_AWAY_DAMAGED);
                         break;
                 }
             }
@@ -819,21 +877,15 @@ public class Character : MonoBehaviour
         _onHitQueue.Add(other);
     }
 
-    private void RotateToAttacker(Character attacker)
+    public void RotateToPosition(Vector3 argPosition)
     {
-        Vector3 vector = attacker.transform.position - transform.position;
+        Vector3 vector = argPosition - transform.position;
         vector.y = 0;
         SetDirectionByVector3(vector);
     }
 
-    public void OnAirborneLanding(Ground ground)
+    public void OnAirborneLanding()
     {
-        if (null == ground)
-        {
-            Debug.LogError("Landing component is not Ground!");
-            return;
-        }
-        Debug.Log($"[testum]name");
         if (_curState != eState.DAMAGED_LANDING)
             ChangeState(eState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
     }
@@ -1065,8 +1117,16 @@ public class Character : MonoBehaviour
     
     protected void RegisterState(eState argState, Type type)
     {
-        State state = Activator.CreateInstance(type, this, argState) as State;
-        _stateMap.Add(argState, state);
+        if (false == _stateMap.ContainsKey(argState))
+        {
+            State state = Activator.CreateInstance(type, this, argState) as State;
+            _stateMap.Add(argState, state);
+        }
+        else
+        {
+            State state = Activator.CreateInstance(type, this, argState) as State;
+            _stateMap[argState] = state;
+        }
     }
 
     public CharacterStatData GetStatData()
@@ -1093,5 +1153,28 @@ public class Character : MonoBehaviour
     public float GetGravityDownHeight()
     {
         return _gravityDownHeight;
+    }
+
+    public float GetWalkTraceDistance()
+    {
+        return _walkTraceDistance;
+    }
+    
+    public float GetAttackStartDistance()
+    {
+        return _attackStartDistance;
+    }
+
+    public void SpawnAttackCube()
+    {
+        var projectileCube = Resources.Load<Projectile>("Prefabs/Projectile/ProjectileCube");
+        var projectileSpawnPos = transform.Find("ProjectilePos");
+        if (null != projectileSpawnPos)
+        {
+            projectileCube = Instantiate(projectileCube, projectileSpawnPos);
+            projectileCube.transform.parent = null;
+
+            projectileCube.Init(_directionVector.normalized, 3f, 3f);
+        }
     }
 }

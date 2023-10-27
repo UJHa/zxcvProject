@@ -3,7 +3,7 @@
 {"id":2,"stateName":"FIGHTER_WEEK_ATTACK2","hitboxType":"PUNCH_A","damageRatio":1.0,"startRatio":0.0,"endRatio":0.3,"attackType":"NORMAL","airborneHeight":0.1,"airborneTime":0.1},
 {"id":3,"stateName":"FIGHTER_WEEK_ATTACK3","hitboxType":"PUNCH_B","damageRatio":1.0,"startRatio":0.1,"endRatio":0.2,"attackType":"AIRBORNE","airborneHeight":3.5,"airborneTime":1.0},
 {"id":4,"stateName":"FIGHTER_STRONG_ATTACK1","hitboxType":"KICK_B","damageRatio":1.0,"startRatio":0.25,"endRatio":0.3,"attackType":"NORMAL","airborneHeight":0.2,"airborneTime":0.3},
-{"id":5,"stateName":"FIGHTER_STRONG_ATTACK2","hitboxType":"KICK_A","damageRatio":1.0,"startRatio":0.15,"endRatio":0.18,"attackType":"KNOCK_BACK","airborneHeight":0.2,"airborneTime":0.3},
+{"id":5,"stateName":"FIGHTER_STRONG_ATTACK2","hitboxType":"KICK_A","damageRatio":1.0,"startRatio":0.15,"endRatio":0.18,"attackType":"FLY_AWAY","airborneHeight":0.2,"airborneTime":0.3},
 {"id":6,"stateName":"FIGHTER_WEEK_AIR_ATTACK1","hitboxType":"PUNCH_A","damageRatio":1.0,"startRatio":0.0,"endRatio":1.0,"attackType":"NORMAL","airborneHeight":0.1,"airborneTime":0.05},
 {"id":7,"stateName":"FIGHTER_WEEK_AIR_ATTACK2","hitboxType":"PUNCH_A","damageRatio":1.0,"startRatio":0.0,"endRatio":1.0,"attackType":"NORMAL","airborneHeight":0.1,"airborneTime":0.05},
 {"id":8,"stateName":"FIGHTER_WEEK_AIR_ATTACK3","hitboxType":"PUNCH_A","damageRatio":1.0,"startRatio":0.0,"endRatio":1.0,"attackType":"AIR_POWER_DOWN","airborneHeight":0.0,"airborneTime":0.0},
@@ -15,4 +15,5 @@
 {"id":14,"stateName":"RAPIER_WEEK_AIR_ATTACK1","hitboxType":"SWORD_A","damageRatio":1.0,"startRatio":0.3,"endRatio":0.5,"attackType":"NORMAL","airborneHeight":0.1,"airborneTime":0.2},
 {"id":15,"stateName":"RAPIER_WEEK_AIR_ATTACK2","hitboxType":"SWORD_A","damageRatio":1.0,"startRatio":0.3,"endRatio":0.5,"attackType":"NORMAL","airborneHeight":0.1,"airborneTime":0.2},
 {"id":16,"stateName":"RAPIER_WEEK_AIR_ATTACK3","hitboxType":"SWORD_A","damageRatio":1.0,"startRatio":0.3,"endRatio":0.5,"attackType":"AIR_POWER_DOWN","airborneHeight":0.0,"airborneTime":0.0},
+{"id":17,"stateName":"MAGIC_WEEK_ATTACK1","hitboxType":"NONE","damageRatio":1.0,"startRatio":0.0,"endRatio":1.0,"attackType":"NORMAL","airborneHeight":0.1,"airborneTime":0.1},
 ]

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class AirBornePowerDownDamagedState : DamagedState
 {
+    private float _airTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
-    private float _maxUpHeight = 0f;
 
     public AirBornePowerDownDamagedState(Character character, eState eState) : base(character, eState)
     {
@@ -20,8 +20,14 @@ public class AirBornePowerDownDamagedState : DamagedState
 
     public override void FixedUpdateState()
     {
-        _moveVelocity.y = -15f;
+        _airTimer += Time.fixedDeltaTime;
+        _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, 0.1f, 1f);
         _character.SetVelocity(_moveVelocity);
+        {
+            var groundObjs = _character.GetGroundCheckObjects();
+            if (0 != groundObjs.Length)
+                _character.OnAirborneLanding();
+        }
     }
 
     public override void EndState()

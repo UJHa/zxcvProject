@@ -31,11 +31,11 @@ public class NpcWalkState : WalkState
             _character.SetDirectionByVector3(traceDirection);
             _character.MovePosition(traceDirection);
             
-            if (_character.GetTraceTargetDistanceXZ() >= 3f)
+            if (_character.GetTraceTargetDistanceXZ() > _character.GetAttackStartDistance() + _character.GetWalkTraceDistance())
             {
                 _character.ChangeRoleState(eRoleState.RUN);
             }
-            else if (_character.GetTraceTargetDistanceXZ() <= 1f)
+            else if (_character.GetTraceTargetDistanceXZ() <= _character.GetAttackStartDistance())
             {
                 _character.ChangeRoleState(eRoleState.IDLE);
             }

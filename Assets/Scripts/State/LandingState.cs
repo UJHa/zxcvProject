@@ -21,7 +21,7 @@ public class LandingState : State
         _moveSet.Play(_action, data.jumpEnd);
         _inputTimer.Start();
 
-        _character.UpdateGroundHeight();
+        _character.UpdateGroundHeight(true);
         _character.ClearAttackInfoData();
     }
 

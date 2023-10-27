@@ -11,6 +11,8 @@ namespace Utils
         [SerializeField] public AnimationCurve airBoneUp;
         [SerializeField] public AnimationCurve airBoneDown;
         [SerializeField] public AnimationCurve knockBack;
+        [SerializeField] public AnimationCurve flyAwayGround;
+        [SerializeField] public AnimationCurve flyAwayHeight;
 
         public AnimationCurve GetAnimCurve(string key)
         {

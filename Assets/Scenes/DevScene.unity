@@ -472,7 +472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19247aa12964dd2b8bf4ad2ef9b9ce3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _resouarcePath: Prefabs/Character/LowPolyCharacter
+  _resouarcePath: Prefabs/Character/BotPlayer
   _prefabName: PlayerSub
   temp: hello
 --- !u!4 &388971294
@@ -1212,7 +1212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19247aa12964dd2b8bf4ad2ef9b9ce3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _resouarcePath: Prefabs/Character/LowPolyCharacter
+  _resouarcePath: Prefabs/Character/MainPlayer
   _prefabName: PlayerMain
   temp: hello
 --- !u!4 &845560607

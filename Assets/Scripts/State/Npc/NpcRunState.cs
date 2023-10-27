@@ -33,7 +33,7 @@ public class NpcRunState : RunState
             _character.SetDirectionByVector3(traceDirection);
             _character.MovePosition(traceDirection);
             
-            if (_character.GetTraceTargetDistanceXZ() <= 1f)
+            if (_character.GetTraceTargetDistanceXZ() <= _character.GetAttackStartDistance())
             {
                 _character.ChangeRoleState(eRoleState.IDLE);
             }

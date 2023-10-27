@@ -39,4 +39,6 @@
 {"id":38,"actionName":"RAPIER_WEEK_AIR_ATTACK2","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Rapier/Rapier_JumpAttack2","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":39,"actionName":"RAPIER_WEEK_AIR_ATTACK3","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Rapier/Rapier_JumpAttack3","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":40,"actionName":"KNOCK_BACK_DAMAGED","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/Damaged2","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.5,"damageRatio":1.0},
+{"id":41,"actionName":"FLY_AWAY_DAMAGED","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/DamageFlyAway","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.4,"damageRatio":1.0},
+{"id":42,"actionName":"MAGIC_WEEK_ATTACK1","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Magic/Magic_Attack1","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 ]

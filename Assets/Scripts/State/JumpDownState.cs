@@ -31,8 +31,8 @@ public class JumpDownState : State
             _character.ChangeRoleState(eRoleState.LANDING);
             return;
         }
-        else
-            _character.UpdateGroundHeight();
+        // else
+        //     _character.UpdateGroundHeight();
         
         _jumpTimer += Time.fixedDeltaTime;
         // _moveVelocity.y = -1f * _character.GetJumpDownVelocity(_jumpTimer, _character.GetJumpDownMaxTimer(), _character.GetJumpMaxHeight());
