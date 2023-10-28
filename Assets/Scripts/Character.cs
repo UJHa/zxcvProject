@@ -434,67 +434,69 @@ public class Character : MonoBehaviour
         while (_onHitQueue.Count > 0)
         {
             var hitboxCollider = _onHitQueue[0];
-            ProcessHit(hitboxCollider);
+            if (hitboxCollider.TryGetComponent<AttackCollider>(out var attackCollider))
+            {
+                var attacker = attackCollider.GetOwner();
+                if (attacker != this)
+                    ProcessHit(attackCollider);
+            }
             _onHitQueue.RemoveAt(0);
         }
     }
     
-    private void ProcessHit(Collider other)
+    private void ProcessHit(AttackCollider attackCollider)
     {
-        if (other.TryGetComponent<AttackCollider>(out var attackCollider))
+        var attacker = attackCollider.GetOwner();
+        AttackInfoData attackInfo = attackCollider.GetAttackInfo();
+        AttackType attackType = UmUtil.StringToEnum<AttackType>(attackInfo.attackType);
+        _attackedMaxHeight = attackInfo.airborneHeight;
+        _attackedAirborneUpTime = attackInfo.airborneTime;
+        var damage = attackInfo.damageRatio * attacker._strength;
+        SetDamage(damage);
+        var closePos = attackCollider.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+        var hitFxObj = Instantiate(hitFx);
+        hitFxObj.transform.position = closePos;
+        if (attackCollider.TryGetComponent<Projectile>(out var projectile))
         {
-            Debug.Log($"[testum][name:{name}]be hit other({other.name})");
-            var attacker = attackCollider.GetOwner();
-            if (attacker != this)
-            {
-                AttackInfoData attackInfo = attackCollider.GetAttackInfo();
-                AttackType attackType = UmUtil.StringToEnum<AttackType>(attackInfo.attackType);
-                _attackedMaxHeight = attackInfo.airborneHeight;
-                _attackedAirborneUpTime = attackInfo.airborneTime;
-                var damage = attackInfo.damageRatio * attacker._strength;
-                SetDamage(damage);
-                var closePos = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
-                var hitFxObj = Instantiate(hitFx);
-                hitFxObj.transform.position = closePos;
-                switch (attackType)
+            Destroy(projectile.gameObject);
+        }
+        switch (attackType)
+        {
+            case AttackType.NONE:
+                break;
+            case AttackType.NORMAL:
+                // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
+                // 엄todo: isGround 및 피격 여부로 체크 변경하기
+                if (false == _isGround)
+                    ChangeState(eState.AIRBORNE_DAMAGED);
+                else
                 {
-                    case AttackType.NONE:
-                        break;
-                    case AttackType.NORMAL:
-                        // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
-                        // 엄todo: isGround 및 피격 여부로 체크 변경하기
-                        if (false == _isGround)
-                            ChangeState(eState.AIRBORNE_DAMAGED);
-                        else
-                        {
-                            if (IsDead())
-                                ChangeState(eState.DEAD);
-                            else
-                                ChangeState(eState.NORMAL_DAMAGED);
-                        }
-                        break;
-                    case AttackType.AIRBORNE:
-                        // 방향을 때린 상대의 방향으로 회전시키기
-                        RotateToPosition(attacker.transform.position);
-                        ChangeState(eState.AIRBORNE_DAMAGED);
-                        break;
-                    case AttackType.AIR_POWER_DOWN:
-                        ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
-                        break;
-                    case AttackType.KNOCK_BACK:
-                        RotateToPosition(attacker.transform.position);
-                        SetDamagedDirectionVector(attacker.GetDirectionVector());
-                        Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
-                        ChangeState(eState.KNOCK_BACK_DAMAGED);
-                        break;
-                    case AttackType.FLY_AWAY:
-                        RotateToPosition(attacker.transform.position);
-                        SetDamagedDirectionVector(attacker.GetDirectionVector());
-                        Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
-                        ChangeState(eState.FLY_AWAY_DAMAGED);
-                        break;
+                    if (IsDead())
+                        ChangeState(eState.DEAD);
+                    else
+                        ChangeState(eState.NORMAL_DAMAGED);
                 }
-            }
+                break;
+            case AttackType.AIRBORNE:
+                // 방향을 때린 상대의 방향으로 회전시키기
+                RotateToPosition(attacker.transform.position);
+                ChangeState(eState.AIRBORNE_DAMAGED);
+                break;
+            case AttackType.AIR_POWER_DOWN:
+                ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
+                break;
+            case AttackType.KNOCK_BACK:
+                RotateToPosition(attacker.transform.position);
+                SetDamagedDirectionVector(attacker.GetDirectionVector());
+                Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
+                ChangeState(eState.KNOCK_BACK_DAMAGED);
+                break;
+            case AttackType.FLY_AWAY:
+                RotateToPosition(attacker.transform.position);
+                SetDamagedDirectionVector(attacker.GetDirectionVector());
+                Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
+                ChangeState(eState.FLY_AWAY_DAMAGED);
+                break;
         }
     }
 
@@ -1165,16 +1167,20 @@ public class Character : MonoBehaviour
         return _attackStartDistance;
     }
 
-    public void SpawnAttackCube()
+    public Projectile SpawnAttackCube(eState curState)
     {
         var projectileCube = Resources.Load<Projectile>("Prefabs/Projectile/ProjectileCube");
+        // 엄todo : 캐릭터가 날려야할 투사체 정보를 어떻게 가질 지 고민 후 정리
         var projectileSpawnPos = transform.Find("ProjectilePos");
         if (null != projectileSpawnPos)
         {
             projectileCube = Instantiate(projectileCube, projectileSpawnPos);
             projectileCube.transform.parent = null;
 
-            projectileCube.Init(_directionVector.normalized, 3f, 3f);
+            projectileCube.Init(_directionVector.normalized, 3f, 3f, this);
+            return projectileCube;
         }
+
+        return null;
     }
 }

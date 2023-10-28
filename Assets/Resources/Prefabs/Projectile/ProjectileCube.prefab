@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 80639823386183143}
   - component: {fileID: 8256531409450068949}
   - component: {fileID: 6581008833566472947}
+  - component: {fileID: 1322311834491595590}
   m_Layer: 0
   m_Name: ProjectileCube
   m_TagString: Untagged
@@ -110,5 +111,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23f09668f9474a72b770aeafe32ae9e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startPos: {x: 0, y: 0, z: 0}
-  _targetPos: {x: 0, y: 0, z: 0}
+  _moveSpeed: 0
+  _moveDirection: {x: 0, y: 0, z: 0}
+  _moveDistance: 0
+  _owner: {fileID: 0}
+--- !u!114 &1322311834491595590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485429490188658536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06e2e56b26ca45f48869aff59c7fa28b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _colliderType: 0

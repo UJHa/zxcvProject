@@ -38,8 +38,9 @@ public class MagicAttackState : AttackState
             if (!_isAttacked && _moveSet.GetCurNormTime() > _attackRatio)
             {
                 _isAttacked = true;
-                _character.SpawnAttackCube();
+                var projectile = _character.SpawnAttackCube(_eState);
                 Debug.Log($"[testMagic]Attack! {_moveSet.GetCurNormTime()}");
+                projectile.SetAttackInfo(_attackInfoData);
             }
             // bool collisionEnable = _moveSet.IsCollisionEnable(_attackInfoData);
             // _character.ActiveAttackCollider(collisionEnable, UmUtil.StringToEnum<HitboxType>(_attackInfoData.hitboxType), _attackInfoData);
