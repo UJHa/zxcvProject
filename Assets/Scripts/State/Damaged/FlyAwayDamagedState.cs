@@ -57,11 +57,11 @@ public class FlyAwayDamagedState : DamagedState
         Debug.Log($"[testum]FinishFlyAway : groundLength({groundObjs.Length})");
         if (0 == groundObjs.Length)
         {
-            _character.ChangeState(eState.DAMAGED_AIRBORNE_LOOP);
+            _character.ChangeState(eRoleState.DAMAGED_AIRBORNE_LOOP);
         }
         else
         {
-            _character.ChangeState(eState.DAMAGED_LANDING);
+            _character.ChangeState(eRoleState.DAMAGED_LANDING);
         }
     }
 }

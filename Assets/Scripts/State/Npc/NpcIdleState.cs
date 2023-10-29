@@ -39,7 +39,7 @@ public class NpcIdleState : IdleState
         }
         else
         {
-            _character.ChangeState(eState.MAGIC_WEEK_ATTACK1);
+            _character.ChangeState(eRoleState.WEEK_ATTACK_1);
         }
         // base.UpdateState();
     }

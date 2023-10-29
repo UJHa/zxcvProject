@@ -49,7 +49,7 @@ public enum eState
 public abstract class State
 {
     protected Character _character;
-    protected readonly eState _eState;
+    protected eState _eState;
     protected readonly MoveSet _moveSet;
     protected Action _action;
     protected AttackInfoData _attackInfoData;
@@ -72,4 +72,9 @@ public abstract class State
     public abstract void FixedUpdateState();
 
     public abstract void EndState();
+
+    public void SetState(eState state)
+    {
+        _eState = state;
+    }
 }

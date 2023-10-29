@@ -29,7 +29,7 @@ public class WeekAttackState : AttackState
         if (_character.IsGround())
         {
             var nextState = _moveSet.DetermineNextState(_character.GetCurState(), _bindingType);
-            if (eState.NONE != nextState)
+            if (eRoleState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
             else if (_moveSet.IsAnimationFinish())
             {

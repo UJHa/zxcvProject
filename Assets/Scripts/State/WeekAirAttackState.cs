@@ -27,7 +27,7 @@ public class WeekAirAttackState : AttackState
     public override void UpdateState()
     {
         var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
-        if (eState.NONE != nextState)
+        if (eRoleState.NONE != nextState)
             _character.ChangeState(nextState, eStateType.INPUT);
         else if (_moveSet.IsAnimationFinish())
         {

@@ -35,9 +35,9 @@ public class DamagedLandingState : DamagedState
             if (_moveSet.IsAnimationFinish())
             {
                 if (_character.IsDead())
-                    _character.ChangeState(eState.DEAD);
+                    _character.ChangeState(eRoleState.DEAD);
                 else
-                    _character.ChangeState(eState.WAKE_UP);
+                    _character.ChangeState(eRoleState.WAKE_UP);
             }
         }
     }

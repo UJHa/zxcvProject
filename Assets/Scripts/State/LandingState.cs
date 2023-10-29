@@ -65,7 +65,7 @@ public class LandingState : State
             foreach (var bindingType in keyBindingTypes)
             {
                 var nextState = _moveSet.DetermineNextState(_character.GetCurState(), bindingType);
-                if (eState.NONE != nextState)
+                if (eRoleState.NONE != nextState)
                 {
                     _character.ChangeState(nextState, eStateType.INPUT);
                     break;

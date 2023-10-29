@@ -26,7 +26,7 @@ public class InputEnableInfo
 {
     public KeyBindingType Type;
     public KeyCode KeyCode;
-    public Dictionary<eState, eState> DetermineStateDict; // 각 가능 state가 어떤 결과로 보낼지 정하는 함수
+    public Dictionary<eRoleState, eRoleState> DetermineStateDict; // 각 가능 state가 어떤 결과로 보낼지 정하는 함수
 }
 
 public class MoveSet
@@ -44,19 +44,19 @@ public class MoveSet
         _animancer = player.GetComponent<AnimancerComponent>();
     }
     
-    public eState DetermineNextState(eState state, KeyBindingType inputBindingType)
+    public eRoleState DetermineNextState(eRoleState state, KeyBindingType inputBindingType)
     {
         if (false == _inputEnableMap.ContainsKey(inputBindingType))
-            return eState.NONE;
+            return eRoleState.NONE;
         var enableInfo = _inputEnableMap[inputBindingType];
         if (false == Input.GetKeyDown(enableInfo.KeyCode))
-            return eState.NONE;
+            return eRoleState.NONE;
         if (false == enableInfo.DetermineStateDict.ContainsKey(state))
-            return eState.NONE;
+            return eRoleState.NONE;
         return enableInfo.DetermineStateDict[state];
     }
 
-    public void RegisterEnableInputMap(KeyBindingType bindingType, eState[] enableStates, eState determineState)
+    public void RegisterEnableInputMap(KeyBindingType bindingType, eRoleState[] enableStates, eRoleState determineState)
     {
         if (false == _inputEnableMap.ContainsKey(bindingType))
             _inputEnableMap.Add(bindingType, new InputEnableInfo

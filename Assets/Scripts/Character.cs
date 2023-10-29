@@ -11,7 +11,7 @@ using Utils;
 
 public class StateInfo
 {
-    public eState state;
+    public eRoleState state;
     public eStateType stateType;
 }
 
@@ -146,11 +146,11 @@ public class Character : MonoBehaviour
 
     protected Vector3 _directionVector = Vector3.zero;
     protected Vector3 _damagedDirectionVector = Vector3.zero;
-
-    protected Dictionary<eState, State> _stateMap = new();
-
-    [SerializeField] protected eState _prevState;
-    [SerializeField] protected eState _curState;
+    
+    protected Dictionary<eRoleState, State> _roleStateMap = new();
+    
+    [SerializeField] protected eRoleState _prevRoleState;
+    [SerializeField] protected eRoleState _curRoleState;
     [SerializeField] protected eRole _curRole = eRole.FIGHTER;
 
     protected DrawDebugCharacter _drawDebug;
@@ -232,37 +232,32 @@ public class Character : MonoBehaviour
 
     private void InitStates()
     {
-        // 엄todo : 캐릭터의 eState가 아닌 eRoleState 기준으로 State 정의하도록 변경하기
         // 엄todo : eRoleState에 연결되는 클래스 이름을 연결한 json 데이터 파일 만들기
-        RegisterState(eState.FIGHTER_IDLE, typeof(IdleState));
-        RegisterState(eState.FIGHTER_WALK, typeof(WalkState));
-        RegisterState(eState.FIGHTER_RUN, typeof(RunState));
-        RegisterState(eState.FIGHTER_RUN_STOP, typeof(RunStopState));
-        RegisterState(eState.JUMP_UP, typeof(JumpUpState));
-        RegisterState(eState.JUMP_DOWN, typeof(JumpDownState));
-        RegisterState(eState.LANDING, typeof(LandingState));
-
-        RegisterState(eState.FIGHTER_WEEK_ATTACK1, typeof(WeekAttackState));
-        RegisterState(eState.FIGHTER_WEEK_ATTACK2, typeof(WeekAttackState));
-        RegisterState(eState.FIGHTER_WEEK_ATTACK3, typeof(WeekAttackState));
-        RegisterState(eState.FIGHTER_STRONG_ATTACK1, typeof(StrongAttackState));
-        RegisterState(eState.FIGHTER_STRONG_ATTACK2, typeof(StrongAttackState));
-        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
-        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
-        RegisterState(eState.FIGHTER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
-
-        RegisterState(eState.NORMAL_DAMAGED, typeof(NormalDamagedState));
-        RegisterState(eState.AIRBORNE_DAMAGED, typeof(AirborneDamagedState));
-        RegisterState(eState.AIRBORNE_POWER_DOWN_DAMAGED, typeof(AirBornePowerDownDamagedState));
-        RegisterState(eState.KNOCK_BACK_DAMAGED, typeof(KnockBackDamagedState));
-        RegisterState(eState.FLY_AWAY_DAMAGED, typeof(FlyAwayDamagedState));
-        RegisterState(eState.DAMAGED_AIRBORNE_LOOP, typeof(DamagedAirborneLoopState));
-        RegisterState(eState.DAMAGED_LANDING, typeof(DamagedLandingState));
-        
-        RegisterState(eState.WAKE_UP, typeof(WakeUpState));
-        RegisterState(eState.DEAD, typeof(DeadState));
-        
-        RegisterState(eState.GET_ITEM, typeof(GetItemState));
+        RegisterRoleState(eRoleState.IDLE, eState.FIGHTER_IDLE, typeof(IdleState));
+        RegisterRoleState(eRoleState.WALK, eState.FIGHTER_WALK, typeof(WalkState));
+        RegisterRoleState(eRoleState.RUN, eState.FIGHTER_RUN, typeof(RunState));
+        RegisterRoleState(eRoleState.RUN_STOP, eState.FIGHTER_RUN_STOP, typeof(RunStopState));
+        RegisterRoleState(eRoleState.JUMP_UP, eState.JUMP_UP, typeof(JumpUpState));
+        RegisterRoleState(eRoleState.JUMP_DOWN, eState.JUMP_DOWN, typeof(JumpDownState));
+        RegisterRoleState(eRoleState.LANDING, eState.LANDING, typeof(LandingState));
+        RegisterRoleState(eRoleState.WEEK_ATTACK_1, eState.FIGHTER_WEEK_ATTACK1, typeof(WeekAttackState));
+        RegisterRoleState(eRoleState.WEEK_ATTACK_2, eState.FIGHTER_WEEK_ATTACK2, typeof(WeekAttackState));
+        RegisterRoleState(eRoleState.WEEK_ATTACK_3, eState.FIGHTER_WEEK_ATTACK3, typeof(WeekAttackState));
+        RegisterRoleState(eRoleState.STRONG_ATTACK_1, eState.FIGHTER_STRONG_ATTACK1, typeof(StrongAttackState));
+        RegisterRoleState(eRoleState.STRONG_ATTACK_2, eState.FIGHTER_STRONG_ATTACK2, typeof(StrongAttackState));
+        RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_1, eState.FIGHTER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
+        RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_2, eState.FIGHTER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
+        RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_3, eState.FIGHTER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
+        RegisterRoleState(eRoleState.NORMAL_DAMAGED, eState.NORMAL_DAMAGED, typeof(NormalDamagedState));
+        RegisterRoleState(eRoleState.AIRBORNE_DAMAGED, eState.AIRBORNE_DAMAGED, typeof(AirborneDamagedState));
+        RegisterRoleState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED, eState.AIRBORNE_POWER_DOWN_DAMAGED, typeof(AirBornePowerDownDamagedState));
+        RegisterRoleState(eRoleState.KNOCK_BACK_DAMAGED, eState.KNOCK_BACK_DAMAGED, typeof(KnockBackDamagedState));
+        RegisterRoleState(eRoleState.FLY_AWAY_DAMAGED, eState.FLY_AWAY_DAMAGED, typeof(FlyAwayDamagedState));
+        RegisterRoleState(eRoleState.DAMAGED_AIRBORNE_LOOP, eState.DAMAGED_AIRBORNE_LOOP, typeof(DamagedAirborneLoopState));
+        RegisterRoleState(eRoleState.DAMAGED_LANDING, eState.DAMAGED_LANDING, typeof(DamagedLandingState));
+        RegisterRoleState(eRoleState.WAKE_UP, eState.WAKE_UP, typeof(WakeUpState));
+        RegisterRoleState(eRoleState.DEAD, eState.DEAD, typeof(DeadState));
+        RegisterRoleState(eRoleState.GET_ITEM, eState.GET_ITEM, typeof(GetItemState));
     }
 
     private void TestHelmetEquip()
@@ -373,8 +368,8 @@ public class Character : MonoBehaviour
         UpdateWallCollisions(eWallDirection.RIGHT_FRONT, (Vector3.right + Vector3.forward).normalized);
         UpdateWallCollisions(eWallDirection.LEFT_BACK, (Vector3.left + Vector3.back).normalized);
         UpdateWallCollisions(eWallDirection.RIGHT_BACK, (Vector3.right + Vector3.back).normalized);
-
-        _stateMap[_curState].FixedUpdateState();
+        
+        _roleStateMap[_curRoleState].FixedUpdateState();
     }
 
     private void UpdateWallCollisions(eWallDirection eWallDir, Vector3 dirVector)
@@ -410,26 +405,19 @@ public class Character : MonoBehaviour
         if (_changeStates.Count > 0)
         {
             // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
-            Debug.Log($"[testState]Change prev({_curState}) count({_changeStates.Count})");
+            Debug.Log($"[testState]Change prev({_curRoleState}) count({_changeStates.Count})");
+            eRoleState state = eRoleState.NONE;
             if (_changeStates.Count == 1)
-            {
-                eState state = _changeStates[0].state;
-                _stateMap[_curState].EndState();
-                _stateMap[state].StartState();
-                _prevState = _curState;
-                _curState = state;
-            }
+                state = _changeStates[0].state;
             else
-            {
-                eState state = SelectNextState();
-                _stateMap[_curState].EndState();
-                _stateMap[state].StartState();
-                _prevState = _curState;
-                _curState = state;
-            }
+                state = SelectNextState();
+            _roleStateMap[_curRoleState].EndState();
+            _roleStateMap[state].StartState();
+            _prevRoleState = _curRoleState;
+            _curRoleState = state;
             _changeStates.Clear();
         }
-        _stateMap[_curState].UpdateState();
+        _roleStateMap[_curRoleState].UpdateState();
 
         while (_onHitQueue.Count > 0)
         {
@@ -468,42 +456,42 @@ public class Character : MonoBehaviour
                 // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
                 // 엄todo: isGround 및 피격 여부로 체크 변경하기
                 if (false == _isGround)
-                    ChangeState(eState.AIRBORNE_DAMAGED);
+                    ChangeState(eRoleState.AIRBORNE_DAMAGED);
                 else
                 {
                     if (IsDead())
-                        ChangeState(eState.DEAD);
+                        ChangeState(eRoleState.DEAD);
                     else
-                        ChangeState(eState.NORMAL_DAMAGED);
+                        ChangeState(eRoleState.NORMAL_DAMAGED);
                 }
                 break;
             case AttackType.AIRBORNE:
                 // 방향을 때린 상대의 방향으로 회전시키기
                 RotateToPosition(attacker.transform.position);
-                ChangeState(eState.AIRBORNE_DAMAGED);
+                ChangeState(eRoleState.AIRBORNE_DAMAGED);
                 break;
             case AttackType.AIR_POWER_DOWN:
-                ChangeState(eState.AIRBORNE_POWER_DOWN_DAMAGED);
+                ChangeState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED);
                 break;
             case AttackType.KNOCK_BACK:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
                 Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
-                ChangeState(eState.KNOCK_BACK_DAMAGED);
+                ChangeState(eRoleState.KNOCK_BACK_DAMAGED);
                 break;
             case AttackType.FLY_AWAY:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
                 Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
-                ChangeState(eState.FLY_AWAY_DAMAGED);
+                ChangeState(eRoleState.FLY_AWAY_DAMAGED);
                 break;
         }
     }
-
-    private eState SelectNextState()
+    
+    private eRoleState SelectNextState()
     {
         int layer = (int)eStateType.NONE;
-        List<eState> enableStates = new();
+        List<eRoleState> enableStates = new();
         foreach (var stateInfo in _changeStates)
         {
             if ((int)stateInfo.stateType == layer)
@@ -518,20 +506,20 @@ public class Character : MonoBehaviour
 
         return enableStates[0];
     }
-
-    public eState GetPrevState()
+    
+    public eRoleState GetPrevState()
     {
-        return _prevState;
+        return _prevRoleState;
     }
     
-    public eState GetCurState()
+    public eRoleState GetCurState()
     {
-        return _curState;
+        return _curRoleState;
     }
     
     public eRoleState GetPrevRoleState()
     {
-        return _moveSet.GetRoleState(_prevState);
+        return _prevRoleState;
     }
     
     public MoveSet GetMoveSet()
@@ -765,9 +753,9 @@ public class Character : MonoBehaviour
         return rot.eulerAngles;
     }
 
-    public void ChangeState(eState state, eStateType stateType = eStateType.NONE)
+    public void ChangeState(eRoleState state, eStateType stateType = eStateType.NONE)
     {
-        Debug.Log($"[{name}][testState]State Change prev({_curState}) cur({state}) count({_changeStates.Count})");
+        Debug.Log($"[{name}][testState]State Change prev({_curRoleState}) cur({state}) count({_changeStates.Count})");
         _changeStates.Add(new StateInfo()
         {
             state = state,
@@ -777,7 +765,7 @@ public class Character : MonoBehaviour
     
     public void ChangeRoleState(eRoleState roleState, eStateType stateType = eStateType.NONE)
     {
-        ChangeState(GameManager.Instance.GetRole(_curRole).States[roleState], stateType);
+        ChangeState(roleState, stateType);
     }
 
     public void ResetMoveSpeed()
@@ -872,7 +860,9 @@ public class Character : MonoBehaviour
 
     public void OnHit(Collider other)
     {
-        if (eState.DEAD == _curState)
+        // if (eState.DEAD == _curState)
+        //     return;
+        if (eRoleState.DEAD == _curRoleState)
             return;
         // 피해 받았을때 진입
         // other : attacker
@@ -888,8 +878,8 @@ public class Character : MonoBehaviour
 
     public void OnAirborneLanding()
     {
-        if (_curState != eState.DAMAGED_LANDING)
-            ChangeState(eState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
+        if (_curRoleState != eRoleState.DAMAGED_LANDING)
+            ChangeState(eRoleState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
     }
 
     public virtual void DeadDisable()
@@ -1052,8 +1042,6 @@ public class Character : MonoBehaviour
         }
 
         // 엄todo : Collider들의 On/Off 관리용, HitCollider 관리용 분리하여 만들기
-        // Character 최상위 Prefab은
-        // 점프 시 On/Off로 에어본 데미지 바닥 도달을 부드럽게 개선(HitCollider는 아님)
         if (TryGetComponent<CapsuleCollider>(out var capsuleCollider))
         {
             capsuleCollider.enabled = colliderType == HitColliderType.STAND;
@@ -1084,50 +1072,40 @@ public class Character : MonoBehaviour
             var equipItem = Instantiate(itemWeapon, partCollider.transform);
             // equipItem.GetRole();
             _curRole = eRole.RAPIER;
-            RegisterState(eState.RAPIER_IDLE, typeof(IdleState));
-            RegisterState(eState.RAPIER_WALK, typeof(WalkState));
-            RegisterState(eState.RAPIER_RUN, typeof(RunState));
-            RegisterState(eState.RAPIER_RUN_STOP, typeof(RunStopState));
-            RegisterState(eState.RAPIER_JUMP_UP, typeof(JumpUpState));
-            RegisterState(eState.RAPIER_JUMP_DOWN, typeof(JumpDownState));
-            RegisterState(eState.RAPIER_LANDING, typeof(LandingState));
-            RegisterState(eState.RAPIER_WEEK_ATTACK1, typeof(WeekAttackState));
-            RegisterState(eState.RAPIER_WEEK_ATTACK2, typeof(WeekAttackState));
-            RegisterState(eState.RAPIER_WEEK_ATTACK3, typeof(WeekAttackState));
-            RegisterState(eState.RAPIER_STRONG_ATTACK1, typeof(StrongAttackState));
-            RegisterState(eState.RAPIER_STRONG_ATTACK2, typeof(StrongAttackState));
-            RegisterState(eState.RAPIER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
-            RegisterState(eState.RAPIER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
-            RegisterState(eState.RAPIER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
-            _moveSet.RegisterEnableInputMap(KeyBindingType.JUMP, new[] { eState.RAPIER_IDLE, eState.RAPIER_WALK, eState.RAPIER_RUN }, eState.RAPIER_JUMP_UP);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_IDLE}, eState.RAPIER_WEEK_ATTACK1);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_ATTACK1}, eState.RAPIER_WEEK_ATTACK2);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_ATTACK2}, eState.RAPIER_WEEK_ATTACK3);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.RAPIER_IDLE}, eState.RAPIER_STRONG_ATTACK1);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.STRONG_ATTACK, new[]{eState.RAPIER_STRONG_ATTACK1}, eState.RAPIER_STRONG_ATTACK2);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_JUMP_UP}, eState.RAPIER_WEEK_AIR_ATTACK1);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK1}, eState.RAPIER_WEEK_AIR_ATTACK2);
-            _moveSet.RegisterEnableInputMap(KeyBindingType.WEEK_ATTACK, new[]{eState.RAPIER_WEEK_AIR_ATTACK2}, eState.RAPIER_WEEK_AIR_ATTACK3);
-            // if (false == _attackColliderMap.ContainsKey(HitboxType.SWORD))
-            //     _attackColliderMap.Add(HitboxType.SWORD, equipItem.GetComponent<AttackCollider>());
-            // _attackColliderMap[HitboxType.SWORD].SetOwner(this);
-            // _attackColliderMap[HitboxType.SWORD].EnableCollider(false);
+            RegisterRoleState(eRoleState.IDLE, eState.RAPIER_IDLE, typeof(IdleState));
+            RegisterRoleState(eRoleState.WALK, eState.RAPIER_WALK, typeof(WalkState));
+            RegisterRoleState(eRoleState.RUN, eState.RAPIER_RUN, typeof(RunState));
+            RegisterRoleState(eRoleState.RUN_STOP, eState.RAPIER_RUN_STOP, typeof(RunStopState));
+            RegisterRoleState(eRoleState.JUMP_UP, eState.RAPIER_JUMP_UP, typeof(JumpUpState));
+            RegisterRoleState(eRoleState.JUMP_DOWN, eState.RAPIER_JUMP_DOWN, typeof(JumpDownState));
+            RegisterRoleState(eRoleState.LANDING, eState.RAPIER_LANDING, typeof(LandingState));
+            RegisterRoleState(eRoleState.WEEK_ATTACK_1, eState.RAPIER_WEEK_ATTACK1, typeof(WeekAttackState));
+            RegisterRoleState(eRoleState.WEEK_ATTACK_2, eState.RAPIER_WEEK_ATTACK2, typeof(WeekAttackState));
+            RegisterRoleState(eRoleState.WEEK_ATTACK_3, eState.RAPIER_WEEK_ATTACK3, typeof(WeekAttackState));
+            RegisterRoleState(eRoleState.STRONG_ATTACK_1, eState.RAPIER_STRONG_ATTACK1, typeof(StrongAttackState));
+            RegisterRoleState(eRoleState.STRONG_ATTACK_2, eState.RAPIER_STRONG_ATTACK2, typeof(StrongAttackState));
+            RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_1, eState.RAPIER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
+            RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_2, eState.RAPIER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
+            RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_3, eState.RAPIER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
 
             Destroy(dropItem.gameObject);
         }
     }
     
-    protected void RegisterState(eState argState, Type type)
+    protected void RegisterRoleState(eRoleState argRoleState, eState argState, Type type)
     {
-        if (false == _stateMap.ContainsKey(argState))
+        if (false == _roleStateMap.ContainsKey(argRoleState))
         {
             State state = Activator.CreateInstance(type, this, argState) as State;
-            _stateMap.Add(argState, state);
+            _roleStateMap.Add(argRoleState, state);
         }
         else
         {
-            State state = Activator.CreateInstance(type, this, argState) as State;
-            _stateMap[argState] = state;
+            Debug.Log($"[testRoleState]prev({_roleStateMap[argRoleState].GetType()})cur({type})typeIsSame({_roleStateMap[argRoleState].GetType() == type})");
+            if (_roleStateMap[argRoleState].GetType() != type)
+                _roleStateMap[argRoleState] = Activator.CreateInstance(type, this, argState) as State;
+            else
+                _roleStateMap[argRoleState].SetState(argState);
         }
     }
 
