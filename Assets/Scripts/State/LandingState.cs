@@ -7,7 +7,7 @@ public class LandingState : State
     private Stopwatch _inputTimer;
     private long _inputDelayMSec = 150;
 
-    public LandingState(Character character, eState eState) : base(character, eState)
+    public LandingState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
         _inputTimer = new Stopwatch();
     }

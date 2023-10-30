@@ -7,7 +7,7 @@ public class JumpUpState : State
     private float _jumpTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
 
-    public JumpUpState(Character character, eState eState) : base(character, eState)
+    public JumpUpState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

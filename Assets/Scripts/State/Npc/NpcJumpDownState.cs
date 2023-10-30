@@ -6,7 +6,7 @@ public class NpcJumpDownState : JumpDownState
     private float _jumpTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
 
-    public NpcJumpDownState(Character character, eState eState) : base(character, eState)
+    public NpcJumpDownState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

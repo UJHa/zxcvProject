@@ -4,7 +4,7 @@ public class WeekAttackState : AttackState
 {
     private KeyBindingType _bindingType = KeyBindingType.WEEK_ATTACK;
     
-    public WeekAttackState(Character character, eState eState) : base(character, eState)
+    public WeekAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

@@ -39,5 +39,5 @@ public enum eRole
 
 public class Role
 {
-    public Dictionary<eRoleState, eState> States = new();
+    public Dictionary<eRoleState, ActionKey> States = new();
 }

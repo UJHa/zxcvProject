@@ -16,7 +16,7 @@ namespace Utils
 
         public AnimationCurve GetAnimCurve(string key)
         {
-            FieldInfo fieldInfo = this.GetType().GetField(key);
+            FieldInfo fieldInfo = this.GetType().GetField(key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
             Debug.Log($"[testVar]GetAnimCurve({fieldInfo.GetValue(this)})");
             AnimationCurve result = fieldInfo.GetValue(this) as AnimationCurve;
             return result;

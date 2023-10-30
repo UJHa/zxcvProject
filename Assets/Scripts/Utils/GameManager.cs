@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviour
     public Vector3 adjust_pos = new Vector3(0.0f, 0.1f, 4.0f);
     [SerializeField] private Canvas canvas;
     
-    private Dictionary<eState, Action> _actionMap = new();
-    private Dictionary<eState, AttackInfoData> _attackInfoMap = new();
+    private Dictionary<ActionKey, Action> _actionMap = new();
+    private Dictionary<ActionKey, AttackInfoData> _attackInfoMap = new();
     private Dictionary<eRole, Role> _baseRoleMap = new();
     private AnimationCurveCollection _animationCurveCollection;
 
@@ -68,23 +68,23 @@ public class GameManager : MonoBehaviour
     {
         // 엄todo : role 관리 json으로 분리하기
         var fightRole = new Role();
-        fightRole.States.Add(eRoleState.IDLE, eState.FIGHTER_IDLE);
-        fightRole.States.Add(eRoleState.WALK, eState.FIGHTER_WALK);
-        fightRole.States.Add(eRoleState.RUN, eState.FIGHTER_RUN);
-        fightRole.States.Add(eRoleState.RUN_STOP, eState.FIGHTER_RUN_STOP);
-        fightRole.States.Add(eRoleState.JUMP_UP, eState.JUMP_UP);
-        fightRole.States.Add(eRoleState.JUMP_DOWN, eState.JUMP_DOWN);
-        fightRole.States.Add(eRoleState.LANDING, eState.LANDING);
+        fightRole.States.Add(eRoleState.IDLE, ActionKey.FIGHTER_IDLE);
+        fightRole.States.Add(eRoleState.WALK, ActionKey.FIGHTER_WALK);
+        fightRole.States.Add(eRoleState.RUN, ActionKey.FIGHTER_RUN);
+        fightRole.States.Add(eRoleState.RUN_STOP, ActionKey.FIGHTER_RUN_STOP);
+        fightRole.States.Add(eRoleState.JUMP_UP, ActionKey.JUMP_UP);
+        fightRole.States.Add(eRoleState.JUMP_DOWN, ActionKey.JUMP_DOWN);
+        fightRole.States.Add(eRoleState.LANDING, ActionKey.LANDING);
         _baseRoleMap.Add(eRole.FIGHTER, fightRole);
         
         var rapierRole = new Role();
-        rapierRole.States.Add(eRoleState.IDLE, eState.RAPIER_IDLE);
-        rapierRole.States.Add(eRoleState.WALK, eState.RAPIER_WALK);
-        rapierRole.States.Add(eRoleState.RUN, eState.RAPIER_RUN);
-        rapierRole.States.Add(eRoleState.RUN_STOP, eState.RAPIER_RUN_STOP);
-        rapierRole.States.Add(eRoleState.JUMP_UP, eState.RAPIER_JUMP_UP);
-        rapierRole.States.Add(eRoleState.JUMP_DOWN, eState.RAPIER_JUMP_DOWN);
-        rapierRole.States.Add(eRoleState.LANDING, eState.RAPIER_LANDING);
+        rapierRole.States.Add(eRoleState.IDLE, ActionKey.RAPIER_IDLE);
+        rapierRole.States.Add(eRoleState.WALK, ActionKey.RAPIER_WALK);
+        rapierRole.States.Add(eRoleState.RUN, ActionKey.RAPIER_RUN);
+        rapierRole.States.Add(eRoleState.RUN_STOP, ActionKey.RAPIER_RUN_STOP);
+        rapierRole.States.Add(eRoleState.JUMP_UP, ActionKey.RAPIER_JUMP_UP);
+        rapierRole.States.Add(eRoleState.JUMP_DOWN, ActionKey.RAPIER_JUMP_DOWN);
+        rapierRole.States.Add(eRoleState.LANDING, ActionKey.RAPIER_LANDING);
         _baseRoleMap.Add(eRole.RAPIER, rapierRole);
     }
 
@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
         var allActions = ActionTable.GetList();
         foreach (var actionData in allActions)
         {
-            var state = UmUtil.StringToEnum<eState>(actionData.actionName);
+            var state = UmUtil.StringToEnum<ActionKey>(actionData.actionName);
             var action = new Action(actionData.actionName);
             action.Init();
             _actionMap.Add(state, action);
@@ -135,7 +135,7 @@ public class GameManager : MonoBehaviour
         foreach (var action in _actionMap.Values)
         {
             var stateName = action.GetActionName();
-            eState state = UmUtil.StringToEnum<eState>(stateName);
+            ActionKey state = UmUtil.StringToEnum<ActionKey>(stateName);
             if (_attackInfoMap.ContainsKey(state))
             {
                 Debug.LogError($"Error _attackInfoMap contains key({state})");
@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour
         return _animationCurveCollection.GetAnimCurve(key);
     }
     
-    public Action GetAction(eState curState)
+    public Action GetAction(ActionKey curState)
     {
         if (false == _actionMap.ContainsKey(curState))
             return null;

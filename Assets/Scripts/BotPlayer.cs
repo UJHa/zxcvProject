@@ -8,13 +8,13 @@ public class BotPlayer : Character
     {
         _directionVector = Vector3.back;
         
-        RegisterRoleState(eRoleState.IDLE, eState.FIGHTER_IDLE, typeof(NpcIdleState));
-        RegisterRoleState(eRoleState.WALK, eState.FIGHTER_WALK, typeof(NpcWalkState));
-        RegisterRoleState(eRoleState.RUN, eState.FIGHTER_RUN, typeof(NpcRunState));
-        RegisterRoleState(eRoleState.JUMP_UP, eState.JUMP_UP, typeof(NpcJumpUpState));
-        RegisterRoleState(eRoleState.JUMP_DOWN, eState.JUMP_DOWN, typeof(NpcJumpDownState));
-        RegisterRoleState(eRoleState.LANDING, eState.LANDING, typeof(NpcLandingState));
-        RegisterRoleState(eRoleState.WEEK_ATTACK_1, eState.MAGIC_WEEK_ATTACK1, typeof(MagicAttackState));
+        RegisterRoleState(eRoleState.IDLE, ActionKey.FIGHTER_IDLE, typeof(NpcIdleState));
+        RegisterRoleState(eRoleState.WALK, ActionKey.FIGHTER_WALK, typeof(NpcWalkState));
+        RegisterRoleState(eRoleState.RUN, ActionKey.FIGHTER_RUN, typeof(NpcRunState));
+        RegisterRoleState(eRoleState.JUMP_UP, ActionKey.JUMP_UP, typeof(NpcJumpUpState));
+        RegisterRoleState(eRoleState.JUMP_DOWN, ActionKey.JUMP_DOWN, typeof(NpcJumpDownState));
+        RegisterRoleState(eRoleState.LANDING, ActionKey.LANDING, typeof(NpcLandingState));
+        RegisterRoleState(eRoleState.WEEK_ATTACK_1, ActionKey.MAGIC_WEEK_ATTACK1, typeof(MagicAttackState));
         _moveSet.Init(gameObject);
         _curRoleState = eRoleState.IDLE;
         _roleStateMap[_curRoleState].StartState();

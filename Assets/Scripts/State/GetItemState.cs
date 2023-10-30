@@ -4,7 +4,7 @@ public class GetItemState : State
 {
     private bool canPickUp = false;
     private DropItem _dropItem = null;
-    public GetItemState(Character character, eState eState) : base(character, eState)
+    public GetItemState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

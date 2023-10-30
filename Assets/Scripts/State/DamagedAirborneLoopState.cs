@@ -6,7 +6,7 @@ public class DamagedAirborneLoopState : DamagedState
     private float _airTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
 
-    public DamagedAirborneLoopState(Character character, eState eState) : base(character, eState)
+    public DamagedAirborneLoopState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 
@@ -17,9 +17,10 @@ public class DamagedAirborneLoopState : DamagedState
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         // 엄todo : 이전 State에 따라서 fadeTime이 동적으로 바뀌어야 할 필요가 있음
-        // 현재 : AirborneDamagedState : 1초
-        // 현재 : FlyAwayDamagedState : 0.1초
-        _moveSet.Play(_action, 0.1f);
+        if (_character.GetPrevState() == eRoleState.FLY_AWAY_DAMAGED)
+            _moveSet.Play(_action, 1f);
+        else if (_character.GetPrevState() == eRoleState.AIRBORNE_DAMAGED)
+            _moveSet.Play(_action, 0.1f);
         _airTimer = 0f;
     }
 

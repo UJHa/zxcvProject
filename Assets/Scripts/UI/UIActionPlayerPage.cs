@@ -136,7 +136,7 @@ namespace UI
             var allActions = ActionTable.GetList();
             foreach (var actionData in allActions)
             {
-                if (actionData.actionName == eState.NONE.ToString())
+                if (actionData.actionName == ActionKey.NONE.ToString())
                     continue;
                 _actions.Add(actionData.actionName, actionData);
                 Debug.Log($"[testum]actionData({actionData})");
@@ -164,7 +164,7 @@ namespace UI
                 });
             }
 
-            _selectActionName = _actions[eState.FIGHTER_IDLE.ToString()].actionName; 
+            _selectActionName = _actions[ActionKey.FIGHTER_IDLE.ToString()].actionName; 
             _actionInfoBtnDict[_selectActionName].onClick.Invoke();
         }
 

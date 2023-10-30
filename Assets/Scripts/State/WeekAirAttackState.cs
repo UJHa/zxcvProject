@@ -3,7 +3,7 @@ using Utils;
 
 public class WeekAirAttackState : AttackState
 {
-    public WeekAirAttackState(Character character, eState eState) : base(character, eState)
+    public WeekAirAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
 
     }

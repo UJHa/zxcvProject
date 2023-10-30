@@ -16,6 +16,11 @@ namespace Utils
         {
             return $"{Application.dataPath}/Resources/Json";
         }
+        
+        public static string GetDataClassPath()
+        {
+            return $"{Application.dataPath}/Scripts/DataClass";
+        }
 
         public static float GetOnFrameTime()
         {

@@ -8,7 +8,7 @@ public class AirborneDamagedState : DamagedState
     private Vector3 _moveVelocity = Vector3.zero;
     private float _maxUpHeight = 0f;
 
-    public AirborneDamagedState(Character character, eState eState) : base(character, eState)
+    public AirborneDamagedState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

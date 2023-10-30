@@ -9,7 +9,7 @@ public class FlyAwayDamagedState : DamagedState
     
     private Vector3 _moveVelocity = Vector3.zero;
     
-    public FlyAwayDamagedState(Character character, eState eState) : base(character, eState)
+    public FlyAwayDamagedState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
     

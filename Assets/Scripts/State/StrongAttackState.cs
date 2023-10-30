@@ -4,7 +4,7 @@ public class StrongAttackState : AttackState
 {
     private KeyBindingType _bindingType = KeyBindingType.STRONG_ATTACK;
     
-    public StrongAttackState(Character character, eState eState) : base(character, eState)
+    public StrongAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

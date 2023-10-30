@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DamagedLandingState : DamagedState
 {
-    public DamagedLandingState(Character character, eState eState) : base(character, eState)
+    public DamagedLandingState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

@@ -3,7 +3,7 @@ using Utils;
 
 public class HitboxInfo
 {
-    private eState _state;
+    private ActionKey _state;
     private float _startRate;
     private float _endRate;
     private AttackType _attackType;
@@ -11,18 +11,6 @@ public class HitboxInfo
     public float damageRatio;
     public float attackHeight;
     public float airborneUpTime;
-
-    public HitboxInfo(eState state, HitboxType hitboxType, float damageRatio, float startRate, float endRate, AttackType attackType, float attackHeight, float airborneUpTime)
-    {
-        _state = state; // 엄todo 지울것!
-        _hitboxType = hitboxType;
-        this.damageRatio = damageRatio;
-        _startRate = startRate;
-        _endRate = endRate;
-        _attackType = attackType;
-        this.attackHeight = attackHeight;
-        this.airborneUpTime = airborneUpTime;
-    }
     
     public HitboxInfo(AttackInfoData attackInfoData)
     {
@@ -55,7 +43,7 @@ public class HitboxInfo
         return _attackType;
     }
 
-    public eState GetState()
+    public ActionKey GetState()
     {
         return _state;
     }

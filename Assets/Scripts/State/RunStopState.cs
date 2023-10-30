@@ -8,7 +8,7 @@ public class RunStopState : State
     private long _remainTime;
     private float _remainRate;
 
-    public RunStopState(Character character, eState eState) : base(character, eState)
+    public RunStopState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
         _inputTimer = new Stopwatch();
     }

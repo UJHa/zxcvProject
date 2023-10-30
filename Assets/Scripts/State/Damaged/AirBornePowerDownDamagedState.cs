@@ -5,7 +5,7 @@ public class AirBornePowerDownDamagedState : DamagedState
     private float _airTimer = 0f;
     private Vector3 _moveVelocity = Vector3.zero;
 
-    public AirBornePowerDownDamagedState(Character character, eState eState) : base(character, eState)
+    public AirBornePowerDownDamagedState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

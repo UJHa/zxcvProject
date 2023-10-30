@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class DeadState : State
 {
-    public DeadState(Character character, eState eState) : base(character, eState)
+    public DeadState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
 
     }

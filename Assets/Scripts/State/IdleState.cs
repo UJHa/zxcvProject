@@ -7,7 +7,7 @@ public class IdleState : State
 {
     private Stopwatch _inputTimer = new();
     private long _inputDelayMSec = 150;
-    public IdleState(Character character, eState eState) : base(character, eState)
+    public IdleState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
         
     }

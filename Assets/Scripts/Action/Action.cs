@@ -4,13 +4,13 @@ using Utils;
 
 public class Action
 {
-    private readonly eState _state;
+    private readonly ActionKey _state;
     protected AnimationClip _animClip;
     private ActionData _actionData;
     
     public Action(string state)
     {
-        _state = UmUtil.StringToEnum<eState>(state);
+        _state = UmUtil.StringToEnum<ActionKey>(state);
         _actionData = ActionTable.GetData(_state.ToString());
         _animClip = Resources.Load<AnimationClip>(_actionData.clipPath);
     }
@@ -25,7 +25,7 @@ public class Action
         _actionData = actionData;
     }
 
-    public eState GetState()
+    public ActionKey GetState()
     {
         return _state;
     }

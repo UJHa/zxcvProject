@@ -5,7 +5,7 @@ public class MagicAttackState : AttackState
 {
     private bool _isAttacked = false;
     private float _attackRatio = 0.2f;
-    public MagicAttackState(Character character, eState eState) : base(character, eState)
+    public MagicAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 
@@ -38,7 +38,7 @@ public class MagicAttackState : AttackState
             if (!_isAttacked && _moveSet.GetCurNormTime() > _attackRatio)
             {
                 _isAttacked = true;
-                var projectile = _character.SpawnAttackCube(_eState);
+                var projectile = _character.SpawnAttackCube(_actionKey);
                 Debug.Log($"[testMagic]Attack! {_moveSet.GetCurNormTime()}");
                 projectile.SetAttackInfo(_attackInfoData);
             }

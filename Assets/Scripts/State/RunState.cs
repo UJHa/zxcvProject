@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class RunState : State
 {
-    public RunState(Character character, eState eState) : base(character, eState)
+    public RunState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

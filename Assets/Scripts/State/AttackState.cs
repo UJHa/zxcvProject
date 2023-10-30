@@ -1,6 +1,6 @@
 public class AttackState : State
 {
-    public AttackState(Character character, eState eState) : base(character, eState)
+    public AttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

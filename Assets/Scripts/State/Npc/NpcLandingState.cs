@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NpcLandingState : LandingState
 {
-    public NpcLandingState(Character character, eState eState) : base(character, eState)
+    public NpcLandingState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
         
     }

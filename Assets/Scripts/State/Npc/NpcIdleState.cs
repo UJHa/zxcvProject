@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class NpcIdleState : IdleState
 {
-    public NpcIdleState(Character character, eState eState) : base(character, eState)
+    public NpcIdleState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 

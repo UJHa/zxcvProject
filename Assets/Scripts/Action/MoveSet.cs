@@ -5,6 +5,52 @@ using DataClass;
 using UnityEngine;
 using Utils;
 
+public enum ActionKey
+{
+    NONE,
+    FIGHTER_IDLE,
+    FIGHTER_WALK,
+    FIGHTER_RUN,
+    FIGHTER_RUN_STOP,
+    JUMP_UP,
+    JUMP_DOWN,
+    LANDING,
+    FIGHTER_WEEK_ATTACK1,
+    FIGHTER_WEEK_ATTACK2,
+    FIGHTER_WEEK_ATTACK3,
+    FIGHTER_STRONG_ATTACK1,
+    FIGHTER_STRONG_ATTACK2,
+    FIGHTER_WEEK_AIR_ATTACK1,
+    FIGHTER_WEEK_AIR_ATTACK2,
+    FIGHTER_WEEK_AIR_ATTACK3,
+    NORMAL_DAMAGED,
+    AIRBORNE_DAMAGED,
+    AIRBORNE_POWER_DOWN_DAMAGED,
+    KNOCK_BACK_DAMAGED,
+    FLY_AWAY_DAMAGED,
+    DAMAGED_AIRBORNE_LOOP,
+    DAMAGED_LANDING,
+    WAKE_UP,
+    DEAD,
+    GET_ITEM,
+    RAPIER_IDLE,
+    RAPIER_WALK,
+    RAPIER_RUN,
+    RAPIER_RUN_STOP,
+    RAPIER_JUMP_UP,
+    RAPIER_JUMP_DOWN,
+    RAPIER_LANDING,
+    RAPIER_WEEK_ATTACK1,
+    RAPIER_WEEK_ATTACK2,
+    RAPIER_WEEK_ATTACK3,
+    RAPIER_STRONG_ATTACK1,
+    RAPIER_STRONG_ATTACK2,
+    RAPIER_WEEK_AIR_ATTACK1,
+    RAPIER_WEEK_AIR_ATTACK2,
+    RAPIER_WEEK_AIR_ATTACK3,
+    MAGIC_WEEK_ATTACK1,
+}
+
 public enum ActionType
 {
     NONE,
@@ -146,7 +192,7 @@ public class MoveSet
         return _curAnimancerState.Speed;
     }
 
-    public eRoleState GetRoleState(eState prevState)
+    public eRoleState GetRoleState(ActionKey prevState)
     {
         var actionState = ActionTable.GetData(prevState.ToString());
         if (null == actionState)

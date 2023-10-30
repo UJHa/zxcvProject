@@ -8,7 +8,7 @@ public class KnockBackDamagedState : DamagedState
     private long _knockBackTimeMilliSec = 1000;
     private float _knockBackTimeSec = 1f;
     
-    public KnockBackDamagedState(Character character, eState eState) : base(character, eState)
+    public KnockBackDamagedState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
     

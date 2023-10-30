@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class NpcRunState : RunState
 {
-    public NpcRunState(Character character, eState eState) : base(character, eState)
+    public NpcRunState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 
