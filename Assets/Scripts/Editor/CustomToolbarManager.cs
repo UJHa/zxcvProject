@@ -28,7 +28,9 @@ public class CustomToolbarManager : EditorWindow
         CompilationPipeline.compilationFinished += OnCompilationFinished;
         Application.logMessageReceived -= HandleLog;
         Application.logMessageReceived += HandleLog;
-    } 
+    }
+
+    private ConvertCodeClass _convertCodeClass;
 
     private void ExecuteJsonGenerator()
     {
@@ -37,47 +39,18 @@ public class CustomToolbarManager : EditorWindow
         AddLog($"[testumJson]Application.dataPath({Application.dataPath})");
         ReadFiles(jsonPath);
         ReadFiles(dataClassPath);
+
         // 샘플 Table.cs 읽어오기
-        string sampleCodefilePath = Path.Combine(dataClassPath, "SampleTable.cs");
-        List<string> tableCodeLines = GetFileLines(sampleCodefilePath);
-        int declareStartIndex = 0;
-        int declareEndIndex = 0;
-        for (int i = 0; i < tableCodeLines.Count; i++)
-        {
-            var line = tableCodeLines[i];
-            AddLog($"[codeLine]{line}");
-            if (line.Contains("Declaration Values[Start]"))
-                declareStartIndex = i;
-            if (line.Contains("Declaration Values[End]"))
-                declareEndIndex = i;
-        }
+        _convertCodeClass = new();
+        string tableName = "CharacterRoleState";
+        _convertCodeClass.Init($"{tableName}.json");
+        _convertCodeClass.ConvertVariable(out var codeLineResult);
 
-        List<string> codeLineResult = new();
-
-        if (declareStartIndex < declareEndIndex)
-        {
-            AddLog($"[declare]Success");
-            var declarePrevLines = tableCodeLines.GetRange(0, declareStartIndex);
-            var declareLines = tableCodeLines.GetRange(declareStartIndex, declareEndIndex - declareStartIndex + 1);
-            var declareNextLines = tableCodeLines.GetRange(declareEndIndex + 1, tableCodeLines.Count - (declareEndIndex + 1));
-            codeLineResult = tableCodeLines.GetRange(0, declareStartIndex);
-            codeLineResult.AddRange(declareLines);
-            codeLineResult.AddRange(declareNextLines);
-            // PrintLines("declareCodeLinePrev", declarePrevLines);
-            // // PrintLines("declareCodeLine", new List<string>(){"string profileName;"});
-            // PrintLines("declareCodeLine", declareLines);
-            // PrintLines("declareCodeLineNext", declareNextLines);
-        }
-        else
-        {
-            AddLog($"[declare]Failed");
-        }
-
-        ConvertSample(codeLineResult);
+        ConvertClassName(codeLineResult, tableName);
 
         // 임시 생성
         {
-            string filePath = Path.Combine(dataClassPath, "CharacterStatTableTest.cs");
+            string filePath = Path.Combine(dataClassPath, $"{tableName}Table.cs");
             // File.WriteAllText(filePath, tableCode.Replace("_Sample_", "Test"));
             // todo codeLineResult _sample 변환
             AddLog($"length({codeLineResult.Count})");
@@ -87,11 +60,11 @@ public class CustomToolbarManager : EditorWindow
         }
     }
 
-    private void ConvertSample(List<string> codeLineResult)
+    private void ConvertClassName(List<string> codeLineResult, string tableName)
     {
         for (int i = 0; i < codeLineResult.Count; i++)
         {
-            codeLineResult[i] = codeLineResult[i].Replace("_Sample_", "Test").Replace(Environment.NewLine, "");
+            codeLineResult[i] = codeLineResult[i].Replace("_Sample_", tableName).Replace(Environment.NewLine, "");
         }
     }
 
@@ -115,14 +88,8 @@ public class CustomToolbarManager : EditorWindow
             AddLog($"[testFile]fileName({file.Name})");
         }
     }
-    
-    private List<string> GetFileLines(string path)
-    {
-        var result = File.ReadAllText(path);
-        return result.Split(Environment.NewLine).ToList();
-    }
 
-    private static void AddLog(string log)
+    public static void AddLog(string log)
     {
         if (enableLog)
             _logLines.Add(log);

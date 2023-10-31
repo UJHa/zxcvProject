@@ -1,4 +1,4 @@
 [
-{"id":1,"roleName":"Fighter","roleStateProfile":"Fighter","statProfile":"Fighter"},
-{"id":2,"roleName":"Rapier","roleStateProfile":"Rapier","characterStatProfile":"Rapier"},
+{"id":1,"name":"Fighter","roleStateProfile":"Fighter","statProfile":"Fighter"},
+{"id":2,"name":"Rapier","roleStateProfile":"Rapier","statProfile":"Rapier"},
 ]

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -102,6 +103,14 @@ namespace Utils
             }
 
             return allChilds;
+        }
+
+        public static string ConvertJsonToTableClassName(string fileName)
+        {
+            var jsonName = fileName.Split('.')[0];
+                
+            string fileClassName = $"{jsonName}Table";
+            return $"{char.ToUpper(fileClassName[0])}{fileClassName.Substring(1)}";
         }
     }
 }

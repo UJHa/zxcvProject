@@ -27,10 +27,8 @@ namespace DataClass
                     continue;
                 if (enableLog)
                     Debug.Log($"[testumJson]fileName({file.Name})");
-                var filename = file.Name.Split('.')[0];
-                
-                string fileClassName = $"{filename}Table";
-                fileClassName = $"DataClass.{char.ToUpper(fileClassName[0])}{fileClassName.Substring(1)}";
+                string fileClassName = UmUtil.ConvertJsonToTableClassName(file.Name);
+                fileClassName = $"DataClass.{fileClassName}";
                 Type type = Type.GetType(fileClassName);
                 if (type is null)
                 {
