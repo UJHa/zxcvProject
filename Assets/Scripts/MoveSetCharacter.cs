@@ -17,7 +17,7 @@ public class MoveSetCharacter : MonoBehaviour
     // ChangeAction이 가지고 있는 액션일 때는 json 로드로 생성하는 기능 구현하기
     public void ChangeAction(ActionData actionData)
     {
-        _action = new Action(actionData.actionName);
+        _action = new Action(actionData.name);
         _action.Init();
         _curState = Play(_action);
         PauseAnim();

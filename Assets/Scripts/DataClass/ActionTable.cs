@@ -1,8 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -19,8 +17,9 @@ namespace DataClass
         }
         public ActionData(ActionData argData)
         {
+            // Construct Values[Start]
             id = argData.id;
-            actionName = argData.actionName;
+            name = argData.name;
             roleState = argData.roleState;
             actionType = argData.actionType;
             clipPath = argData.clipPath;
@@ -28,10 +27,12 @@ namespace DataClass
             startTimeRatio = argData.startTimeRatio;
             endTimeRatio = argData.endTimeRatio;
             damageRatio = argData.damageRatio;
+            // Construct Values[End]
         }
 
+        // Declaration Values[Start]
         public int id { get; set; }
-        public string actionName { get; set; }
+        public string name { get; set; }
         public string roleState { get; set; }
         public string actionType { get; set; }
         public string clipPath { get; set; }
@@ -39,9 +40,12 @@ namespace DataClass
         public float startTimeRatio { get; set; }
         public float endTimeRatio { get; set; }
         public float damageRatio { get; set; }
+        // Declaration Values[End]
         public override string ToString()
         {
-            return $"id({id})actionName({actionName})roleState({roleState})action({actionType})speed({speed})clipPath({clipPath})startTimeRatio({startTimeRatio})endTimeRatio({endTimeRatio})damageRatio({damageRatio})";
+            // ToString Values[Start]
+            return $"id({id})name({name})roleState({roleState})actionType({actionType})clipPath({clipPath})speed({speed})startTimeRatio({startTimeRatio})endTimeRatio({endTimeRatio})damageRatio({damageRatio})";
+            // ToString Values[End]
         }
     }
 
@@ -64,62 +68,66 @@ namespace DataClass
                 var jsonData = JsonConvert.DeserializeObject<ActionData>(jToken.ToString());
                 if (enableLog)
                     Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+                // Id Dictionary Values[Start]
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
                     Debug.LogError($"{dataName} have same id({jsonData.id})");
                     continue;
                 }
                 IndexDictionary.Add(jsonData.id, jsonData);
+                // Id Dictionary Values[End]
                 
-                if (nameDictionary.ContainsKey(jsonData.actionName))
+                // name Dictionary Values[Start]
+                if (nameDictionary.ContainsKey(jsonData.name))
                 {
-                    Debug.LogError($"dataName have same key({jsonData.actionName})");
+                    Debug.LogError($"{dataName} have same key({jsonData.name})");
                     continue;
                 }
-                nameDictionary.Add(jsonData.actionName, jsonData);
+                nameDictionary.Add(jsonData.name, jsonData);
+                // name Dictionary Values[End]
             }
         }
 
-        public static ActionData GetData(string argData)
+        public static ActionData GetData(string argKeyName)
         {
             if (false == DataTable.Tables.ContainsKey(tableType))
                 return null;
-            ActionTable actionTable = DataTable.Tables[tableType] as ActionTable;
-            if (null == actionTable)
+            ActionTable table = DataTable.Tables[tableType] as ActionTable;
+            if (null == table)
                 return null;
-            if (false == actionTable.nameDictionary.ContainsKey(argData))
+            if (false == table.nameDictionary.ContainsKey(argKeyName))
                 return null;
-            return new(actionTable.nameDictionary[argData]);
+            return new(table.nameDictionary[argKeyName]);
         }
 
         public static List<ActionData> GetList()
         {
             if (null == _instance)
             {
-                Debug.LogError($"ActionTable is not instantiate!");
+                Debug.LogError($"{tableType} is not instantiate!");
                 return null;
             }
 
             List<ActionData> result = new();
 
-            // 값 복사를 통해서 ActionTable 값과 분리하여 전달
-            foreach (var actionData in _instance.IndexDictionary.Values)
+            // 값 복사를 통해서 Table 값과 분리하여 전달
+            foreach (var data in _instance.IndexDictionary.Values)
             {
-                result.Add(new (actionData));
+                result.Add(new (data));
             }
             return result;
         }
 
-        public static void SetData(string actionName, ActionData action)
+        public static void SetData(string argKeyName, ActionData argData)
         {
-            if (false == _instance.nameDictionary.ContainsKey(actionName))
+            if (false == _instance.nameDictionary.ContainsKey(argKeyName))
             {
-                Debug.LogError($"Don't have actionName({actionName})");
+                Debug.LogError($"Don't have string key({argKeyName})");
                 return;
             }
 
-            _instance.nameDictionary[actionName] = action;
-            _instance.IndexDictionary[action.id] = action;
+            _instance.nameDictionary[argKeyName] = argData;
+            _instance.IndexDictionary[argData.id] = argData;
         }
 
         public static void Export()

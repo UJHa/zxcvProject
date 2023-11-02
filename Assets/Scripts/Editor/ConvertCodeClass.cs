@@ -19,12 +19,12 @@ public class ConvertCodeClass
     private List<string> _templateCodeLines = new();
     private JArray _jsonArray;
     private string _jsonFileName;
-    private ConvertInfo _declareInfo = new() {lines = new()};
-    private ConvertInfo _contructInfo = new() {lines = new()};
-    private ConvertInfo _toStringInfo = new() {lines = new()};
-    public void Init(string jsonFileName)
+    private ConvertInfo _declareInfo;
+    private ConvertInfo _contructInfo;
+    private ConvertInfo _toStringInfo;
+    public void Init()
     {
-        _jsonFileName = jsonFileName;
+        ClearConvertInfos();
         LoadTemplateCodeLines();
         for (int i = 0; i < _templateCodeLines.Count; i++)
         {
@@ -59,9 +59,24 @@ public class ConvertCodeClass
                 _toStringInfo.endIndex = i;
             }
         }
+        AddLog($"[lineCheck]Construct({_contructInfo.startIndex}/{_contructInfo.endIndex})\n" +
+               $"_declareInfo({_declareInfo.startIndex}/{_declareInfo.endIndex})\n" +
+               $"_toStringInfo({_toStringInfo.startIndex}/{_toStringInfo.endIndex})");
+    }
+
+    public void LoadTable(string tableName)
+    {
+        _jsonFileName = $"{tableName}.json";
         LoadJsonFileLines();
     }
-    
+
+    public void ClearConvertInfos()
+    {
+        _declareInfo = new() {lines = new()};
+        _contructInfo = new() {lines = new()};
+        _toStringInfo = new() {lines = new()};
+    }
+
     private void LoadTemplateCodeLines()
     {
         string dataClassPath = UmUtil.GetDataClassPath();

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -17,8 +17,9 @@ namespace DataClass
         }
         public AttackInfoData(AttackInfoData argData)
         {
+            // Construct Values[Start]
             id = argData.id;
-            stateName = argData.stateName;
+            name = argData.name;
             hitboxType = argData.hitboxType;
             damageRatio = argData.damageRatio;
             startRatio = argData.startRatio;
@@ -26,10 +27,12 @@ namespace DataClass
             attackType = argData.attackType;
             airborneHeight = argData.airborneHeight;
             airborneTime = argData.airborneTime;
+            // Construct Values[End]
         }
 
+        // Declaration Values[Start]
         public int id { get; set; }
-        public string stateName { get; set; }
+        public string name { get; set; }
         public string hitboxType { get; set; }
         public float damageRatio { get; set; }
         public float startRatio { get; set; }
@@ -37,9 +40,12 @@ namespace DataClass
         public string attackType { get; set; }
         public float airborneHeight { get; set; }
         public float airborneTime { get; set; }
+        // Declaration Values[End]
         public override string ToString()
         {
-            return $"id({id})stateName({stateName})rangeType({hitboxType})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})airborneHeight({airborneHeight})airborneTime({airborneTime})";
+            // ToString Values[Start]
+            return $"id({id})name({name})hitboxType({hitboxType})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})airborneHeight({airborneHeight})airborneTime({airborneTime})";
+            // ToString Values[End]
         }
     }
 
@@ -62,19 +68,23 @@ namespace DataClass
                 var jsonData = JsonConvert.DeserializeObject<AttackInfoData>(jToken.ToString());
                 if (enableLog)
                     Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+                // Id Dictionary Values[Start]
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
                     Debug.LogError($"{dataName} have same id({jsonData.id})");
                     continue;
                 }
                 IndexDictionary.Add(jsonData.id, jsonData);
+                // Id Dictionary Values[End]
                 
-                if (nameDictionary.ContainsKey(jsonData.stateName))
+                // name Dictionary Values[Start]
+                if (nameDictionary.ContainsKey(jsonData.name))
                 {
-                    Debug.LogError($"{dataName} have same key({jsonData.stateName})");
+                    Debug.LogError($"{dataName} have same key({jsonData.name})");
                     continue;
                 }
-                nameDictionary.Add(jsonData.stateName, jsonData);
+                nameDictionary.Add(jsonData.name, jsonData);
+                // name Dictionary Values[End]
             }
         }
 

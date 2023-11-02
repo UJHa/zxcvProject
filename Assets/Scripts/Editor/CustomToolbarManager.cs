@@ -37,24 +37,42 @@ public class CustomToolbarManager : EditorWindow
         string jsonPath = UmUtil.GetResourceJsonPath();
         string dataClassPath = UmUtil.GetDataClassPath();
         AddLog($"[testumJson]Application.dataPath({Application.dataPath})");
-        ReadFiles(jsonPath);
-        ReadFiles(dataClassPath);
+        // ReadFiles(jsonPath);
+        // ReadFiles(dataClassPath);
 
-        // 샘플 Table.cs 읽어오기
         _convertCodeClass = new();
-        string tableName = "CharacterRoleState";
-        _convertCodeClass.Init($"{tableName}.json");
+        
+        var info = new DirectoryInfo(jsonPath);
+        var fileInfo = info.GetFiles();
+        foreach (var file in fileInfo)
+        {
+            if (file.Name.Contains(".meta"))
+                continue;
+            var tableName = file.Name.Split('.')[0];
+            AddLog($"[executeFile]fileName({file.Name})tableName()");
+            JsonToCodeGenerator(tableName);
+        }
+    }
+
+    private void JsonToCodeGenerator(string tableName)
+    {
+        _convertCodeClass.Init();
+        _convertCodeClass.LoadTable(tableName);
         _convertCodeClass.ConvertVariable(out var codeLineResult);
 
         ConvertClassName(codeLineResult, tableName);
 
-        // 임시 생성
+        // 수정된 파일 쓰기 처리
         {
+            string dataClassPath = UmUtil.GetDataClassPath();
             string filePath = Path.Combine(dataClassPath, $"{tableName}Table.cs");
             // File.WriteAllText(filePath, tableCode.Replace("_Sample_", "Test"));
             // todo codeLineResult _sample 변환
             AddLog($"length({codeLineResult.Count})");
             File.WriteAllLines(filePath, codeLineResult.ToArray(), Encoding.UTF8);
+        }
+        // 저장
+        {
             AssetDatabase.Refresh();
             CompilationPipeline.RequestScriptCompilation();
         }

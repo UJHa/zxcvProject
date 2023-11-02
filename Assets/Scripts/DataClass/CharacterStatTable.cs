@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -17,27 +17,33 @@ namespace DataClass
         }
         public CharacterStatData(CharacterStatData argData)
         {
+            // Construct Values[Start]
             id = argData.id;
-            profileName = argData.profileName;
+            name = argData.name;
             health = argData.health;
             mana = argData.mana;
             strength = argData.strength;
             agility = argData.agility;
             intellect = argData.intellect;
             defense = argData.defense;
+            // Construct Values[End]
         }
 
+        // Declaration Values[Start]
         public int id { get; set; }
-        public string profileName { get; set; }
+        public string name { get; set; }
         public float health { get; set; }
         public float mana { get; set; }
         public float strength { get; set; }
         public float agility { get; set; }
         public float intellect { get; set; }
         public float defense { get; set; }
+        // Declaration Values[End]
         public override string ToString()
         {
-            return $"id({id})profileName({profileName})health({health})mana({mana})strength({strength})agility({agility})intellect({intellect})defense({defense})";
+            // ToString Values[Start]
+            return $"id({id})name({name})health({health})mana({mana})strength({strength})agility({agility})intellect({intellect})defense({defense})";
+            // ToString Values[End]
         }
     }
 
@@ -60,19 +66,23 @@ namespace DataClass
                 var jsonData = JsonConvert.DeserializeObject<CharacterStatData>(jToken.ToString());
                 if (enableLog)
                     Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+                // Id Dictionary Values[Start]
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
                     Debug.LogError($"{dataName} have same id({jsonData.id})");
                     continue;
                 }
                 IndexDictionary.Add(jsonData.id, jsonData);
+                // Id Dictionary Values[End]
                 
-                if (nameDictionary.ContainsKey(jsonData.profileName))
+                // name Dictionary Values[Start]
+                if (nameDictionary.ContainsKey(jsonData.name))
                 {
-                    Debug.LogError($"{dataName} have same key({jsonData.profileName})");
+                    Debug.LogError($"{dataName} have same key({jsonData.name})");
                     continue;
                 }
-                nameDictionary.Add(jsonData.profileName, jsonData);
+                nameDictionary.Add(jsonData.name, jsonData);
+                // name Dictionary Values[End]
             }
         }
 

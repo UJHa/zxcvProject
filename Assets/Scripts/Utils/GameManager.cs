@@ -123,8 +123,8 @@ public class GameManager : MonoBehaviour
         var allActions = ActionTable.GetList();
         foreach (var actionData in allActions)
         {
-            var state = UmUtil.StringToEnum<ActionKey>(actionData.actionName);
-            var action = new Action(actionData.actionName);
+            var state = UmUtil.StringToEnum<ActionKey>(actionData.name);
+            var action = new Action(actionData.name);
             action.Init();
             _actionMap.Add(state, action);
         }

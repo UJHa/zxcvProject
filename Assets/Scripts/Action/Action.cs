@@ -65,7 +65,7 @@ public class Action
 
     public string GetActionName()
     {
-        return _actionData.actionName;
+        return _actionData.name;
     }
 
     public string GetClipPath()

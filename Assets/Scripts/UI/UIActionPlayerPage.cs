@@ -136,35 +136,35 @@ namespace UI
             var allActions = ActionTable.GetList();
             foreach (var actionData in allActions)
             {
-                if (actionData.actionName == ActionKey.NONE.ToString())
+                if (actionData.name == ActionKey.NONE.ToString())
                     continue;
-                _actions.Add(actionData.actionName, actionData);
+                _actions.Add(actionData.name, actionData);
                 Debug.Log($"[testum]actionData({actionData})");
-                _actionInfoBtnPrefab.name = actionData.actionName;
-                if (_actionInfoBtnDict.ContainsKey(actionData.actionName))
+                _actionInfoBtnPrefab.name = actionData.name;
+                if (_actionInfoBtnDict.ContainsKey(actionData.name))
                 {
-                    Debug.LogError($"ScrollView have actionName's UIButton({actionData.actionName})");
+                    Debug.LogError($"ScrollView have actionName's UIButton({actionData.name})");
                     continue;
                 }
                 var btnObj = Instantiate(_actionInfoBtnPrefab, _scrollRect.content);
                 btnObj.name = _actionInfoBtnPrefab.name;
                 btnObj.Init();
-                btnObj.SetText(actionData.actionName);
-                _actionInfoBtnDict.Add(actionData.actionName, btnObj);
+                btnObj.SetText(actionData.name);
+                _actionInfoBtnDict.Add(actionData.name, btnObj);
             }
 
             foreach (var actionData in _actions.Values)
             {
-                var btnObj = _actionInfoBtnDict[actionData.actionName];
+                var btnObj = _actionInfoBtnDict[actionData.name];
                 btnObj.onClick.AddListener(() =>
                 {
                     Debug.Log($"[testum]Click button name({btnObj.name})");
-                    _selectActionName = actionData.actionName;
+                    _selectActionName = actionData.name;
                     SelectButton();
                 });
             }
 
-            _selectActionName = _actions[ActionKey.FIGHTER_IDLE.ToString()].actionName; 
+            _selectActionName = _actions[ActionKey.FIGHTER_IDLE.ToString()].name; 
             _actionInfoBtnDict[_selectActionName].onClick.Invoke();
         }
 

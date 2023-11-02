@@ -1,5 +1,5 @@
 [
-{"id":1,"profileName":"Default","health":5.0,"mana":5.0,"strength":5.0,"agility":5.0,"intellect": 5.0, "defense": 5.0},
-{"id":2,"profileName":"Fighter","health":5.0,"mana":5.0,"strength":5.0,"agility":5.0,"intellect": 5.0, "defense": 5.0},
-{"id":3,"profileName":"Rapier","health":5.0,"mana":5.0,"strength":4.0,"agility":7.0,"intellect": 5.0, "defense": 5.0},
+{"id":1,"name":"Default","health":5.0,"mana":5.0,"strength":5.0,"agility":5.0,"intellect": 5.0, "defense": 5.0},
+{"id":2,"name":"Fighter","health":5.0,"mana":5.0,"strength":5.0,"agility":5.0,"intellect": 5.0, "defense": 5.0},
+{"id":3,"name":"Rapier","health":5.0,"mana":5.0,"strength":4.0,"agility":7.0,"intellect": 5.0, "defense": 5.0},
 ]
