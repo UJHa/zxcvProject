@@ -14,7 +14,7 @@ public class BotPlayer : Character
         RegisterRoleState(eRoleState.JUMP_UP, ActionKey.JUMP_UP, typeof(NpcJumpUpState));
         RegisterRoleState(eRoleState.JUMP_DOWN, ActionKey.JUMP_DOWN, typeof(NpcJumpDownState));
         RegisterRoleState(eRoleState.LANDING, ActionKey.LANDING, typeof(NpcLandingState));
-        RegisterRoleState(eRoleState.WEEK_ATTACK_1, ActionKey.MAGIC_WEEK_ATTACK1, typeof(MagicAttackState));
+        RegisterRoleState(eRoleState.WEEK_ATTACK1, ActionKey.MAGIC_WEEK_ATTACK1, typeof(MagicAttackState));
         _moveSet.Init(gameObject);
         _curRoleState = eRoleState.IDLE;
         _roleStateMap[_curRoleState].StartState();

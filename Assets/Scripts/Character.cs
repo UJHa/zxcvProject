@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using Animancer;
 using DataClass;
 using DG.Tweening;
@@ -232,32 +234,28 @@ public class Character : MonoBehaviour
 
     private void InitStates()
     {
-        // 엄todo : eRoleState에 연결되는 클래스 이름을 연결한 json 데이터 파일 만들기
-        RegisterRoleState(eRoleState.IDLE, ActionKey.FIGHTER_IDLE, typeof(IdleState));
-        RegisterRoleState(eRoleState.WALK, ActionKey.FIGHTER_WALK, typeof(WalkState));
-        RegisterRoleState(eRoleState.RUN, ActionKey.FIGHTER_RUN, typeof(RunState));
-        RegisterRoleState(eRoleState.RUN_STOP, ActionKey.FIGHTER_RUN_STOP, typeof(RunStopState));
-        RegisterRoleState(eRoleState.JUMP_UP, ActionKey.JUMP_UP, typeof(JumpUpState));
-        RegisterRoleState(eRoleState.JUMP_DOWN, ActionKey.JUMP_DOWN, typeof(JumpDownState));
-        RegisterRoleState(eRoleState.LANDING, ActionKey.LANDING, typeof(LandingState));
-        RegisterRoleState(eRoleState.WEEK_ATTACK_1, ActionKey.FIGHTER_WEEK_ATTACK1, typeof(WeekAttackState));
-        RegisterRoleState(eRoleState.WEEK_ATTACK_2, ActionKey.FIGHTER_WEEK_ATTACK2, typeof(WeekAttackState));
-        RegisterRoleState(eRoleState.WEEK_ATTACK_3, ActionKey.FIGHTER_WEEK_ATTACK3, typeof(WeekAttackState));
-        RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_1, ActionKey.FIGHTER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
-        RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_2, ActionKey.FIGHTER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
-        RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_3, ActionKey.FIGHTER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
-        RegisterRoleState(eRoleState.STRONG_ATTACK_1, ActionKey.FIGHTER_STRONG_ATTACK1, typeof(StrongAttackState));
-        RegisterRoleState(eRoleState.STRONG_ATTACK_2, ActionKey.FIGHTER_STRONG_ATTACK2, typeof(StrongAttackState));
-        RegisterRoleState(eRoleState.NORMAL_DAMAGED, ActionKey.NORMAL_DAMAGED, typeof(NormalDamagedState));
-        RegisterRoleState(eRoleState.AIRBORNE_DAMAGED, ActionKey.AIRBORNE_DAMAGED, typeof(AirborneDamagedState));
-        RegisterRoleState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED, ActionKey.AIRBORNE_POWER_DOWN_DAMAGED, typeof(AirBornePowerDownDamagedState));
-        RegisterRoleState(eRoleState.KNOCK_BACK_DAMAGED, ActionKey.KNOCK_BACK_DAMAGED, typeof(KnockBackDamagedState));
-        RegisterRoleState(eRoleState.FLY_AWAY_DAMAGED, ActionKey.FLY_AWAY_DAMAGED, typeof(FlyAwayDamagedState));
-        RegisterRoleState(eRoleState.DAMAGED_AIRBORNE_LOOP, ActionKey.DAMAGED_AIRBORNE_LOOP, typeof(DamagedAirborneLoopState));
-        RegisterRoleState(eRoleState.DAMAGED_LANDING, ActionKey.DAMAGED_LANDING, typeof(DamagedLandingState));
-        RegisterRoleState(eRoleState.WAKE_UP, ActionKey.WAKE_UP, typeof(WakeUpState));
-        RegisterRoleState(eRoleState.DEAD, ActionKey.DEAD, typeof(DeadState));
-        RegisterRoleState(eRoleState.GET_ITEM, ActionKey.GET_ITEM, typeof(GetItemState));
+        SettingRoleState("Default");
+    }
+
+    private void SettingRoleState(string roleStateDataName)
+    {
+        var data = CharacterRoleStateTable.GetData(roleStateDataName);
+        var properties = typeof(CharacterRoleStateData).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        Debug.Log($"[testRoleTable]length({properties.Length})");
+        foreach (var pInfo in properties)
+        {
+            var value = pInfo.GetValue(data);
+            if (value is string[] valueStr && 2 == valueStr.Length)
+            {
+                var roleState = UmUtil.StringToEnum<eRoleState>(Regex.Replace(pInfo.Name, @"(\p{Ll})(\p{Lu})", "$1_$2").ToUpper());
+                var actionKey = UmUtil.StringToEnum<ActionKey>(valueStr[1]);
+                var stateClassType = Type.GetType(valueStr[0]);
+                // Debug.Log($"[testRoleTable]name({pInfo.Name})roleState({UmUtil.StringToEnum<eRoleState>(pInfo.Name.ToUpper())})");
+                // Debug.Log($"[testRoleTable]name({pInfo.Name})roleState({UmUtil.StringToEnum<eRoleState>(roleStateName)})");
+                RegisterRoleState(roleState, actionKey, stateClassType);
+            }
+            // Debug.Log($"[testRoleTable]name({pInfo.Name})value({pInfo.GetValue(data).ToString()})");
+        }
     }
 
     private void TestHelmetEquip()
@@ -1072,21 +1070,7 @@ public class Character : MonoBehaviour
             var equipItem = Instantiate(itemWeapon, partCollider.transform);
             // equipItem.GetRole();
             _curRole = eRole.RAPIER;
-            RegisterRoleState(eRoleState.IDLE, ActionKey.RAPIER_IDLE, typeof(IdleState));
-            RegisterRoleState(eRoleState.WALK, ActionKey.RAPIER_WALK, typeof(WalkState));
-            RegisterRoleState(eRoleState.RUN, ActionKey.RAPIER_RUN, typeof(RunState));
-            RegisterRoleState(eRoleState.RUN_STOP, ActionKey.RAPIER_RUN_STOP, typeof(RunStopState));
-            RegisterRoleState(eRoleState.JUMP_UP, ActionKey.RAPIER_JUMP_UP, typeof(JumpUpState));
-            RegisterRoleState(eRoleState.JUMP_DOWN, ActionKey.RAPIER_JUMP_DOWN, typeof(JumpDownState));
-            RegisterRoleState(eRoleState.LANDING, ActionKey.RAPIER_LANDING, typeof(LandingState));
-            RegisterRoleState(eRoleState.WEEK_ATTACK_1, ActionKey.RAPIER_WEEK_ATTACK1, typeof(WeekAttackState));
-            RegisterRoleState(eRoleState.WEEK_ATTACK_2, ActionKey.RAPIER_WEEK_ATTACK2, typeof(WeekAttackState));
-            RegisterRoleState(eRoleState.WEEK_ATTACK_3, ActionKey.RAPIER_WEEK_ATTACK3, typeof(WeekAttackState));
-            RegisterRoleState(eRoleState.STRONG_ATTACK_1, ActionKey.RAPIER_STRONG_ATTACK1, typeof(StrongAttackState));
-            RegisterRoleState(eRoleState.STRONG_ATTACK_2, ActionKey.RAPIER_STRONG_ATTACK2, typeof(StrongAttackState));
-            RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_1, ActionKey.RAPIER_WEEK_AIR_ATTACK1, typeof(WeekAirAttackState));
-            RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_2, ActionKey.RAPIER_WEEK_AIR_ATTACK2, typeof(WeekAirAttackState));
-            RegisterRoleState(eRoleState.AIR_WEEK_ATTACK_3, ActionKey.RAPIER_WEEK_AIR_ATTACK3, typeof(WeekAirAttackState));
+            SettingRoleState("Rapier");
 
             Destroy(dropItem.gameObject);
         }
