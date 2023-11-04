@@ -154,6 +154,9 @@ public class Character : MonoBehaviour
     [SerializeField] protected eRoleState _prevRoleState;
     [SerializeField] protected eRoleState _curRoleState;
     [SerializeField] protected eRole _curRole = eRole.FIGHTER;
+    
+    // 엄todo : 캐릭터가 날려야할 투사체 정보를 어떻게 가질 지 고민 후 정리
+    [SerializeField] protected GameObject _projectilePos;
 
     protected DrawDebugCharacter _drawDebug;
     protected HumanBoneInfo _humanBoneInfo = new();
@@ -201,6 +204,8 @@ public class Character : MonoBehaviour
         // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
         // TestHelmetEquip();
 
+        SettingProjectilePos();
+
         foreach (var partData in _attackCollisionRangeDatas)
         {
             partData.attackCollider.SetOwner(this);
@@ -232,12 +237,27 @@ public class Character : MonoBehaviour
         StartUI();
     }
 
-    private void InitStates()
+    private void SettingProjectilePos()
     {
-        SettingRoleState("Default");
+        var obj = Resources.Load<GameObject>("Prefabs/Projectile/ProjectilePos");
+        _projectilePos = Instantiate(obj, transform);
     }
 
-    private void SettingRoleState(string roleStateDataName)
+    private void InitStates()
+    {
+        SettingRoleState("Default", true);
+    }
+    
+    public struct RoleStateData
+    {
+        public eRoleState roleState;
+        public ActionKey actionKey;
+        public Type stateClassType;
+    }
+
+    protected Dictionary<string, RoleStateData> _defaultDataMap = new();
+
+    public void SettingRoleState(string roleStateDataName, bool isDefault = false)
     {
         var data = CharacterRoleStateTable.GetData(roleStateDataName);
         var properties = typeof(CharacterRoleStateData).GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -250,11 +270,23 @@ public class Character : MonoBehaviour
                 var roleState = UmUtil.StringToEnum<eRoleState>(Regex.Replace(pInfo.Name, @"(\p{Ll})(\p{Lu})", "$1_$2").ToUpper());
                 var actionKey = UmUtil.StringToEnum<ActionKey>(valueStr[1]);
                 var stateClassType = Type.GetType(valueStr[0]);
-                // Debug.Log($"[testRoleTable]name({pInfo.Name})roleState({UmUtil.StringToEnum<eRoleState>(pInfo.Name.ToUpper())})");
-                // Debug.Log($"[testRoleTable]name({pInfo.Name})roleState({UmUtil.StringToEnum<eRoleState>(roleStateName)})");
-                RegisterRoleState(roleState, actionKey, stateClassType);
+                if (isDefault)
+                {
+                    _defaultDataMap[pInfo.Name] = new()
+                    {
+                        roleState = roleState,
+                        actionKey = actionKey,
+                        stateClassType = stateClassType
+                    };
+                }
+                else
+                {
+                    actionKey = actionKey == default ? _defaultDataMap[pInfo.Name].actionKey : actionKey;
+                    stateClassType = stateClassType == default ? _defaultDataMap[pInfo.Name].stateClassType : stateClassType;
+                }
+                bool isSuccess = RegisterRoleState(roleState, actionKey, stateClassType);
+                Debug.Log($"[setRoleState]{roleState}:[{actionKey}][{stateClassType}][{isSuccess}]");
             }
-            // Debug.Log($"[testRoleTable]name({pInfo.Name})value({pInfo.GetValue(data).ToString()})");
         }
     }
 
@@ -355,7 +387,7 @@ public class Character : MonoBehaviour
     private void FixedUpdate()
     {
         // ground check
-        _groundObjs = GetGroundCheckObjects();
+        RefreshGroundCheckObjects();
         
         _colliderInfos.Clear();
         UpdateWallCollisions(eWallDirection.LEFT, Vector3.left);
@@ -886,10 +918,11 @@ public class Character : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public RaycastHit[] GetGroundCheckObjects()
+    public RaycastHit[] RefreshGroundCheckObjects()
     {
         int layerMask = 1 << LayerMask.NameToLayer("Ground");
         RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.Size / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+        _groundObjs = hits;
         return hits;
     }
     
@@ -944,18 +977,24 @@ public class Character : MonoBehaviour
         var rayObjs = _groundObjs;
         if (null == rayObjs)
             return;
+
+        Vector3 changePos = transform.position;
         foreach (var rayObj in rayObjs)
         {
+            if (rayObj.collider.name.Contains("Slop"))
+                return;
             if (rayObj.transform.TryGetComponent<Ground>(out var ground))
             {
                 var changeHeightPosY = ground.heightPosY - transform.position.y;
                 if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
                 {
                     groundHeight = ground.heightPosY;
-                    transform.position = new Vector3(transform.position.x, groundHeight, transform.position.z);
+                    changePos.y = groundHeight;
                 }
             }
         }
+
+        transform.position = changePos;
     }
 
     private Vector3 GetGroundBoxHalfSize()
@@ -1076,8 +1115,10 @@ public class Character : MonoBehaviour
         }
     }
     
-    protected void RegisterRoleState(eRoleState argRoleState, ActionKey argState, Type type)
+    protected bool RegisterRoleState(eRoleState argRoleState, ActionKey argState, Type type)
     {
+        if (argRoleState == eRoleState.NONE || argState == ActionKey.NONE)
+            return false;
         if (false == _roleStateMap.ContainsKey(argRoleState))
         {
             State state = Activator.CreateInstance(type, this, argState) as State;
@@ -1091,6 +1132,8 @@ public class Character : MonoBehaviour
             else
                 _roleStateMap[argRoleState].SetState(argState);
         }
+
+        return true;
     }
 
     public CharacterStatData GetStatData()
@@ -1132,17 +1175,10 @@ public class Character : MonoBehaviour
     public Projectile SpawnAttackCube(ActionKey curState)
     {
         var projectileCube = Resources.Load<Projectile>("Prefabs/Projectile/ProjectileCube");
-        // 엄todo : 캐릭터가 날려야할 투사체 정보를 어떻게 가질 지 고민 후 정리
-        var projectileSpawnPos = transform.Find("ProjectilePos");
-        if (null != projectileSpawnPos)
-        {
-            projectileCube = Instantiate(projectileCube, projectileSpawnPos);
-            projectileCube.transform.parent = null;
+        projectileCube = Instantiate(projectileCube, _projectilePos.transform);
+        projectileCube.transform.parent = null;
 
-            projectileCube.Init(_directionVector.normalized, 3f, 3f, this);
-            return projectileCube;
-        }
-
-        return null;
+        projectileCube.Init(_directionVector.normalized, 3f, 3f, this);
+        return projectileCube;
     }
 }

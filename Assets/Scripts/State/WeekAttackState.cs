@@ -2,8 +2,6 @@ using Utils;
 
 public class WeekAttackState : AttackState
 {
-    private KeyBindingType _bindingType = KeyBindingType.WEEK_ATTACK;
-    
     public WeekAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
@@ -12,7 +10,6 @@ public class WeekAttackState : AttackState
     {
         base.StartState();
         _moveSet.Play(_action);
-        _bindingType = KeyBindingType.WEEK_ATTACK;
     }
 
     public override void FixedUpdateState()
@@ -28,7 +25,7 @@ public class WeekAttackState : AttackState
     {
         if (_character.IsGround())
         {
-            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), _bindingType);
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState());
             if (eRoleState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
             else if (_moveSet.IsAnimationFinish())

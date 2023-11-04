@@ -33,7 +33,7 @@ public class IdleState : State
 
     public override void FixedUpdateState()
     {
-        var groundObjs = _character.GetGroundCheckObjects();
+        var groundObjs = _character.RefreshGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
@@ -69,12 +69,12 @@ public class IdleState : State
             };
             foreach (var bindingType in keyBindingTypes)
             {
-                var nextState = _moveSet.DetermineNextState(_character.GetCurState(), bindingType);
-                if (eRoleState.NONE != nextState)
-                {
-                    _character.ChangeState(nextState, eStateType.INPUT);
-                    break;
-                }
+                
+            }
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState());
+            if (eRoleState.NONE != nextState)
+            {
+                _character.ChangeState(nextState, eStateType.INPUT);
             }
         }
     }

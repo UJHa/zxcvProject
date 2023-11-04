@@ -26,7 +26,7 @@ public class RunStopState : State
 
     public override void FixedUpdateState()
     {
-        var groundObjs = _character.GetGroundCheckObjects();
+        var groundObjs = _character.RefreshGroundCheckObjects();
         if (0 == groundObjs.Length)
         {
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);

@@ -26,7 +26,7 @@ public class JumpUpState : State
     {
         if (_moveSet.IsAnimationFinish())
             _moveSet.SetAnimationEndRatio();
-        var nextState = _moveSet.DetermineNextState(_character.GetCurState(), KeyBindingType.WEEK_ATTACK);
+        var nextState = _moveSet.DetermineNextState(_character.GetCurState());
         if (eRoleState.NONE != nextState)
             _character.ChangeState(nextState, eStateType.INPUT);
         UpdateMoveXZ();

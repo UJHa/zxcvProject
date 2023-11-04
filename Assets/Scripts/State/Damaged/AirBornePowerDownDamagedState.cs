@@ -24,7 +24,7 @@ public class AirBornePowerDownDamagedState : DamagedState
         _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, 0.1f, 1f);
         _character.SetVelocity(_moveVelocity);
         {
-            var groundObjs = _character.GetGroundCheckObjects();
+            var groundObjs = _character.RefreshGroundCheckObjects();
             if (0 != groundObjs.Length)
                 _character.OnAirborneLanding();
         }

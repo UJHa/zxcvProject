@@ -25,7 +25,7 @@ public class JumpDownState : State
 
     public override void FixedUpdateState()
     {
-        var groundObjs = _character.GetGroundCheckObjects();
+        var groundObjs = _character.RefreshGroundCheckObjects();
         if (groundObjs.Length > 0)
         {
             _character.ChangeRoleState(eRoleState.LANDING);

@@ -28,7 +28,7 @@ public class StrongAttackState : AttackState
     {
         if (_character.IsGround())
         {
-            var nextState = _moveSet.DetermineNextState(_character.GetCurState(), _bindingType);
+            var nextState = _moveSet.DetermineNextState(_character.GetCurState());
             if (eRoleState.NONE != nextState)
                 _character.ChangeState(nextState, eStateType.INPUT);
             else if (_moveSet.IsAnimationFinish())

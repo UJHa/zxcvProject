@@ -53,7 +53,7 @@ public class FlyAwayDamagedState : DamagedState
     {
         // _character.ActiveHitCollider(false, HitColliderType.STAND);
         // _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
-        var groundObjs = _character.GetGroundCheckObjects();
+        var groundObjs = _character.RefreshGroundCheckObjects();
         Debug.Log($"[testum]FinishFlyAway : groundLength({groundObjs.Length})");
         if (0 == groundObjs.Length)
         {

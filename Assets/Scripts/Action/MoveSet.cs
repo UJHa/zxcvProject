@@ -49,6 +49,8 @@ public enum ActionKey
     RAPIER_WEEK_AIR_ATTACK2,
     RAPIER_WEEK_AIR_ATTACK3,
     MAGIC_WEEK_ATTACK1,
+    MAGIC_WEEK_ATTACK2,
+    MAGIC_WEEK_ATTACK3,
 }
 
 public enum ActionType
@@ -90,16 +92,21 @@ public class MoveSet
         _animancer = player.GetComponent<AnimancerComponent>();
     }
     
-    public eRoleState DetermineNextState(eRoleState state, KeyBindingType inputBindingType)
+    public eRoleState DetermineNextState(eRoleState state)
     {
-        if (false == _inputEnableMap.ContainsKey(inputBindingType))
-            return eRoleState.NONE;
-        var enableInfo = _inputEnableMap[inputBindingType];
-        if (false == Input.GetKeyDown(enableInfo.KeyCode))
-            return eRoleState.NONE;
-        if (false == enableInfo.DetermineStateDict.ContainsKey(state))
-            return eRoleState.NONE;
-        return enableInfo.DetermineStateDict[state];
+        var bindingTypes = Enum.GetValues(typeof(KeyBindingType));
+        foreach (KeyBindingType bindingType in bindingTypes)
+        {
+            if (false == _inputEnableMap.ContainsKey(bindingType))
+                continue;
+            var enableInfo = _inputEnableMap[bindingType];
+            if (false == Input.GetKeyDown(enableInfo.KeyCode))
+                continue;
+            if (false == enableInfo.DetermineStateDict.ContainsKey(state))
+                continue;
+            return enableInfo.DetermineStateDict[state];
+        }
+        return eRoleState.NONE;
     }
 
     public void RegisterEnableInputMap(KeyBindingType bindingType, eRoleState[] enableStates, eRoleState determineState)
