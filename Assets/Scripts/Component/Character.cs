@@ -240,7 +240,7 @@ public class Character : MonoBehaviour
     private void SettingProjectilePos()
     {
         var obj = Resources.Load<GameObject>("Prefabs/Projectile/ProjectilePos");
-        _projectilePos = Instantiate(obj, transform);
+        _projectilePos = Instantiate(obj, transform.Find("RotateMain"));
     }
 
     private void InitStates()
@@ -485,7 +485,7 @@ public class Character : MonoBehaviour
             case AttackType.NORMAL:
                 // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
                 // 엄todo: isGround 및 피격 여부로 체크 변경하기
-                if (false == _isGround)
+                if (!IsGround())
                     ChangeState(eRoleState.AIRBORNE_DAMAGED);
                 else
                 {
@@ -556,20 +556,12 @@ public class Character : MonoBehaviour
     {
         return _moveSet;
     }
-    
-    public void MovePosition(Vector3 direction)
-    {
-        MovePosition(direction, _moveSpeed);
-    }
-    
-    public void MovePosition(Vector3 direction, float moveSpeed)
+
+    public Vector3 ComputeMoveVelocityXZ(Vector3 direction)
     {
         Vector3 moveDirection = GetMoveDirectionVector(direction);
-        Debug.Log($"[testWall][{name}]{moveDirection}");
-
-        Vector3 moveVelocity = moveDirection * moveSpeed;
-
-        SetVelocity(moveVelocity);
+        Vector3 moveVelocity = moveDirection * _moveSpeed;
+        return moveVelocity;
     }
 
     public Vector3 GetMoveDirectionVector(Vector3 normDirection)
@@ -699,11 +691,12 @@ public class Character : MonoBehaviour
     public void SetDirectionByVector3(Vector3 argVector, float rotateTime = 0.1f)
     {
         _directionVector = argVector;
+        var rotateMain = transform.Find("RotateMain");
         // var euler = GetEuler(_directionVector);
         if (null != _rotationTween)
             _rotationTween.Kill();
         var rot = GetRotation(_directionVector);
-        _rotationTween = transform.DORotateQuaternion(rot, rotateTime);
+        _rotationTween = rotateMain.DORotateQuaternion(rot, rotateTime);
     }
     
     public Vector3 GetDirectionVector()
@@ -918,13 +911,18 @@ public class Character : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public RaycastHit[] RefreshGroundCheckObjects()
+    public bool RefreshGroundCheckObjects()
     {
         int layerMask = 1 << LayerMask.NameToLayer("Ground");
         RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.Size / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
         _groundObjs = hits;
-        return hits;
+        return _groundObjs.Length > 0;
     }
+    
+    // public bool RefreshGroundCheckObjects()
+    // {
+    //     return _groundDetection.BottomSphereCast();
+    // }
     
     private RaycastHit[] GetWallCheckObjects(Vector3 direction)
     {
@@ -973,28 +971,28 @@ public class Character : MonoBehaviour
 
     public void UpdateGroundHeight(bool forceUpdate = false)
     {
-        float groundHeight = float.MinValue;
-        var rayObjs = _groundObjs;
-        if (null == rayObjs)
-            return;
-
-        Vector3 changePos = transform.position;
-        foreach (var rayObj in rayObjs)
-        {
-            if (rayObj.collider.name.Contains("Slop"))
-                return;
-            if (rayObj.transform.TryGetComponent<Ground>(out var ground))
-            {
-                var changeHeightPosY = ground.heightPosY - transform.position.y;
-                if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
-                {
-                    groundHeight = ground.heightPosY;
-                    changePos.y = groundHeight;
-                }
-            }
-        }
-
-        transform.position = changePos;
+        // float groundHeight = float.MinValue;
+        // var rayObjs = _groundObjs;
+        // if (null == rayObjs)
+        //     return;
+        //
+        // Vector3 changePos = transform.position;
+        // foreach (var rayObj in rayObjs)
+        // {
+        //     if (rayObj.collider.name.Contains("Slop"))
+        //         return;
+        //     if (rayObj.transform.TryGetComponent<Ground>(out var ground))
+        //     {
+        //         var changeHeightPosY = ground.heightPosY - transform.position.y;
+        //         if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
+        //         {
+        //             groundHeight = ground.heightPosY;
+        //             changePos.y = groundHeight;
+        //         }
+        //     }
+        // }
+        //
+        // transform.position = changePos;
     }
 
     private Vector3 GetGroundBoxHalfSize()

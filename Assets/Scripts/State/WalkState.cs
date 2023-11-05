@@ -17,8 +17,7 @@ public class WalkState : State
 
     public override void FixedUpdateState()
     {
-        var groundObjs = _character.RefreshGroundCheckObjects();
-        if (0 == groundObjs.Length)
+        if (!_character.RefreshGroundCheckObjects())
         {
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
@@ -51,6 +50,7 @@ public class WalkState : State
         }
         
         _character.SetDirectionByVector3(vector);
-        _character.MovePosition(vector);
+        var moveVelocity = _character.ComputeMoveVelocityXZ(vector);
+        _character.SetVelocity(moveVelocity);
     }
 }

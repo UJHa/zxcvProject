@@ -26,13 +26,16 @@ public class RunStopState : State
 
     public override void FixedUpdateState()
     {
-        var groundObjs = _character.RefreshGroundCheckObjects();
-        if (0 == groundObjs.Length)
+        if (!_character.RefreshGroundCheckObjects())
         {
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }
         else
-            _character.MovePosition(_character.GetDirectionVector(), _character.GetMoveSpeed() * (_remainRate / 2f));
+        {
+            var moveVelocity = _character.ComputeMoveVelocityXZ(_character.GetDirectionVector());
+            moveVelocity *= (_remainRate / 2f);
+            _character.SetVelocity(moveVelocity);
+        }
     }
 
     public override void EndState()

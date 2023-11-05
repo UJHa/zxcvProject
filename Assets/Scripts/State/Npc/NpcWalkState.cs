@@ -29,7 +29,8 @@ public class NpcWalkState : WalkState
             Vector3 traceDirection = (_character.GetTraceTarget().transform.position - _character.transform.position).normalized;
             traceDirection.y = 0f;
             _character.SetDirectionByVector3(traceDirection);
-            _character.MovePosition(traceDirection);
+            var moveVelocity = _character.ComputeMoveVelocityXZ(traceDirection);
+            _character.SetVelocity(moveVelocity);
             
             if (_character.GetTraceTargetDistanceXZ() > _character.GetAttackStartDistance() + _character.GetWalkTraceDistance())
             {

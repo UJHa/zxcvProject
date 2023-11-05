@@ -14,6 +14,7 @@ public class JumpDownState : State
     {
         base.StartState();
         _moveSet.Play(_action);
+        _character._isGround = false;
 
         _jumpTimer = 0f;
     }
@@ -25,8 +26,7 @@ public class JumpDownState : State
 
     public override void FixedUpdateState()
     {
-        var groundObjs = _character.RefreshGroundCheckObjects();
-        if (groundObjs.Length > 0)
+        if (_character.RefreshGroundCheckObjects())
         {
             _character.ChangeRoleState(eRoleState.LANDING);
             return;
@@ -51,7 +51,6 @@ public class JumpDownState : State
 
         if (Vector3.zero != vector)
             _character.SetDirectionByVector3(vector);
-        var moveVector = _character.GetMoveDirectionVector(vector);
-        _moveVelocity = moveVector * _character.GetMoveSpeed();
+        _moveVelocity = _character.ComputeMoveVelocityXZ(vector);
     }
 }

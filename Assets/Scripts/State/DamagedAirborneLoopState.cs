@@ -30,8 +30,7 @@ public class DamagedAirborneLoopState : DamagedState
         _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, _character.GetGravityDownTime(), _character.GetGravityDownHeight());
         _character.SetVelocity(_moveVelocity);
         {
-            var groundObjs = _character.RefreshGroundCheckObjects();
-            if (0 != groundObjs.Length)
+            if (_character.RefreshGroundCheckObjects())
                 _character.OnAirborneLanding();
         }
     }

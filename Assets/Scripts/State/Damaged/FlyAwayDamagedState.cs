@@ -54,14 +54,13 @@ public class FlyAwayDamagedState : DamagedState
         // _character.ActiveHitCollider(false, HitColliderType.STAND);
         // _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         var groundObjs = _character.RefreshGroundCheckObjects();
-        Debug.Log($"[testum]FinishFlyAway : groundLength({groundObjs.Length})");
-        if (0 == groundObjs.Length)
+        if (_character.RefreshGroundCheckObjects())
         {
-            _character.ChangeState(eRoleState.DAMAGED_AIRBORNE_LOOP);
+            _character.ChangeState(eRoleState.DAMAGED_LANDING);
         }
         else
         {
-            _character.ChangeState(eRoleState.DAMAGED_LANDING);
+            _character.ChangeState(eRoleState.DAMAGED_AIRBORNE_LOOP);
         }
     }
 }
