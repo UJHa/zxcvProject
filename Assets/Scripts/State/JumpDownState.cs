@@ -14,7 +14,7 @@ public class JumpDownState : State
     {
         base.StartState();
         _moveSet.Play(_action);
-        _character._isGround = false;
+        _character.SetGrounding(false);
 
         _jumpTimer = 0f;
     }

@@ -16,7 +16,7 @@ public class DamagedLandingState : DamagedState
         _moveSet.Play(_action, data.damageLandingStart);//0.1f
         _character.SetVelocity(Vector3.zero);
         _character.UpdateGroundHeight(true);
-        _character._isGround = true;
+        _character.SetGrounding(true);
     }
 
     public override void FixedUpdateState()

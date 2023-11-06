@@ -17,7 +17,7 @@ public class JumpUpState : State
         _jumpTimer = 0f;
         AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
         _moveSet.Play(_action, data.jumpUpStart);
-        _character._isGround = false;
+        _character.SetGrounding(false);
         _moveVelocity = Vector3.zero;
         _character.SetVelocity(_moveVelocity);
     }

@@ -16,20 +16,21 @@ public class IdleState : State
     {
         base.StartState();
         _character.ResetMoveSpeed();
-        _character._isGround = true;
+        _character.SetGrounding(true);
         if (false == _moveSet.IsEqualClip(_action))
         {
             // 재생중이던 clip이 idle clip과 동일할 때
             AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
             _moveSet.Play(_action, data.idleStart);
         }
+
+        _character.StopRotateDirection();
         
         _inputTimer.Start();
 
         // Idle도중 움직임이 없으므로 UpdateGroundHeight는 시작 시점 한 번만 처리
         // 엄todo : 이 함수 기반으로 점프 바닥 충돌 위치 보간 테스트하기
         _character.UpdateGroundHeight();
-        _character.SetVelocity(Vector3.zero);
     }
 
     public override void FixedUpdateState()

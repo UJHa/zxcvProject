@@ -15,7 +15,7 @@ public class AirBornePowerDownDamagedState : DamagedState
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _moveSet.Play(_action);
-        _character._isGround = false;
+        _character.SetGrounding(false);
     }
 
     public override void FixedUpdateState()

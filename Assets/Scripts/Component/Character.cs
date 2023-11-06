@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,6 +7,8 @@ using System.Text.RegularExpressions;
 using Animancer;
 using DataClass;
 using DG.Tweening;
+using ECM.Components;
+using ECM.Controllers;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -71,18 +74,13 @@ public struct PartColliderData
     public PartCollider Collider;
 }
 
-// 엄todo : 대쉬 슬라이드로 언덕 오르기/내리기 테스트 및 구현 >>>> 보류
-// // 대각 바닥 오르기 안되는 버그
-// // >> 원인 : 바닥 타입 일 때 posY 갱신으로 인해서 대각 오르기 실패 >> slop 타입, wall 타입 분리 필요
-// // 대각 바닥 내리기 기능 개발
-// // >> slop 타입 분리 필요
-// // >> 바닥 콜리전 없을 때, 경사용 컬리전으로 다시 체크하는 방식?
 // 피격 시 동일한 AttackCollider 인스턴스일 때 무시 처리
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
-    [Header("[ Test Speed ]")]
-    [SerializeField] private Vector3 curVelocity = Vector3.zero;
+    [Header("[ Test rigidbody velocity]")]
+    [SerializeField] private Vector3 _moveVelocity = Vector3.zero;
+    [SerializeField] private Vector3 _platformVelocity = Vector3.zero;
     [Header("[ Test Bot Trace]")]
     [SerializeField] private float _walkTraceDistance = 1f;
     [SerializeField] private float _attackStartDistance = 4f;
@@ -183,6 +181,9 @@ public class Character : MonoBehaviour
     protected float _attackedMaxHeight = 0f;
     protected float _attackedAirborneUpTime = 0f;
 
+    private CharacterMovement _characterMovement;
+    private Coroutine _lateFixedUpdateCoroutine = null;
+
     // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
     private GameObject hitFx;
     
@@ -198,6 +199,9 @@ public class Character : MonoBehaviour
         
         if (TryGetComponent<AnimancerComponent>(out var animancer))
             _animancer = animancer;
+
+        if (TryGetComponent<CharacterMovement>(out var characterMovement))
+            _characterMovement = characterMovement;
 
         _humanBoneInfo.Init(_animancer.Animator);
         
@@ -237,10 +241,37 @@ public class Character : MonoBehaviour
         StartUI();
     }
 
+    public void SetGrounding(bool enable)
+    {
+        if (!enable)
+        {
+            _characterMovement.DisableGrounding();
+        }
+        _isGround = enable;
+    }
+    
+    public void OnEnable()
+    {
+        // Initialize LateFixedUpdate coroutine
+
+        if (_lateFixedUpdateCoroutine != null)
+            StopCoroutine(_lateFixedUpdateCoroutine);
+
+        _lateFixedUpdateCoroutine = StartCoroutine(LateFixedUpdate());
+    }
+
+    public void OnDisable()
+    {
+        // Stop LateFixedUpdate coroutine
+
+        if (_lateFixedUpdateCoroutine != null)
+            StopCoroutine(_lateFixedUpdateCoroutine);
+    }
+
     private void SettingProjectilePos()
     {
         var obj = Resources.Load<GameObject>("Prefabs/Projectile/ProjectilePos");
-        _projectilePos = Instantiate(obj, transform.Find("RotateMain"));
+        _projectilePos = Instantiate(obj, transform);
     }
 
     private void InitStates()
@@ -386,6 +417,20 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (name.Contains("Sub"))
+        {
+            _characterMovement.DetectGroundCustom();
+            if (_characterMovement.isGrounded)
+            {
+                _rigidbody.velocity = _moveVelocity + _characterMovement.platformVelocity;
+                _characterMovement.SnapToGround();
+            }
+            else
+            {
+                _rigidbody.velocity = _moveVelocity;
+            }
+        }
+        
         // ground check
         RefreshGroundCheckObjects();
         
@@ -400,6 +445,32 @@ public class Character : MonoBehaviour
         UpdateWallCollisions(eWallDirection.RIGHT_BACK, (Vector3.right + Vector3.back).normalized);
         
         _roleStateMap[_curRoleState].FixedUpdateState();
+    }
+    
+    private IEnumerator LateFixedUpdate()
+    {
+        var waitTime = new WaitForFixedUpdate();
+            
+        while (true)
+        {
+            yield return waitTime;
+
+            // Solve any possible overlap after internal physics update
+
+            var p = transform.position;
+            var q = transform.rotation;
+
+            // Attempt to snap to a moving platform (if any)
+
+            if (_characterMovement.isOnGround && _characterMovement.isOnPlatform)
+                _characterMovement.SnapToPlatform(ref p, ref q);
+
+            // _characterMovement asdf
+            // Update rigidbody
+
+            // _rigidbody.MovePosition(p);
+            // _rigidbody.MoveRotation(q);
+        }
     }
 
     private void UpdateWallCollisions(eWallDirection eWallDir, Vector3 dirVector)
@@ -418,7 +489,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         _drawDebug?.DrawUpdate();
     }
@@ -691,12 +762,17 @@ public class Character : MonoBehaviour
     public void SetDirectionByVector3(Vector3 argVector, float rotateTime = 0.1f)
     {
         _directionVector = argVector;
-        var rotateMain = transform.Find("RotateMain");
         // var euler = GetEuler(_directionVector);
         if (null != _rotationTween)
             _rotationTween.Kill();
         var rot = GetRotation(_directionVector);
-        _rotationTween = rotateMain.DORotateQuaternion(rot, rotateTime);
+        _rotationTween = transform.DORotateQuaternion(rot, rotateTime);
+    }
+
+    public void StopRotateDirection()
+    {
+        if (null != _rotationTween)
+            _rotationTween.Kill();
     }
     
     public Vector3 GetDirectionVector()
@@ -799,8 +875,8 @@ public class Character : MonoBehaviour
 
     public void SetVelocity(Vector3 argVelocity)
     {
-        _rigidbody.velocity = argVelocity;
-        curVelocity = _rigidbody.velocity;
+        _moveVelocity = argVelocity;
+        _platformVelocity = _characterMovement.platformVelocity;
     }
 
     public void SetMoveSpeedToWalk()
@@ -913,16 +989,18 @@ public class Character : MonoBehaviour
 
     public bool RefreshGroundCheckObjects()
     {
-        int layerMask = 1 << LayerMask.NameToLayer("Ground");
-        RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.Size / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
-        _groundObjs = hits;
-        return _groundObjs.Length > 0;
+        if (name.Contains("Sub"))
+        {
+            return _characterMovement.isGrounded;
+        }
+        else
+        {
+            int layerMask = 1 << LayerMask.NameToLayer("Ground");
+            RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.Size / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
+            _groundObjs = hits;
+            return _groundObjs.Length > 0;
+        }
     }
-    
-    // public bool RefreshGroundCheckObjects()
-    // {
-    //     return _groundDetection.BottomSphereCast();
-    // }
     
     private RaycastHit[] GetWallCheckObjects(Vector3 direction)
     {
@@ -1176,7 +1254,7 @@ public class Character : MonoBehaviour
         projectileCube = Instantiate(projectileCube, _projectilePos.transform);
         projectileCube.transform.parent = null;
 
-        projectileCube.Init(_directionVector.normalized, 3f, 3f, this);
+        projectileCube.Init(projectileCube.transform.forward.normalized, 3f, 3f, this);
         return projectileCube;
     }
 }

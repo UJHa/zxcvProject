@@ -18,7 +18,7 @@ public class FlyAwayDamagedState : DamagedState
         base.StartState();
         _moveSet.Play(_action);
         _flyAwayDeltaTime = 0f;
-        _character._isGround = false;
+        _character.SetGrounding(false);
         var animSpeed = _moveSet.GetClipLength() / _flyAwayTimeSec;
         _moveSet.SetSpeed(animSpeed);
         Debug.Log($"[testum][FlyAway]ClipLength({_moveSet.GetClipLength()})animSpeed({animSpeed})");

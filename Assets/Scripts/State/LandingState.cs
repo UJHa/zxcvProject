@@ -16,7 +16,7 @@ public class LandingState : State
     {
         base.StartState();
         _character.ResetMoveSpeed();
-        _character._isGround = true;
+        _character.SetGrounding(true);
         AnimationFadeInfoData data = _character.GetAnimFadeInfoData();
         _moveSet.Play(_action, data.jumpEnd);
         _inputTimer.Start();

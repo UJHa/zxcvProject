@@ -33,6 +33,7 @@ public class DrawDebugCharacter
         Gizmos.matrix = Matrix4x4.TRS(_character.transform.position, Quaternion.identity, Vector3.one);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(center, _groundCollider.Size);
+        Gizmos.matrix = Matrix4x4.identity;
     }
 
     private void DrawWallCheckBox()
@@ -49,6 +50,7 @@ public class DrawDebugCharacter
                 Gizmos.color = Color.red;
                 var cubePos = Vector3.forward * (collider.radius + _wallCollider.Size.z / 2);
                 Gizmos.DrawWireCube(cubePos, _wallCollider.Size);
+                Gizmos.matrix = Matrix4x4.identity;
             }
         }
     }

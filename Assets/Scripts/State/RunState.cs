@@ -44,9 +44,10 @@ public class RunState : State
             return;
         }
 
-        if (InputManager.Instance.GetButtonDown(KeyBindingType.JUMP))
+        var nextState = _moveSet.DetermineNextState(_character.GetCurState());
+        if (eRoleState.NONE != nextState)
         {
-            _character.ChangeRoleState(eRoleState.JUMP_UP, eStateType.INPUT);
+            _character.ChangeState(nextState, eStateType.INPUT);
             return;
         }
         
