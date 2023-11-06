@@ -459,7 +459,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &388971293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,7 +472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19247aa12964dd2b8bf4ad2ef9b9ce3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _resouarcePath: Prefabs/Character/BotPlayer
+  _resouarcePath: Prefabs/Character/Player
   _prefabName: PlayerSub
   temp: hello
 --- !u!4 &388971294

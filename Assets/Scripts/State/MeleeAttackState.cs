@@ -1,10 +1,8 @@
 using Utils;
 
-public class StrongAttackState : AttackState
+public class MeleeAttackState : AttackState
 {
-    private KeyBindingType _bindingType = KeyBindingType.STRONG_ATTACK;
-    
-    public StrongAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
+    public MeleeAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
 
@@ -12,7 +10,6 @@ public class StrongAttackState : AttackState
     {
         base.StartState();
         _moveSet.Play(_action);
-        _bindingType = KeyBindingType.STRONG_ATTACK;
     }
 
     public override void FixedUpdateState()
@@ -35,7 +32,7 @@ public class StrongAttackState : AttackState
             {
                 _character.ChangeRoleState(eRoleState.IDLE);
             }
-            
+
             bool collisionEnable = _moveSet.IsCollisionEnable(_attackInfoData);
             _character.ActiveAttackCollider(collisionEnable, UmUtil.StringToEnum<HitboxType>(_attackInfoData.hitboxType), _attackInfoData);
         }

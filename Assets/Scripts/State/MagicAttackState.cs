@@ -39,6 +39,7 @@ public class MagicAttackState : AttackState
                 _character.ChangeRoleState(eRoleState.IDLE);
             }
 
+            // 엄todo : action 정보가 spawn을 가질 수 있도록 변경 가능할때 처리하기
             if (!_isAttacked && _moveSet.GetCurNormTime() > _attackRatio)
             {
                 _isAttacked = true;

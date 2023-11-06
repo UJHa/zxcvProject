@@ -1,9 +1,9 @@
 using UnityEngine;
 using Utils;
 
-public class WeekAirAttackState : AttackState
+public class MeleeAirAttackState : AttackState
 {
-    public WeekAirAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
+    public MeleeAirAttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
 
     }

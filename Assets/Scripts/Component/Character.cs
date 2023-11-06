@@ -971,28 +971,28 @@ public class Character : MonoBehaviour
 
     public void UpdateGroundHeight(bool forceUpdate = false)
     {
-        // float groundHeight = float.MinValue;
-        // var rayObjs = _groundObjs;
-        // if (null == rayObjs)
-        //     return;
-        //
-        // Vector3 changePos = transform.position;
-        // foreach (var rayObj in rayObjs)
-        // {
-        //     if (rayObj.collider.name.Contains("Slop"))
-        //         return;
-        //     if (rayObj.transform.TryGetComponent<Ground>(out var ground))
-        //     {
-        //         var changeHeightPosY = ground.heightPosY - transform.position.y;
-        //         if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
-        //         {
-        //             groundHeight = ground.heightPosY;
-        //             changePos.y = groundHeight;
-        //         }
-        //     }
-        // }
-        //
-        // transform.position = changePos;
+        float groundHeight = float.MinValue;
+        var rayObjs = _groundObjs;
+        if (null == rayObjs)
+            return;
+        
+        Vector3 changePos = transform.position;
+        foreach (var rayObj in rayObjs)
+        {
+            if (rayObj.collider.name.Contains("Slop"))
+                return;
+            if (rayObj.transform.TryGetComponent<Ground>(out var ground))
+            {
+                var changeHeightPosY = ground.heightPosY - transform.position.y;
+                if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
+                {
+                    groundHeight = ground.heightPosY;
+                    changePos.y = groundHeight;
+                }
+            }
+        }
+        
+        transform.position = changePos;
     }
 
     private Vector3 GetGroundBoxHalfSize()
