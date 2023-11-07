@@ -22,17 +22,19 @@ public class DamagedAirborneLoopState : DamagedState
         else if (_character.GetPrevState() == eRoleState.AIRBORNE_DAMAGED)
             _moveSet.Play(_action, 0.1f);
         _airTimer = 0f;
+        _moveVelocity = Vector3.zero;
     }
 
     public override void FixedUpdateState()
     {
+        if (_character.RefreshGroundCheckObjects())
+        {
+            _character.ChangeRoleState(eRoleState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
+            return;
+        }
         _airTimer += Time.fixedDeltaTime;
         _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, _character.GetGravityDownTime(), _character.GetGravityDownHeight());
         _character.SetVelocity(_moveVelocity);
-        {
-            if (_character.RefreshGroundCheckObjects())
-                _character.OnAirborneLanding();
-        }
     }
 
     public override void EndState()

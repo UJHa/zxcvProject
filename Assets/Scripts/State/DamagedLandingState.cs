@@ -34,10 +34,11 @@ public class DamagedLandingState : DamagedState
         {
             if (_moveSet.IsAnimationFinish())
             {
+                // 엄todo state 변경 로직 fixedupdate로 옮기기
                 if (_character.IsDead())
-                    _character.ChangeState(eRoleState.DEAD);
+                    _character.ChangeRoleState(eRoleState.DEAD);
                 else
-                    _character.ChangeState(eRoleState.WAKE_UP);
+                    _character.ChangeRoleState(eRoleState.WAKE_UP);
             }
         }
     }

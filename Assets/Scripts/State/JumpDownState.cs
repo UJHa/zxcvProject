@@ -29,6 +29,7 @@ public class JumpDownState : State
         if (_character.RefreshGroundCheckObjects())
         {
             _character.ChangeRoleState(eRoleState.LANDING);
+            _character.SetVelocity(Vector3.zero);
             return;
         }
         // else

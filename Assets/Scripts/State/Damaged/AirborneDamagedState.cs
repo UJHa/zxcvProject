@@ -29,7 +29,7 @@ public class AirborneDamagedState : DamagedState
         if (_character.transform.position.y >= _maxUpHeight)
         {
             Debug.Log($"[testlog] damage up update fin?");
-            _character.ChangeState(eRoleState.DAMAGED_AIRBORNE_LOOP);
+            _character.ChangeRoleState(eRoleState.DAMAGED_AIRBORNE_LOOP);
         }
         else
         {

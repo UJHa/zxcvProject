@@ -182,6 +182,7 @@ public class Character : MonoBehaviour
     protected float _attackedAirborneUpTime = 0f;
 
     private CharacterMovement _characterMovement;
+    private GroundDetection _groundDetection;
     private Coroutine _lateFixedUpdateCoroutine = null;
 
     // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
@@ -202,6 +203,8 @@ public class Character : MonoBehaviour
 
         if (TryGetComponent<CharacterMovement>(out var characterMovement))
             _characterMovement = characterMovement;
+        if (TryGetComponent<GroundDetection>(out var groundDetection))
+            _groundDetection = groundDetection;
 
         _humanBoneInfo.Init(_animancer.Animator);
         
@@ -247,7 +250,7 @@ public class Character : MonoBehaviour
         {
             _characterMovement.DisableGrounding();
         }
-        _isGround = enable;
+        _isGround = IsGround();
     }
     
     public void OnEnable()
@@ -417,23 +420,9 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (name.Contains("Sub"))
-        {
-            _characterMovement.DetectGroundCustom();
-            if (_characterMovement.isGrounded)
-            {
-                _rigidbody.velocity = _moveVelocity + _characterMovement.platformVelocity;
-                _characterMovement.SnapToGround();
-            }
-            else
-            {
-                _rigidbody.velocity = _moveVelocity;
-            }
-        }
-        
         // ground check
         RefreshGroundCheckObjects();
-        
+
         _colliderInfos.Clear();
         UpdateWallCollisions(eWallDirection.LEFT, Vector3.left);
         UpdateWallCollisions(eWallDirection.RIGHT, Vector3.right);
@@ -444,7 +433,63 @@ public class Character : MonoBehaviour
         UpdateWallCollisions(eWallDirection.LEFT_BACK, (Vector3.left + Vector3.back).normalized);
         UpdateWallCollisions(eWallDirection.RIGHT_BACK, (Vector3.right + Vector3.back).normalized);
         
+        while (_onHitQueue.Count > 0)
+        {
+            var hitboxCollider = _onHitQueue[0];
+            if (hitboxCollider.TryGetComponent<AttackCollider>(out var attackCollider))
+            {
+                var attacker = attackCollider.GetOwner();
+                if (attacker != this)
+                    ProcessHit(attackCollider);
+            }
+            _onHitQueue.RemoveAt(0);
+        }
+
+        if (_changeStates.Count > 0)
+        {
+            string stateLog = $"[{name}][testState]Change prev({_curRoleState})";
+            // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
+            eRoleState state = eRoleState.NONE;
+            if (_changeStates.Count == 1)
+                state = _changeStates[0].state;
+            else
+                state = SelectNextState();
+            _roleStateMap[_curRoleState].EndState();
+            _roleStateMap[state].StartState();
+            _prevRoleState = _curRoleState;
+            _curRoleState = state;
+            _changeStates.Clear();
+            stateLog += $"cur({_curRoleState})count({_changeStates.Count})pos({transform.position})velocity({_rigidbody.velocity})isground({IsGround()}";
+            Debug.Log($"{stateLog}");
+        }
+        
+        DetectGround();
+        
         _roleStateMap[_curRoleState].FixedUpdateState();
+    }
+
+    public void DetectGround()
+    {
+        if (name.Contains("Sub"))
+        {
+            float castDistance = _groundDetection.castDistance;
+            if (!_characterMovement.isGrounded)
+            {
+                castDistance = _moveVelocity.y * Time.fixedDeltaTime;
+            }
+            _groundDetection.castDistance = Mathf.Abs(castDistance);
+            _characterMovement.DetectGroundCustom();
+            if (_characterMovement.isGrounded)
+            {
+                _moveVelocity.y = 0f;
+                _rigidbody.velocity = _moveVelocity + _characterMovement.platformVelocity;
+                _characterMovement.SnapToGround();
+            }
+            else
+            {
+                _rigidbody.velocity = _moveVelocity;
+            }
+        }
     }
     
     private IEnumerator LateFixedUpdate()
@@ -464,12 +509,11 @@ public class Character : MonoBehaviour
 
             if (_characterMovement.isOnGround && _characterMovement.isOnPlatform)
                 _characterMovement.SnapToPlatform(ref p, ref q);
-
-            // _characterMovement asdf
+            
             // Update rigidbody
 
-            // _rigidbody.MovePosition(p);
-            // _rigidbody.MoveRotation(q);
+            _rigidbody.MovePosition(p);
+            _rigidbody.MoveRotation(q);
         }
     }
 
@@ -503,34 +547,7 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_changeStates.Count > 0)
-        {
-            // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
-            Debug.Log($"[testState]Change prev({_curRoleState}) count({_changeStates.Count})");
-            eRoleState state = eRoleState.NONE;
-            if (_changeStates.Count == 1)
-                state = _changeStates[0].state;
-            else
-                state = SelectNextState();
-            _roleStateMap[_curRoleState].EndState();
-            _roleStateMap[state].StartState();
-            _prevRoleState = _curRoleState;
-            _curRoleState = state;
-            _changeStates.Clear();
-        }
         _roleStateMap[_curRoleState].UpdateState();
-
-        while (_onHitQueue.Count > 0)
-        {
-            var hitboxCollider = _onHitQueue[0];
-            if (hitboxCollider.TryGetComponent<AttackCollider>(out var attackCollider))
-            {
-                var attacker = attackCollider.GetOwner();
-                if (attacker != this)
-                    ProcessHit(attackCollider);
-            }
-            _onHitQueue.RemoveAt(0);
-        }
     }
     
     private void ProcessHit(AttackCollider attackCollider)
@@ -557,34 +574,35 @@ public class Character : MonoBehaviour
                 // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
                 // 엄todo: isGround 및 피격 여부로 체크 변경하기
                 if (!IsGround())
-                    ChangeState(eRoleState.AIRBORNE_DAMAGED);
+                    ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
                 else
                 {
                     if (IsDead())
-                        ChangeState(eRoleState.DEAD);
+                        ChangeRoleState(eRoleState.DEAD);
                     else
-                        ChangeState(eRoleState.NORMAL_DAMAGED);
+                        ChangeRoleState(eRoleState.NORMAL_DAMAGED);
                 }
                 break;
             case AttackType.AIRBORNE:
                 // 방향을 때린 상대의 방향으로 회전시키기
                 RotateToPosition(attacker.transform.position);
-                ChangeState(eRoleState.AIRBORNE_DAMAGED);
+                ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
                 break;
             case AttackType.AIR_POWER_DOWN:
-                ChangeState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED);
+                Debug.Log($"[{name}][testPowerdown]{transform.position}rvel({_rigidbody.velocity})({_moveVelocity})");
+                ChangeRoleState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED);
                 break;
             case AttackType.KNOCK_BACK:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
                 Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
-                ChangeState(eRoleState.KNOCK_BACK_DAMAGED);
+                ChangeRoleState(eRoleState.KNOCK_BACK_DAMAGED);
                 break;
             case AttackType.FLY_AWAY:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
                 Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
-                ChangeState(eRoleState.FLY_AWAY_DAMAGED);
+                ChangeRoleState(eRoleState.FLY_AWAY_DAMAGED);
                 break;
         }
     }
@@ -854,7 +872,7 @@ public class Character : MonoBehaviour
 
     public void ChangeState(eRoleState state, eStateType stateType = eStateType.NONE)
     {
-        Debug.Log($"[{name}][testState]State Change prev({_curRoleState}) cur({state}) count({_changeStates.Count})");
+        Debug.Log($"[{name}][testState]Request Change prev({_curRoleState}) cur({state}) count({_changeStates.Count})pos({transform.position})");
         _changeStates.Add(new StateInfo()
         {
             state = state,
@@ -896,7 +914,7 @@ public class Character : MonoBehaviour
 
     public bool IsGround()
     {
-        return _isGround;
+        return _characterMovement.isGrounded;
     }
     
     public bool IsDead()
@@ -975,12 +993,6 @@ public class Character : MonoBehaviour
         SetDirectionByVector3(vector);
     }
 
-    public void OnAirborneLanding()
-    {
-        if (_curRoleState != eRoleState.DAMAGED_LANDING)
-            ChangeState(eRoleState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
-    }
-
     public virtual void DeadDisable()
     {
         // 이건 deadState 이후 시체가 사라질 때 처리하는 함수로 쓰자.
@@ -1049,27 +1061,31 @@ public class Character : MonoBehaviour
 
     public void UpdateGroundHeight(bool forceUpdate = false)
     {
-        float groundHeight = float.MinValue;
-        var rayObjs = _groundObjs;
-        if (null == rayObjs)
-            return;
+        // float groundHeight = float.MinValue;
+        // var rayObjs = _groundObjs;
+        // if (null == rayObjs)
+        //     return;
+        //
+        // Vector3 changePos = transform.position;
+        // foreach (var rayObj in rayObjs)
+        // {
+        //     if (rayObj.collider.name.Contains("Slop"))
+        //         return;
+        //     if (rayObj.transform.TryGetComponent<Ground>(out var ground))
+        //     {
+        //         var changeHeightPosY = ground.heightPosY - transform.position.y;
+        //         if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
+        //         {
+        //             groundHeight = ground.heightPosY;
+        //             changePos.y = groundHeight;
+        //         }
+        //     }
+        // }
+        //
+        // transform.position = changePos;
         
-        Vector3 changePos = transform.position;
-        foreach (var rayObj in rayObjs)
-        {
-            if (rayObj.collider.name.Contains("Slop"))
-                return;
-            if (rayObj.transform.TryGetComponent<Ground>(out var ground))
-            {
-                var changeHeightPosY = ground.heightPosY - transform.position.y;
-                if (groundHeight < ground.heightPosY && (changeHeightPosY < 0.2f || forceUpdate))
-                {
-                    groundHeight = ground.heightPosY;
-                    changePos.y = groundHeight;
-                }
-            }
-        }
-        
+        var changePos = transform.position;
+        changePos.y = _groundDetection.groundPoint.y;
         transform.position = changePos;
     }
 

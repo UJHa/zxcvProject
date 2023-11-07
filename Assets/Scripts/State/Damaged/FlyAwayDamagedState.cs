@@ -45,6 +45,7 @@ public class FlyAwayDamagedState : DamagedState
         if (_moveSet.IsAnimationFinish())
             _moveSet.PauseAnimation();
 
+        // 엄todo state 변경 로직 fixedupdate로 옮기기
         if (_flyAwayTimeSec <= _flyAwayDeltaTime)
             FinishFlyAway();
     }
@@ -56,11 +57,11 @@ public class FlyAwayDamagedState : DamagedState
         var groundObjs = _character.RefreshGroundCheckObjects();
         if (_character.RefreshGroundCheckObjects())
         {
-            _character.ChangeState(eRoleState.DAMAGED_LANDING);
+            _character.ChangeRoleState(eRoleState.DAMAGED_LANDING);
         }
         else
         {
-            _character.ChangeState(eRoleState.DAMAGED_AIRBORNE_LOOP);
+            _character.ChangeRoleState(eRoleState.DAMAGED_AIRBORNE_LOOP);
         }
     }
 }
