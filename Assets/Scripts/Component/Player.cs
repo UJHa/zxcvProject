@@ -7,7 +7,7 @@ public class Player : Character
     void Start()
     {
         _directionVector = Vector3.back;
-        SettingRoleState("Magic");
+        // SettingRoleState("Magic");
 
         // 엄todo : MoveSet 공격 콤보 연결 노드 시스템 데이터 기반 제어 기능 개발 필요
         _moveSet.Init(gameObject);

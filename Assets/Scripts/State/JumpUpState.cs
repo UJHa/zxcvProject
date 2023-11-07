@@ -28,7 +28,7 @@ public class JumpUpState : State
             _moveSet.SetAnimationEndRatio();
         var nextState = _moveSet.DetermineNextState(_character.GetCurState());
         if (eRoleState.NONE != nextState)
-            _character.ChangeState(nextState, eStateType.INPUT);
+            _character.ChangeRoleState(nextState, eStateType.INPUT);
         UpdateMoveXZ();
     }
 
@@ -44,6 +44,7 @@ public class JumpUpState : State
         // _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer, _character.GetJumpUpMaxTimer(), _character.GetJumpMaxHeight());
         _moveVelocity.y = _character.GetJumpUpVelocity(_jumpTimer, _character.GetJumpUpMaxTimer(), _character.GetJumpMaxHeight());
         _character.SetVelocity(_moveVelocity);
+        _character.SetGrounding(false);
         // Debug.Log($"[jumpup]timer({_jumpTimer}) GetVelocity({_character.GetJumpUpVelocity(_jumpTimer)}), position({_character.transform.position}), rigid pos({_character.GetRigidbody().position})");
     }
 

@@ -28,7 +28,7 @@ public class MeleeAirAttackState : AttackState
     {
         var nextState = _moveSet.DetermineNextState(_character.GetCurState());
         if (eRoleState.NONE != nextState)
-            _character.ChangeState(nextState, eStateType.INPUT);
+            _character.ChangeRoleState(nextState, eStateType.INPUT);
         else if (_moveSet.IsAnimationFinish())
         {
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);

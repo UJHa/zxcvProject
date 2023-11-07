@@ -16,17 +16,20 @@ public class AirBornePowerDownDamagedState : DamagedState
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         _moveSet.Play(_action);
         _character.SetGrounding(false);
+        _moveVelocity = Vector3.zero;
     }
 
     public override void FixedUpdateState()
     {
+        if (_character.RefreshGroundCheckObjects())
+        {
+            _character.ChangeRoleState(eRoleState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
+            _character.SetVelocity(Vector3.zero);
+            return;
+        }
         _airTimer += Time.fixedDeltaTime;
         _moveVelocity.y = -1f * _character.GetAirBoneDownVelocity(_airTimer, 0.1f, 1f);
         _character.SetVelocity(_moveVelocity);
-        {
-            if (_character.RefreshGroundCheckObjects())
-                _character.OnAirborneLanding();
-        }
     }
 
     public override void EndState()
