@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float _moveDistance;
     [SerializeField] private Character _owner;
     private float _curMoveTotal = 0f;
+    private HitInfo _hitInfo = new();
     
     private Tween _moveTween = null;
     
@@ -30,13 +31,16 @@ public class Projectile : MonoBehaviour
         if (_curMoveTotal > _moveDistance)
             Destroy(gameObject);
     }
-
-    public void SetAttackInfo(AttackInfoData attackInfoData)
+    
+    public void SetHitInfo(AttackInfoData attackInfoData)
     {
-        if (TryGetComponent<AttackCollider>(out var attackCollider))
-        {
-            attackCollider.SetOwner(_owner);
-            attackCollider.SetAttackInfo(attackInfoData);
-        }
+        _hitInfo.Attacker = _owner;
+        _hitInfo.AttackInfoData = attackInfoData;
+        _hitInfo.RaycastHit = default;
+    }
+
+    public HitInfo GetHitInfo()
+    {
+        return _hitInfo;
     }
 }

@@ -17,8 +17,10 @@ public class HitCollider : MonoBehaviour
         // Debug.Log($"[testOther]other({other.name})");
         if (null != _character)
         {
-            if (other.TryGetComponent<AttackCollider>(out var attackCollider) && attackCollider.GetOwner())
-                _character.OnHit(other);
+            // if (other.TryGetComponent<AttackCollider>(out var attackCollider) && attackCollider.GetOwner())
+            //     _character.OnHit(other);
+            if (other.TryGetComponent<Projectile>(out var projectile))
+                _character.OnHit(projectile.GetHitInfo());
         }
     }
 
@@ -30,5 +32,10 @@ public class HitCollider : MonoBehaviour
     public Character GetCharacter()
     {
         return _character;
+    }
+
+    public void OnHit(HitInfo hitInfo)
+    {
+        _character.OnHit(hitInfo);
     }
 }

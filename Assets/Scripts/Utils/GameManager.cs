@@ -141,7 +141,6 @@ public class GameManager : MonoBehaviour
                 Debug.LogError($"Error _attackInfoMap contains key({state})");
                 continue;
             }
-            // action.CreateHitboxInfo()
             _attackInfoMap.Add(state, AttackInfoTable.GetData(stateName));
         }
     }

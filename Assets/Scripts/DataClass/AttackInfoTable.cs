@@ -25,6 +25,8 @@ namespace DataClass
             startRatio = argData.startRatio;
             endRatio = argData.endRatio;
             attackType = argData.attackType;
+            offset = argData.offset;
+            size = argData.size;
             airborneHeight = argData.airborneHeight;
             airborneTime = argData.airborneTime;
             // Construct Values[End]
@@ -38,13 +40,15 @@ namespace DataClass
         public float startRatio { get; set; }
         public float endRatio { get; set; }
         public string attackType { get; set; }
+        public float[] offset { get; set; }
+        public float[] size { get; set; }
         public float airborneHeight { get; set; }
         public float airborneTime { get; set; }
         // Declaration Values[End]
         public override string ToString()
         {
             // ToString Values[Start]
-            return $"id({id})name({name})hitboxType({hitboxType})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})airborneHeight({airborneHeight})airborneTime({airborneTime})";
+            return $"id({id})name({name})hitboxType({hitboxType})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})offset({offset})size({size})airborneHeight({airborneHeight})airborneTime({airborneTime})";
             // ToString Values[End]
         }
     }

@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AttackState : State
 {
+    protected HashSet<int> _instanceIds = new();
     public AttackState(Character character, ActionKey actionKey) : base(character, actionKey)
     {
     }
@@ -9,6 +11,7 @@ public class AttackState : State
     public override void StartState()
     {
         base.StartState();
+        _instanceIds.Clear();
         _character.SetVelocity(Vector3.zero);
     }
 
@@ -18,7 +21,6 @@ public class AttackState : State
 
     public override void EndState()
     {
-        _character.ActiveAttackColliders(false);
     }
 
     public override void UpdateState()

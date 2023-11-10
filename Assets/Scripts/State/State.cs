@@ -10,20 +10,23 @@ public abstract class State
 
     public State(Character character, ActionKey actionKey)
     {
-        this._character = character;
+        _character = character;
         _moveSet = _character.GetMoveSet();
         _actionKey = actionKey;
     }
 
     public virtual void StartState()
     {
-        _character.ActiveAttackColliders(false);
         _character.ActiveHitCollider(true, HitColliderType.STAND);
         _action = GameManager.Instance.GetAction(_actionKey);
         _attackInfoData = AttackInfoTable.GetData(_actionKey.ToString());
     }
     public abstract void UpdateState();
     public abstract void FixedUpdateState();
+
+    public virtual void DrawGizmosUpdateState()
+    {
+    }
 
     public abstract void EndState();
 

@@ -132,11 +132,6 @@ public class Character : MonoBehaviour
     private Dictionary<HitColliderType, List<HitCollider>> _hitColliderMap = new();
     
     [Header("[ Attack Collider ]")]
-    [FormerlySerializedAs("_attackPartDatas")]
-    [SerializeField] private List<AttackPartData> _attackCollisionRangeDatas = new();
-    private Dictionary<HitboxType, AttackCollider> _attackCollisionRangeMap = new();
-    
-    [Header("[ Attack Collider ]")]
     [FormerlySerializedAs("_partColliderDatas")]
     [SerializeField] private List<PartColliderData> _equipPartColliderDatas = new();
     private Dictionary<ColliderType, PartCollider> _equipPartColliderMap = new();
@@ -175,8 +170,8 @@ public class Character : MonoBehaviour
 
     protected MoveSet _moveSet = new();
     protected AnimancerComponent _animancer;
-
-    private List<Collider> _onHitQueue = new();
+    
+    private List<HitInfo> _onHitQueue = new();
 
     protected float _attackedMaxHeight = 0f;
     protected float _attackedAirborneUpTime = 0f;
@@ -212,13 +207,6 @@ public class Character : MonoBehaviour
         // TestHelmetEquip();
 
         SettingProjectilePos();
-
-        foreach (var partData in _attackCollisionRangeDatas)
-        {
-            partData.attackCollider.SetOwner(this);
-            if (false == _attackCollisionRangeMap.ContainsKey(partData.attackPart))
-                _attackCollisionRangeMap.Add(partData.attackPart, partData.attackCollider);
-        }
 
         foreach (var hitCollider in _hitColliders)
         {
@@ -432,16 +420,11 @@ public class Character : MonoBehaviour
         UpdateWallCollisions(eWallDirection.RIGHT_FRONT, (Vector3.right + Vector3.forward).normalized);
         UpdateWallCollisions(eWallDirection.LEFT_BACK, (Vector3.left + Vector3.back).normalized);
         UpdateWallCollisions(eWallDirection.RIGHT_BACK, (Vector3.right + Vector3.back).normalized);
-        
+
         while (_onHitQueue.Count > 0)
         {
-            var hitboxCollider = _onHitQueue[0];
-            if (hitboxCollider.TryGetComponent<AttackCollider>(out var attackCollider))
-            {
-                var attacker = attackCollider.GetOwner();
-                if (attacker != this)
-                    ProcessHit(attackCollider);
-            }
+            var hitInfo = _onHitQueue[0];
+            ProcessHit(hitInfo);
             _onHitQueue.RemoveAt(0);
         }
 
@@ -535,10 +518,8 @@ public class Character : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        _roleStateMap[_curRoleState].DrawGizmosUpdateState();
         _drawDebug?.DrawUpdate();
-        Gizmos.color = Color.blue;
-        Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero + hitboxOffset, castSize);
     }
     
     public void ClearAttackInfoData()
@@ -546,47 +527,25 @@ public class Character : MonoBehaviour
         _attackedMaxHeight = 0f;
         _attackedAirborneUpTime = 0f;
     }
-    
-    // attackInfo에서 가져올 값들
-    public float castDistance = 0f;
-    public Vector3 castSize = Vector3.one;
-    public Vector3 hitboxOffset;
-    public LayerMask castMask = ~0;
 
     // Update is called once per frame
     void Update()
     {
         _roleStateMap[_curRoleState].UpdateState();
-        if (InputManager.Instance.GetButtonDown(KeyBindingType.WEEK_ATTACK))
-        {
-            RaycastHit hit;
-            bool isHit = Physics.BoxCast(transform.position + hitboxOffset, castSize / 2f, transform.forward, out hit, transform.rotation, castDistance, castMask);
-
-            // BoxCast의 충돌 결과를 확인합니다.
-            if (isHit)
-            {
-                Debug.Log("BoxCast 충돌!");
-                // 충돌한 오브젝트에 대한 추가 처리를 수행할 수 있습니다.
-            }
-        }
     }
     
-    private void ProcessHit(AttackCollider attackCollider)
+    private void ProcessHit(HitInfo hitInfo)
     {
-        var attacker = attackCollider.GetOwner();
-        AttackInfoData attackInfo = attackCollider.GetAttackInfo();
+        var attacker = hitInfo.Attacker;
+        AttackInfoData attackInfo = hitInfo.AttackInfoData;
         AttackType attackType = UmUtil.StringToEnum<AttackType>(attackInfo.attackType);
         _attackedMaxHeight = attackInfo.airborneHeight;
         _attackedAirborneUpTime = attackInfo.airborneTime;
         var damage = attackInfo.damageRatio * attacker._strength;
         SetDamage(damage);
-        var closePos = attackCollider.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+        var closePos = hitInfo.RaycastHit.point;
         var hitFxObj = Instantiate(hitFx);
         hitFxObj.transform.position = closePos;
-        if (attackCollider.TryGetComponent<Projectile>(out var projectile))
-        {
-            Destroy(projectile.gameObject);
-        }
         switch (attackType)
         {
             case AttackType.NONE:
@@ -996,15 +955,11 @@ public class Character : MonoBehaviour
         return (Vector3.Distance(traceTarget.transform.position, transform.position) > findRange);
     }
 
-    public void OnHit(Collider other)
+    public void OnHit(HitInfo hitInfo)
     {
-        // if (eState.DEAD == _curState)
-        //     return;
         if (eRoleState.DEAD == _curRoleState)
             return;
-        // 피해 받았을때 진입
-        // other : attacker
-        _onHitQueue.Add(other);
+        _onHitQueue.Add(hitInfo);
     }
 
     public void RotateToPosition(Vector3 argPosition)
@@ -1165,21 +1120,6 @@ public class Character : MonoBehaviour
             return false;
         return _colliderInfos[wallDir].Count > 0;
     }
-
-    public void ActiveAttackColliders(bool enable)
-    {
-        foreach (var rangeType in _attackCollisionRangeMap.Keys)
-        {
-            _attackCollisionRangeMap[rangeType].EnableCollider(enable);
-        }
-    }
-    public void ActiveAttackCollider(bool enable, HitboxType colliderType, AttackInfoData attackInfoData)
-    {
-        if (false == _attackCollisionRangeMap.ContainsKey(colliderType))
-            return;
-        _attackCollisionRangeMap[colliderType].EnableCollider(enable);
-        _attackCollisionRangeMap[colliderType].SetAttackInfo(attackInfoData);
-    }
     
     public void ActiveHitCollider(bool enable, HitColliderType colliderType)
     {
@@ -1294,15 +1234,28 @@ public class Character : MonoBehaviour
         return projectileCube;
     }
 
-    public Character[] HitBoxCast(AttackInfoData attackInfoData)
+    public RaycastHit[] HitBoxCast(Vector3 offset, Vector3 size)
     {
-        RaycastHit[] hits = Physics.BoxCastAll(transform.position + hitboxOffset, castSize / 2f, transform.forward, transform.rotation, castDistance, castMask);
-        List<Character> result = new();
+        LayerMask layer = ~0; // everything
+        RaycastHit[] hits = Physics.BoxCastAll(transform.position + transform.rotation * offset, size / 2f, transform.forward, transform.rotation, 0f, layer);
+        List<RaycastHit> result = new();
         foreach (var hit in hits)
         {
             if (hit.collider.TryGetComponent<HitCollider>(out var hitCollider)
                 && hitCollider.GetCharacter().GetInstanceID() != GetInstanceID())
-                result.Add(hitCollider.GetCharacter());
+            {
+                Vector3 rayStartPos = transform.position;
+                rayStartPos.y += offset.y;
+                // 정확한 타격 지점 확인용 물리 처리
+                var rayHits = Physics.RaycastAll(rayStartPos, transform.forward, size.z, layer);
+                foreach (var rayHit in rayHits)
+                {
+                    if (rayHit.collider == hit.collider)
+                    {
+                        result.Add(rayHit);
+                    }
+                }
+            }
         }
         return result.ToArray();
     }

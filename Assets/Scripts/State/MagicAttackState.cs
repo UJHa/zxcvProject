@@ -45,10 +45,8 @@ public class MagicAttackState : AttackState
                 _isAttacked = true;
                 var projectile = _character.SpawnAttackCube(_actionKey);
                 Debug.Log($"[testMagic]Attack! {_moveSet.GetCurNormTime()}");
-                projectile.SetAttackInfo(_attackInfoData);
+                projectile.SetHitInfo(_attackInfoData);
             }
-            // bool collisionEnable = _moveSet.IsCollisionEnable(_attackInfoData);
-            // _character.ActiveAttackCollider(collisionEnable, UmUtil.StringToEnum<HitboxType>(_attackInfoData.hitboxType), _attackInfoData);
         }
     }
 }
