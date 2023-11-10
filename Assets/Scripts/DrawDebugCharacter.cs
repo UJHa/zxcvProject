@@ -24,8 +24,14 @@ public class DrawDebugCharacter
     {
         DrawGroundCheckBox();
         DrawWallCheckBox();
+        DrawHitBox();
     }
-    
+
+    private void DrawHitBox()
+    {
+        
+    }
+
     private void DrawGroundCheckBox()
     {
         Vector3 center = new(0f, - _groundCollider.Size.y / 2, 0f);

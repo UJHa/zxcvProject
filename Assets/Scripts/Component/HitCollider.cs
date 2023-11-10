@@ -26,4 +26,9 @@ public class HitCollider : MonoBehaviour
     {
         return _hitColliderType;
     }
+
+    public Character GetCharacter()
+    {
+        return _character;
+    }
 }

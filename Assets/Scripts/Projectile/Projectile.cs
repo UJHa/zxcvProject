@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
     {
         Vector3 moveVector = _moveDirection * _moveSpeed * Time.fixedDeltaTime;
         _curMoveTotal += moveVector.magnitude;
-        transform.position += moveVector;
+        // transform.position += moveVector;
         if (_curMoveTotal > _moveDistance)
             Destroy(gameObject);
     }

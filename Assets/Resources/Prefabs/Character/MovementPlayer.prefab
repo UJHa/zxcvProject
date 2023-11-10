@@ -2178,6 +2178,12 @@ MonoBehaviour:
   _curRole: 0
   _projectilePos: {fileID: 0}
   _isGround: 0
+  castDistance: 1
+  castSize: {x: 1, y: 1, z: 1}
+  hitboxOffset: {x: 0, y: 0, z: 0}
+  castMask:
+    serializedVersion: 2
+    m_Bits: 2147483647
   traceTarget: {fileID: 0}
 --- !u!54 &6136724877743868229
 Rigidbody:

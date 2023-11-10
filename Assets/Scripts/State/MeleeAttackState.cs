@@ -1,3 +1,4 @@
+using UnityEngine;
 using Utils;
 
 public class MeleeAttackState : AttackState
@@ -35,6 +36,14 @@ public class MeleeAttackState : AttackState
 
             bool collisionEnable = _moveSet.IsCollisionEnable(_attackInfoData);
             _character.ActiveAttackCollider(collisionEnable, UmUtil.StringToEnum<HitboxType>(_attackInfoData.hitboxType), _attackInfoData);
+            if (collisionEnable)
+            {
+                 Character[] characters = _character.HitBoxCast(_attackInfoData);
+                 foreach (var attackedCharacter in characters)
+                 {
+                     Debug.Log($"[testAttack]name({attackedCharacter})");
+                 }
+            }
         }
     }
 }

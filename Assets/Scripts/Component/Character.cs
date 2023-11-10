@@ -536,6 +536,9 @@ public class Character : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         _drawDebug?.DrawUpdate();
+        Gizmos.color = Color.blue;
+        Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero + hitboxOffset, castSize);
     }
     
     public void ClearAttackInfoData()
@@ -543,11 +546,29 @@ public class Character : MonoBehaviour
         _attackedMaxHeight = 0f;
         _attackedAirborneUpTime = 0f;
     }
+    
+    // attackInfo에서 가져올 값들
+    public float castDistance = 0f;
+    public Vector3 castSize = Vector3.one;
+    public Vector3 hitboxOffset;
+    public LayerMask castMask = ~0;
 
     // Update is called once per frame
     void Update()
     {
         _roleStateMap[_curRoleState].UpdateState();
+        if (InputManager.Instance.GetButtonDown(KeyBindingType.WEEK_ATTACK))
+        {
+            RaycastHit hit;
+            bool isHit = Physics.BoxCast(transform.position + hitboxOffset, castSize / 2f, transform.forward, out hit, transform.rotation, castDistance, castMask);
+
+            // BoxCast의 충돌 결과를 확인합니다.
+            if (isHit)
+            {
+                Debug.Log("BoxCast 충돌!");
+                // 충돌한 오브젝트에 대한 추가 처리를 수행할 수 있습니다.
+            }
+        }
     }
     
     private void ProcessHit(AttackCollider attackCollider)
@@ -1266,11 +1287,23 @@ public class Character : MonoBehaviour
 
     public Projectile SpawnAttackCube(ActionKey curState)
     {
-        var projectileCube = Resources.Load<Projectile>("Prefabs/Projectile/ProjectileCube");
-        projectileCube = Instantiate(projectileCube, _projectilePos.transform);
-        projectileCube.transform.parent = null;
+        var projectileCube = Resources.Load<Projectile>("Prefabs/Projectile/ProjectileSample");
+        projectileCube = Instantiate(projectileCube, transform.TransformPoint(_projectilePos.transform.localPosition), transform.rotation);
 
         projectileCube.Init(projectileCube.transform.forward.normalized, 3f, 3f, this);
         return projectileCube;
+    }
+
+    public Character[] HitBoxCast(AttackInfoData attackInfoData)
+    {
+        RaycastHit[] hits = Physics.BoxCastAll(transform.position + hitboxOffset, castSize / 2f, transform.forward, transform.rotation, castDistance, castMask);
+        List<Character> result = new();
+        foreach (var hit in hits)
+        {
+            if (hit.collider.TryGetComponent<HitCollider>(out var hitCollider)
+                && hitCollider.GetCharacter().GetInstanceID() != GetInstanceID())
+                result.Add(hitCollider.GetCharacter());
+        }
+        return result.ToArray();
     }
 }
