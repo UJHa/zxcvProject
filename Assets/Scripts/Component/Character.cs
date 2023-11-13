@@ -518,6 +518,8 @@ public class Character : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        if (!_roleStateMap.ContainsKey(_curRoleState))
+            return;
         _roleStateMap[_curRoleState].DrawGizmosUpdateState();
         _drawDebug?.DrawUpdate();
     }
@@ -1230,7 +1232,7 @@ public class Character : MonoBehaviour
         var projectileCube = Resources.Load<Projectile>("Prefabs/Projectile/ProjectileSample");
         projectileCube = Instantiate(projectileCube, transform.TransformPoint(_projectilePos.transform.localPosition), transform.rotation);
 
-        projectileCube.Init(projectileCube.transform.forward.normalized, 3f, 3f, this);
+        projectileCube.Init(projectileCube.transform.forward.normalized, 11f, 3f, this);
         return projectileCube;
     }
 

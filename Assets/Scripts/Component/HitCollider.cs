@@ -19,8 +19,8 @@ public class HitCollider : MonoBehaviour
         {
             // if (other.TryGetComponent<AttackCollider>(out var attackCollider) && attackCollider.GetOwner())
             //     _character.OnHit(other);
-            if (other.TryGetComponent<Projectile>(out var projectile))
-                _character.OnHit(projectile.GetHitInfo());
+            // if (other.TryGetComponent<Projectile>(out var projectile))
+            //     _character.OnHit(projectile.GetHitInfo());
         }
     }
 
