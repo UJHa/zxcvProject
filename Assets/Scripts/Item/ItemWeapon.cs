@@ -14,4 +14,9 @@ public class ItemWeapon : ItemBase
     {
         return _colliderType;
     }
+    
+    public override eItemType GetItemType()
+    {
+        return eItemType.WEAPON;
+    }
 }

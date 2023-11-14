@@ -8,4 +8,10 @@ public class ItemHelmet : ItemBase
     {
         return _meshRenderer;
     }
+
+
+    public override eItemType GetItemType()
+    {
+        return eItemType.NONE;
+    }
 }

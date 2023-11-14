@@ -1,3 +1,4 @@
+using System;
 using Debug = UnityEngine.Debug;
 
 public class GetItemState : State
@@ -25,17 +26,33 @@ public class GetItemState : State
                 break;
             }
         }
-        
-        if (canPickUp)
-        {
-            _character.ResetMoveSpeed();
-            _moveSet.Play(_action);
 
-            _character.EquipDropItem(_dropItem);
-        }
-        else
+        ExecuteGetItem();
+    }
+
+    private void ExecuteGetItem()
+    {
+        if (null == _dropItem)
         {
             _character.ChangeRoleState(eRoleState.IDLE);
+            return;
+        }
+
+        var itemType = _dropItem.GetItem().GetItemType();
+        switch (itemType)
+        {
+            case eItemType.NONE:
+                _character.ChangeRoleState(eRoleState.IDLE);
+                break;
+            case eItemType.WEAPON:
+                _character.ResetMoveSpeed();
+                _moveSet.Play(_action);
+                _character.EquipDropItem(_dropItem);
+                break;
+            case eItemType.POTION:
+                _character.RecoveryHealth(20f);
+                _character.ChangeRoleState(eRoleState.IDLE);
+                break;
         }
     }
 
