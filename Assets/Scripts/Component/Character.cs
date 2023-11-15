@@ -127,7 +127,6 @@ public class Character : MonoBehaviour
     protected HumanBoneInfo _humanBoneInfo = new();
 
     public bool _isGround = false;
-    private bool _checkGround = true;
 
     private List<StateInfo> _changeStates = new();
 
