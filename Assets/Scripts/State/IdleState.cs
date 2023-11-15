@@ -35,7 +35,7 @@ public class IdleState : State
 
     public override void FixedUpdateState()
     {
-        if (!_character.RefreshGroundCheckObjects())
+        if (!_character.IsGround())
         {
             _character.ChangeRoleState(eRoleState.JUMP_DOWN);
         }

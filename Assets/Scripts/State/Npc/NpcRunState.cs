@@ -28,10 +28,8 @@ public class NpcRunState : RunState
     {
         if(_character.GetTraceTarget() != null)
         {
-            Vector3 traceDirection = (_character.GetTraceTarget().transform.position - _character.transform.position).normalized;
-            traceDirection.y = 0f;
-            _character.SetDirectionByVector3(traceDirection);
-            var moveVelocity = _character.ComputeMoveVelocityXZ(traceDirection);
+            _character.RotateToPosition(_character.GetTraceTarget().transform.position);
+            var moveVelocity = _character.ComputeMoveVelocityXZ(_character.GetDirectionVector());
             _character.SetVelocity(moveVelocity);
             
             if (_character.GetTraceTargetDistanceXZ() <= _character.GetAttackStartDistance())

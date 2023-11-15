@@ -373,9 +373,6 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // ground check
-        RefreshGroundCheckObjects();
-
         while (_onHitQueue.Count > 0)
         {
             var hitInfo = _onHitQueue[0];
@@ -408,25 +405,22 @@ public class Character : MonoBehaviour
 
     public void DetectGround()
     {
-        if (name.Contains("Sub"))
+        float castDistance = _groundDetection.castDistance;
+        if (!_characterMovement.isGrounded)
         {
-            float castDistance = _groundDetection.castDistance;
-            if (!_characterMovement.isGrounded)
-            {
-                castDistance = _moveVelocity.y * Time.fixedDeltaTime;
-            }
-            _groundDetection.castDistance = Mathf.Abs(castDistance);
-            _characterMovement.DetectGroundCustom();
-            if (_characterMovement.isGrounded)
-            {
-                _moveVelocity.y = 0f;
-                _rigidbody.velocity = _moveVelocity + _characterMovement.platformVelocity;
-                _characterMovement.SnapToGround();
-            }
-            else
-            {
-                _rigidbody.velocity = _moveVelocity;
-            }
+            castDistance = _moveVelocity.y * Time.fixedDeltaTime;
+        }
+        _groundDetection.castDistance = Mathf.Abs(castDistance);
+        _characterMovement.DetectGroundCustom();
+        if (_characterMovement.isGrounded)
+        {
+            _moveVelocity.y = 0f;
+            _rigidbody.velocity = _moveVelocity + _characterMovement.platformVelocity;
+            _characterMovement.SnapToGround();
+        }
+        else
+        {
+            _rigidbody.velocity = _moveVelocity;
         }
     }
     
@@ -713,11 +707,6 @@ public class Character : MonoBehaviour
     {
         return _moveSpeed;
     }
-
-    public bool IsGround()
-    {
-        return _characterMovement.isGrounded;
-    }
     
     public bool IsDead()
     {
@@ -786,7 +775,7 @@ public class Character : MonoBehaviour
 
     public void RotateToPosition(Vector3 argPosition)
     {
-        Vector3 vector = argPosition - transform.position;
+        Vector3 vector = (argPosition - transform.position).normalized;
         vector.y = 0;
         SetDirectionByVector3(vector);
     }
@@ -796,19 +785,9 @@ public class Character : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public bool RefreshGroundCheckObjects()
+    public bool IsGround()
     {
-        if (name.Contains("Sub"))
-        {
-            return _characterMovement.isGrounded;
-        }
-        else
-        {
-            int layerMask = 1 << LayerMask.NameToLayer("Ground");
-            RaycastHit[] hits = Physics.BoxCastAll(GetGroundBoxCenter(), _groundCollider.Size / 2, Vector3.down, Quaternion.identity, 0.1f, layerMask);    // BoxCastAll은 찾아낸 충돌체를 배열로 반환한다.
-            _groundObjs = hits;
-            return _groundObjs.Length > 0;
-        }
+        return _characterMovement.isGrounded;
     }
 
     public void SetPositionY(float groundHeight)

@@ -25,10 +25,6 @@ public class NpcIdleState : IdleState
 
     public override void UpdateState()
     {
-        // if (_character.GetTraceTargetDistanceXZ() > 4f)
-        // {
-        //     _character.ChangeRoleState(eRoleState.JUMP_UP);
-        // }
         if (_character.GetTraceTargetDistanceXZ() > _character.GetAttackStartDistance() + _character.GetWalkTraceDistance())
         {
             _character.ChangeRoleState(eRoleState.RUN);
@@ -39,6 +35,7 @@ public class NpcIdleState : IdleState
         }
         else
         {
+            _character.RotateToPosition(_character.GetTraceTarget().transform.position);
             _character.ChangeRoleState(eRoleState.WEEK_ATTACK1);
         }
         // base.UpdateState();

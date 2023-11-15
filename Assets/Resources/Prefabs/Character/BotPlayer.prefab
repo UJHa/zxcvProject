@@ -1841,6 +1841,8 @@ GameObject:
   - component: {fileID: 6136724877743868283}
   - component: {fileID: 3647786310916378707}
   - component: {fileID: 1194379238202812944}
+  - component: {fileID: 4227386049296860889}
+  - component: {fileID: 1940989780815503640}
   m_Layer: 8
   m_Name: BotPlayer
   m_TagString: Untagged
@@ -1904,9 +1906,6 @@ MonoBehaviour:
   _gravityDownHeight: 2
   _groundCollider:
     Size: {x: 0.2, y: 0.03, z: 0.2}
-    gizmoPos: {x: 0, y: 0, z: 0}
-  _wallCollider:
-    Size: {x: 0.1, y: 1.5, z: 0.05}
     gizmoPos: {x: 0, y: 0, z: 0}
   _rootTransform: {fileID: 3861058366054779276}
   _hitColliders:
@@ -1984,6 +1983,49 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4227386049296860889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6136724877743868280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b15c3ebfe09c0ef49b5d8ae34b2bfdbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxLateralSpeed: 10
+  _maxRiseSpeed: 20
+  _maxFallSpeed: 20
+  _useGravity: 1
+  _gravity: {x: 0, y: -30, z: 0}
+  _slideOnSteepSlope: 0
+  _slopeLimit: 89
+  _slideGravityMultiplier: 2
+  _snapToGround: 1
+  _snapStrength: 0.5
+--- !u!114 &1940989780815503640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6136724877743868280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0802f31c3eee5a4ea88c35696c1e905, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 2147483647
+  _groundLimit: 60
+  _stepOffset: 0.2
+  _ledgeOffset: 0
+  _castDistance: 0.5
+  _triggerInteraction: 1
+  _isGround: 0
 --- !u!1 &7915699813569230937
 GameObject:
   m_ObjectHideFlags: 0

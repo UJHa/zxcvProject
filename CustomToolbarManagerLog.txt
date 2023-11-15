@@ -4408,3 +4408,1005 @@ Assets\Scripts\UI\UIActionPlayerPage.cs(43,40): warning CS0414: The field 'UIAct
 Assets\Scripts\State\Npc\NpcJumpUpState.cs(7,19): warning CS0414: The field 'NpcJumpUpState._jumpTimer' is assigned but its value is never used
 Assets\Scripts\PartCollider.cs(5,43): warning CS0414: The field 'PartCollider._colliderType' is assigned but its value is never used
 Assets\Scripts\State\Damaged\KnockBackDamagedState.cs(8,18): warning CS0414: The field 'KnockBackDamagedState._knockBackTimeMilliSec' is assigned but its value is never used
+스크립트 컴파일이 완료되었습니다.
+[test]CustomToolbar
+[testumJson]Application.dataPath(C:/Users/user/Documents/Github/zxcvProject/Assets)
+[executeFile]fileName(Action.json)tableName()
+[codeLine]using System;
+[codeLine]using System.Collections.Generic;
+[codeLine]using System.IO;
+[codeLine]using Newtonsoft.Json;
+[codeLine]using Newtonsoft.Json.Linq;
+[codeLine]using UnityEngine;
+[codeLine]using Utils;
+[codeLine]
+[codeLine]namespace DataClass
+[codeLine]{
+[codeLine]    [Serializable]
+[codeLine]    public class _Sample_Data
+[codeLine]    {
+[codeLine]        public _Sample_Data()
+[codeLine]        {
+[codeLine]            
+[codeLine]        }
+[codeLine]        public _Sample_Data(_Sample_Data argData)
+[codeLine]        {
+[codeLine]            // Construct Values[Start]
+[codeLine]            id = argData.id;
+[codeLine]            name = argData.name;
+[codeLine]            // Construct Values[End]
+[codeLine]        }
+[codeLine]
+[codeLine]        // Declaration Values[Start]
+[codeLine]        public int id { get; set; }
+[codeLine]        public string name { get; set; }
+[codeLine]        // Declaration Values[End]
+[codeLine]        public override string ToString()
+[codeLine]        {
+[codeLine]            // ToString Values[Start]
+[codeLine]            return $"id({id})name({name})";
+[codeLine]            // ToString Values[End]
+[codeLine]        }
+[codeLine]    }
+[codeLine]
+[codeLine]    public class _Sample_Table : DataTable
+[codeLine]    {
+[codeLine]        private static Type tableType = typeof(_Sample_Table);
+[codeLine]        private static string dataName = $"{typeof(_Sample_Data)}";
+[codeLine]        private static string jsonFileName = "_Sample_.json";
+[codeLine]        private static _Sample_Table _instance = null;
+[codeLine]        
+[codeLine]        // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
+[codeLine]        public Dictionary<int, _Sample_Data> IndexDictionary = new();
+[codeLine]        public Dictionary<string, _Sample_Data> nameDictionary = new();
+[codeLine]        protected override void Init(JArray dataList)
+[codeLine]        {
+[codeLine]            base.Init(dataList);
+[codeLine]            _instance = this;
+[codeLine]            foreach (var jToken in dataList)
+[codeLine]            {
+[codeLine]                var jsonData = JsonConvert.DeserializeObject<_Sample_Data>(jToken.ToString());
+[codeLine]                if (enableLog)
+[codeLine]                    Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+[codeLine]                // Id Dictionary Values[Start]
+[codeLine]                if (IndexDictionary.ContainsKey(jsonData.id))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                IndexDictionary.Add(jsonData.id, jsonData);
+[codeLine]                // Id Dictionary Values[End]
+[codeLine]                
+[codeLine]                // name Dictionary Values[Start]
+[codeLine]                if (nameDictionary.ContainsKey(jsonData.name))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                nameDictionary.Add(jsonData.name, jsonData);
+[codeLine]                // name Dictionary Values[End]
+[codeLine]            }
+[codeLine]        }
+[codeLine]
+[codeLine]        public static _Sample_Data GetData(string argKeyName)
+[codeLine]        {
+[codeLine]            if (false == DataTable.Tables.ContainsKey(tableType))
+[codeLine]                return null;
+[codeLine]            _Sample_Table table = DataTable.Tables[tableType] as _Sample_Table;
+[codeLine]            if (null == table)
+[codeLine]                return null;
+[codeLine]            if (false == table.nameDictionary.ContainsKey(argKeyName))
+[codeLine]                return null;
+[codeLine]            return new(table.nameDictionary[argKeyName]);
+[codeLine]        }
+[codeLine]
+[codeLine]        public static List<_Sample_Data> GetList()
+[codeLine]        {
+[codeLine]            if (null == _instance)
+[codeLine]            {
+[codeLine]                Debug.LogError($"{tableType} is not instantiate!");
+[codeLine]                return null;
+[codeLine]            }
+[codeLine]
+[codeLine]            List<_Sample_Data> result = new();
+[codeLine]
+[codeLine]            // 값 복사를 통해서 Table 값과 분리하여 전달
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                result.Add(new (data));
+[codeLine]            }
+[codeLine]            return result;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void SetData(string argKeyName, _Sample_Data argData)
+[codeLine]        {
+[codeLine]            if (false == _instance.nameDictionary.ContainsKey(argKeyName))
+[codeLine]            {
+[codeLine]                Debug.LogError($"Don't have string key({argKeyName})");
+[codeLine]                return;
+[codeLine]            }
+[codeLine]
+[codeLine]            _instance.nameDictionary[argKeyName] = argData;
+[codeLine]            _instance.IndexDictionary[argData.id] = argData;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void Export()
+[codeLine]        {
+[codeLine]            string writeText = "[\n";
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                writeText += JsonConvert.SerializeObject(data) + ",\n";
+[codeLine]                Debug.Log($"[ExportTest]{data}\n{JsonConvert.SerializeObject(data)}");
+[codeLine]            }
+[codeLine]
+[codeLine]            writeText += "]";
+[codeLine]            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
+[codeLine]            Debug.Log(jsonPath);
+[codeLine]            // 파일 생성 및 저장
+[codeLine]            File.WriteAllText(jsonPath, writeText);
+[codeLine]        }
+[codeLine]    }
+[codeLine]}
+[lineCheck]Construct(19/22)
+_declareInfo(25/28)
+_toStringInfo(31/33)
+[jsonLine]key(id)type(Integer)typeStr(int)
+        public int id { get; set; }
+[jsonLine]key(name)type(String)typeStr(string)
+        public string name { get; set; }
+[jsonLine]key(roleState)type(String)typeStr(string)
+        public string roleState { get; set; }
+[jsonLine]key(actionType)type(String)typeStr(string)
+        public string actionType { get; set; }
+[jsonLine]key(clipPath)type(String)typeStr(string)
+        public string clipPath { get; set; }
+[jsonLine]key(speed)type(Float)typeStr(float)
+        public float speed { get; set; }
+[jsonLine]key(startTimeRatio)type(Float)typeStr(float)
+        public float startTimeRatio { get; set; }
+[jsonLine]key(endTimeRatio)type(Float)typeStr(float)
+        public float endTimeRatio { get; set; }
+[jsonLine]key(damageRatio)type(Float)typeStr(float)
+        public float damageRatio { get; set; }
+length(149)
+[executeFile]fileName(AnimationFadeInfo.json)tableName()
+[codeLine]using System;
+[codeLine]using System.Collections.Generic;
+[codeLine]using System.IO;
+[codeLine]using Newtonsoft.Json;
+[codeLine]using Newtonsoft.Json.Linq;
+[codeLine]using UnityEngine;
+[codeLine]using Utils;
+[codeLine]
+[codeLine]namespace DataClass
+[codeLine]{
+[codeLine]    [Serializable]
+[codeLine]    public class _Sample_Data
+[codeLine]    {
+[codeLine]        public _Sample_Data()
+[codeLine]        {
+[codeLine]            
+[codeLine]        }
+[codeLine]        public _Sample_Data(_Sample_Data argData)
+[codeLine]        {
+[codeLine]            // Construct Values[Start]
+[codeLine]            id = argData.id;
+[codeLine]            name = argData.name;
+[codeLine]            // Construct Values[End]
+[codeLine]        }
+[codeLine]
+[codeLine]        // Declaration Values[Start]
+[codeLine]        public int id { get; set; }
+[codeLine]        public string name { get; set; }
+[codeLine]        // Declaration Values[End]
+[codeLine]        public override string ToString()
+[codeLine]        {
+[codeLine]            // ToString Values[Start]
+[codeLine]            return $"id({id})name({name})";
+[codeLine]            // ToString Values[End]
+[codeLine]        }
+[codeLine]    }
+[codeLine]
+[codeLine]    public class _Sample_Table : DataTable
+[codeLine]    {
+[codeLine]        private static Type tableType = typeof(_Sample_Table);
+[codeLine]        private static string dataName = $"{typeof(_Sample_Data)}";
+[codeLine]        private static string jsonFileName = "_Sample_.json";
+[codeLine]        private static _Sample_Table _instance = null;
+[codeLine]        
+[codeLine]        // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
+[codeLine]        public Dictionary<int, _Sample_Data> IndexDictionary = new();
+[codeLine]        public Dictionary<string, _Sample_Data> nameDictionary = new();
+[codeLine]        protected override void Init(JArray dataList)
+[codeLine]        {
+[codeLine]            base.Init(dataList);
+[codeLine]            _instance = this;
+[codeLine]            foreach (var jToken in dataList)
+[codeLine]            {
+[codeLine]                var jsonData = JsonConvert.DeserializeObject<_Sample_Data>(jToken.ToString());
+[codeLine]                if (enableLog)
+[codeLine]                    Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+[codeLine]                // Id Dictionary Values[Start]
+[codeLine]                if (IndexDictionary.ContainsKey(jsonData.id))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                IndexDictionary.Add(jsonData.id, jsonData);
+[codeLine]                // Id Dictionary Values[End]
+[codeLine]                
+[codeLine]                // name Dictionary Values[Start]
+[codeLine]                if (nameDictionary.ContainsKey(jsonData.name))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                nameDictionary.Add(jsonData.name, jsonData);
+[codeLine]                // name Dictionary Values[End]
+[codeLine]            }
+[codeLine]        }
+[codeLine]
+[codeLine]        public static _Sample_Data GetData(string argKeyName)
+[codeLine]        {
+[codeLine]            if (false == DataTable.Tables.ContainsKey(tableType))
+[codeLine]                return null;
+[codeLine]            _Sample_Table table = DataTable.Tables[tableType] as _Sample_Table;
+[codeLine]            if (null == table)
+[codeLine]                return null;
+[codeLine]            if (false == table.nameDictionary.ContainsKey(argKeyName))
+[codeLine]                return null;
+[codeLine]            return new(table.nameDictionary[argKeyName]);
+[codeLine]        }
+[codeLine]
+[codeLine]        public static List<_Sample_Data> GetList()
+[codeLine]        {
+[codeLine]            if (null == _instance)
+[codeLine]            {
+[codeLine]                Debug.LogError($"{tableType} is not instantiate!");
+[codeLine]                return null;
+[codeLine]            }
+[codeLine]
+[codeLine]            List<_Sample_Data> result = new();
+[codeLine]
+[codeLine]            // 값 복사를 통해서 Table 값과 분리하여 전달
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                result.Add(new (data));
+[codeLine]            }
+[codeLine]            return result;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void SetData(string argKeyName, _Sample_Data argData)
+[codeLine]        {
+[codeLine]            if (false == _instance.nameDictionary.ContainsKey(argKeyName))
+[codeLine]            {
+[codeLine]                Debug.LogError($"Don't have string key({argKeyName})");
+[codeLine]                return;
+[codeLine]            }
+[codeLine]
+[codeLine]            _instance.nameDictionary[argKeyName] = argData;
+[codeLine]            _instance.IndexDictionary[argData.id] = argData;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void Export()
+[codeLine]        {
+[codeLine]            string writeText = "[\n";
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                writeText += JsonConvert.SerializeObject(data) + ",\n";
+[codeLine]                Debug.Log($"[ExportTest]{data}\n{JsonConvert.SerializeObject(data)}");
+[codeLine]            }
+[codeLine]
+[codeLine]            writeText += "]";
+[codeLine]            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
+[codeLine]            Debug.Log(jsonPath);
+[codeLine]            // 파일 생성 및 저장
+[codeLine]            File.WriteAllText(jsonPath, writeText);
+[codeLine]        }
+[codeLine]    }
+[codeLine]}
+[lineCheck]Construct(19/22)
+_declareInfo(25/28)
+_toStringInfo(31/33)
+[jsonLine]key(id)type(Integer)typeStr(int)
+        public int id { get; set; }
+[jsonLine]key(name)type(String)typeStr(string)
+        public string name { get; set; }
+[jsonLine]key(idleStart)type(Float)typeStr(float)
+        public float idleStart { get; set; }
+[jsonLine]key(walkStart)type(Float)typeStr(float)
+        public float walkStart { get; set; }
+[jsonLine]key(runStart)type(Float)typeStr(float)
+        public float runStart { get; set; }
+[jsonLine]key(jumpUpStart)type(Float)typeStr(float)
+        public float jumpUpStart { get; set; }
+[jsonLine]key(jumpEnd)type(Float)typeStr(float)
+        public float jumpEnd { get; set; }
+[jsonLine]key(damageLandingStart)type(Float)typeStr(float)
+        public float damageLandingStart { get; set; }
+length(147)
+[executeFile]fileName(AttackInfo.json)tableName()
+[codeLine]using System;
+[codeLine]using System.Collections.Generic;
+[codeLine]using System.IO;
+[codeLine]using Newtonsoft.Json;
+[codeLine]using Newtonsoft.Json.Linq;
+[codeLine]using UnityEngine;
+[codeLine]using Utils;
+[codeLine]
+[codeLine]namespace DataClass
+[codeLine]{
+[codeLine]    [Serializable]
+[codeLine]    public class _Sample_Data
+[codeLine]    {
+[codeLine]        public _Sample_Data()
+[codeLine]        {
+[codeLine]            
+[codeLine]        }
+[codeLine]        public _Sample_Data(_Sample_Data argData)
+[codeLine]        {
+[codeLine]            // Construct Values[Start]
+[codeLine]            id = argData.id;
+[codeLine]            name = argData.name;
+[codeLine]            // Construct Values[End]
+[codeLine]        }
+[codeLine]
+[codeLine]        // Declaration Values[Start]
+[codeLine]        public int id { get; set; }
+[codeLine]        public string name { get; set; }
+[codeLine]        // Declaration Values[End]
+[codeLine]        public override string ToString()
+[codeLine]        {
+[codeLine]            // ToString Values[Start]
+[codeLine]            return $"id({id})name({name})";
+[codeLine]            // ToString Values[End]
+[codeLine]        }
+[codeLine]    }
+[codeLine]
+[codeLine]    public class _Sample_Table : DataTable
+[codeLine]    {
+[codeLine]        private static Type tableType = typeof(_Sample_Table);
+[codeLine]        private static string dataName = $"{typeof(_Sample_Data)}";
+[codeLine]        private static string jsonFileName = "_Sample_.json";
+[codeLine]        private static _Sample_Table _instance = null;
+[codeLine]        
+[codeLine]        // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
+[codeLine]        public Dictionary<int, _Sample_Data> IndexDictionary = new();
+[codeLine]        public Dictionary<string, _Sample_Data> nameDictionary = new();
+[codeLine]        protected override void Init(JArray dataList)
+[codeLine]        {
+[codeLine]            base.Init(dataList);
+[codeLine]            _instance = this;
+[codeLine]            foreach (var jToken in dataList)
+[codeLine]            {
+[codeLine]                var jsonData = JsonConvert.DeserializeObject<_Sample_Data>(jToken.ToString());
+[codeLine]                if (enableLog)
+[codeLine]                    Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+[codeLine]                // Id Dictionary Values[Start]
+[codeLine]                if (IndexDictionary.ContainsKey(jsonData.id))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                IndexDictionary.Add(jsonData.id, jsonData);
+[codeLine]                // Id Dictionary Values[End]
+[codeLine]                
+[codeLine]                // name Dictionary Values[Start]
+[codeLine]                if (nameDictionary.ContainsKey(jsonData.name))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                nameDictionary.Add(jsonData.name, jsonData);
+[codeLine]                // name Dictionary Values[End]
+[codeLine]            }
+[codeLine]        }
+[codeLine]
+[codeLine]        public static _Sample_Data GetData(string argKeyName)
+[codeLine]        {
+[codeLine]            if (false == DataTable.Tables.ContainsKey(tableType))
+[codeLine]                return null;
+[codeLine]            _Sample_Table table = DataTable.Tables[tableType] as _Sample_Table;
+[codeLine]            if (null == table)
+[codeLine]                return null;
+[codeLine]            if (false == table.nameDictionary.ContainsKey(argKeyName))
+[codeLine]                return null;
+[codeLine]            return new(table.nameDictionary[argKeyName]);
+[codeLine]        }
+[codeLine]
+[codeLine]        public static List<_Sample_Data> GetList()
+[codeLine]        {
+[codeLine]            if (null == _instance)
+[codeLine]            {
+[codeLine]                Debug.LogError($"{tableType} is not instantiate!");
+[codeLine]                return null;
+[codeLine]            }
+[codeLine]
+[codeLine]            List<_Sample_Data> result = new();
+[codeLine]
+[codeLine]            // 값 복사를 통해서 Table 값과 분리하여 전달
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                result.Add(new (data));
+[codeLine]            }
+[codeLine]            return result;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void SetData(string argKeyName, _Sample_Data argData)
+[codeLine]        {
+[codeLine]            if (false == _instance.nameDictionary.ContainsKey(argKeyName))
+[codeLine]            {
+[codeLine]                Debug.LogError($"Don't have string key({argKeyName})");
+[codeLine]                return;
+[codeLine]            }
+[codeLine]
+[codeLine]            _instance.nameDictionary[argKeyName] = argData;
+[codeLine]            _instance.IndexDictionary[argData.id] = argData;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void Export()
+[codeLine]        {
+[codeLine]            string writeText = "[\n";
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                writeText += JsonConvert.SerializeObject(data) + ",\n";
+[codeLine]                Debug.Log($"[ExportTest]{data}\n{JsonConvert.SerializeObject(data)}");
+[codeLine]            }
+[codeLine]
+[codeLine]            writeText += "]";
+[codeLine]            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
+[codeLine]            Debug.Log(jsonPath);
+[codeLine]            // 파일 생성 및 저장
+[codeLine]            File.WriteAllText(jsonPath, writeText);
+[codeLine]        }
+[codeLine]    }
+[codeLine]}
+[lineCheck]Construct(19/22)
+_declareInfo(25/28)
+_toStringInfo(31/33)
+[jsonLine]key(id)type(Integer)typeStr(int)
+        public int id { get; set; }
+[jsonLine]key(name)type(String)typeStr(string)
+        public string name { get; set; }
+[jsonLine]key(hitboxType)type(String)typeStr(string)
+        public string hitboxType { get; set; }
+[jsonLine]key(damageRatio)type(Float)typeStr(float)
+        public float damageRatio { get; set; }
+[jsonLine]key(startRatio)type(Float)typeStr(float)
+        public float startRatio { get; set; }
+[jsonLine]key(endRatio)type(Float)typeStr(float)
+        public float endRatio { get; set; }
+[jsonLine]key(attackType)type(String)typeStr(string)
+        public string attackType { get; set; }
+[jsonLine]key(offset)type(Array)typeStr(float[])
+        public float[] offset { get; set; }
+[jsonLine]key(size)type(Array)typeStr(float[])
+        public float[] size { get; set; }
+[jsonLine]key(airborneHeight)type(Float)typeStr(float)
+        public float airborneHeight { get; set; }
+[jsonLine]key(airborneTime)type(Float)typeStr(float)
+        public float airborneTime { get; set; }
+length(153)
+[executeFile]fileName(CharacterRoleProfile.json)tableName()
+[codeLine]using System;
+[codeLine]using System.Collections.Generic;
+[codeLine]using System.IO;
+[codeLine]using Newtonsoft.Json;
+[codeLine]using Newtonsoft.Json.Linq;
+[codeLine]using UnityEngine;
+[codeLine]using Utils;
+[codeLine]
+[codeLine]namespace DataClass
+[codeLine]{
+[codeLine]    [Serializable]
+[codeLine]    public class _Sample_Data
+[codeLine]    {
+[codeLine]        public _Sample_Data()
+[codeLine]        {
+[codeLine]            
+[codeLine]        }
+[codeLine]        public _Sample_Data(_Sample_Data argData)
+[codeLine]        {
+[codeLine]            // Construct Values[Start]
+[codeLine]            id = argData.id;
+[codeLine]            name = argData.name;
+[codeLine]            // Construct Values[End]
+[codeLine]        }
+[codeLine]
+[codeLine]        // Declaration Values[Start]
+[codeLine]        public int id { get; set; }
+[codeLine]        public string name { get; set; }
+[codeLine]        // Declaration Values[End]
+[codeLine]        public override string ToString()
+[codeLine]        {
+[codeLine]            // ToString Values[Start]
+[codeLine]            return $"id({id})name({name})";
+[codeLine]            // ToString Values[End]
+[codeLine]        }
+[codeLine]    }
+[codeLine]
+[codeLine]    public class _Sample_Table : DataTable
+[codeLine]    {
+[codeLine]        private static Type tableType = typeof(_Sample_Table);
+[codeLine]        private static string dataName = $"{typeof(_Sample_Data)}";
+[codeLine]        private static string jsonFileName = "_Sample_.json";
+[codeLine]        private static _Sample_Table _instance = null;
+[codeLine]        
+[codeLine]        // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
+[codeLine]        public Dictionary<int, _Sample_Data> IndexDictionary = new();
+[codeLine]        public Dictionary<string, _Sample_Data> nameDictionary = new();
+[codeLine]        protected override void Init(JArray dataList)
+[codeLine]        {
+[codeLine]            base.Init(dataList);
+[codeLine]            _instance = this;
+[codeLine]            foreach (var jToken in dataList)
+[codeLine]            {
+[codeLine]                var jsonData = JsonConvert.DeserializeObject<_Sample_Data>(jToken.ToString());
+[codeLine]                if (enableLog)
+[codeLine]                    Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+[codeLine]                // Id Dictionary Values[Start]
+[codeLine]                if (IndexDictionary.ContainsKey(jsonData.id))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                IndexDictionary.Add(jsonData.id, jsonData);
+[codeLine]                // Id Dictionary Values[End]
+[codeLine]                
+[codeLine]                // name Dictionary Values[Start]
+[codeLine]                if (nameDictionary.ContainsKey(jsonData.name))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                nameDictionary.Add(jsonData.name, jsonData);
+[codeLine]                // name Dictionary Values[End]
+[codeLine]            }
+[codeLine]        }
+[codeLine]
+[codeLine]        public static _Sample_Data GetData(string argKeyName)
+[codeLine]        {
+[codeLine]            if (false == DataTable.Tables.ContainsKey(tableType))
+[codeLine]                return null;
+[codeLine]            _Sample_Table table = DataTable.Tables[tableType] as _Sample_Table;
+[codeLine]            if (null == table)
+[codeLine]                return null;
+[codeLine]            if (false == table.nameDictionary.ContainsKey(argKeyName))
+[codeLine]                return null;
+[codeLine]            return new(table.nameDictionary[argKeyName]);
+[codeLine]        }
+[codeLine]
+[codeLine]        public static List<_Sample_Data> GetList()
+[codeLine]        {
+[codeLine]            if (null == _instance)
+[codeLine]            {
+[codeLine]                Debug.LogError($"{tableType} is not instantiate!");
+[codeLine]                return null;
+[codeLine]            }
+[codeLine]
+[codeLine]            List<_Sample_Data> result = new();
+[codeLine]
+[codeLine]            // 값 복사를 통해서 Table 값과 분리하여 전달
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                result.Add(new (data));
+[codeLine]            }
+[codeLine]            return result;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void SetData(string argKeyName, _Sample_Data argData)
+[codeLine]        {
+[codeLine]            if (false == _instance.nameDictionary.ContainsKey(argKeyName))
+[codeLine]            {
+[codeLine]                Debug.LogError($"Don't have string key({argKeyName})");
+[codeLine]                return;
+[codeLine]            }
+[codeLine]
+[codeLine]            _instance.nameDictionary[argKeyName] = argData;
+[codeLine]            _instance.IndexDictionary[argData.id] = argData;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void Export()
+[codeLine]        {
+[codeLine]            string writeText = "[\n";
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                writeText += JsonConvert.SerializeObject(data) + ",\n";
+[codeLine]                Debug.Log($"[ExportTest]{data}\n{JsonConvert.SerializeObject(data)}");
+[codeLine]            }
+[codeLine]
+[codeLine]            writeText += "]";
+[codeLine]            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
+[codeLine]            Debug.Log(jsonPath);
+[codeLine]            // 파일 생성 및 저장
+[codeLine]            File.WriteAllText(jsonPath, writeText);
+[codeLine]        }
+[codeLine]    }
+[codeLine]}
+[lineCheck]Construct(19/22)
+_declareInfo(25/28)
+_toStringInfo(31/33)
+[jsonLine]key(id)type(Integer)typeStr(int)
+        public int id { get; set; }
+[jsonLine]key(name)type(String)typeStr(string)
+        public string name { get; set; }
+[jsonLine]key(roleStateProfile)type(String)typeStr(string)
+        public string roleStateProfile { get; set; }
+[jsonLine]key(statProfile)type(String)typeStr(string)
+        public string statProfile { get; set; }
+length(139)
+[executeFile]fileName(CharacterRoleState.json)tableName()
+[codeLine]using System;
+[codeLine]using System.Collections.Generic;
+[codeLine]using System.IO;
+[codeLine]using Newtonsoft.Json;
+[codeLine]using Newtonsoft.Json.Linq;
+[codeLine]using UnityEngine;
+[codeLine]using Utils;
+[codeLine]
+[codeLine]namespace DataClass
+[codeLine]{
+[codeLine]    [Serializable]
+[codeLine]    public class _Sample_Data
+[codeLine]    {
+[codeLine]        public _Sample_Data()
+[codeLine]        {
+[codeLine]            
+[codeLine]        }
+[codeLine]        public _Sample_Data(_Sample_Data argData)
+[codeLine]        {
+[codeLine]            // Construct Values[Start]
+[codeLine]            id = argData.id;
+[codeLine]            name = argData.name;
+[codeLine]            // Construct Values[End]
+[codeLine]        }
+[codeLine]
+[codeLine]        // Declaration Values[Start]
+[codeLine]        public int id { get; set; }
+[codeLine]        public string name { get; set; }
+[codeLine]        // Declaration Values[End]
+[codeLine]        public override string ToString()
+[codeLine]        {
+[codeLine]            // ToString Values[Start]
+[codeLine]            return $"id({id})name({name})";
+[codeLine]            // ToString Values[End]
+[codeLine]        }
+[codeLine]    }
+[codeLine]
+[codeLine]    public class _Sample_Table : DataTable
+[codeLine]    {
+[codeLine]        private static Type tableType = typeof(_Sample_Table);
+[codeLine]        private static string dataName = $"{typeof(_Sample_Data)}";
+[codeLine]        private static string jsonFileName = "_Sample_.json";
+[codeLine]        private static _Sample_Table _instance = null;
+[codeLine]        
+[codeLine]        // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
+[codeLine]        public Dictionary<int, _Sample_Data> IndexDictionary = new();
+[codeLine]        public Dictionary<string, _Sample_Data> nameDictionary = new();
+[codeLine]        protected override void Init(JArray dataList)
+[codeLine]        {
+[codeLine]            base.Init(dataList);
+[codeLine]            _instance = this;
+[codeLine]            foreach (var jToken in dataList)
+[codeLine]            {
+[codeLine]                var jsonData = JsonConvert.DeserializeObject<_Sample_Data>(jToken.ToString());
+[codeLine]                if (enableLog)
+[codeLine]                    Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+[codeLine]                // Id Dictionary Values[Start]
+[codeLine]                if (IndexDictionary.ContainsKey(jsonData.id))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                IndexDictionary.Add(jsonData.id, jsonData);
+[codeLine]                // Id Dictionary Values[End]
+[codeLine]                
+[codeLine]                // name Dictionary Values[Start]
+[codeLine]                if (nameDictionary.ContainsKey(jsonData.name))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                nameDictionary.Add(jsonData.name, jsonData);
+[codeLine]                // name Dictionary Values[End]
+[codeLine]            }
+[codeLine]        }
+[codeLine]
+[codeLine]        public static _Sample_Data GetData(string argKeyName)
+[codeLine]        {
+[codeLine]            if (false == DataTable.Tables.ContainsKey(tableType))
+[codeLine]                return null;
+[codeLine]            _Sample_Table table = DataTable.Tables[tableType] as _Sample_Table;
+[codeLine]            if (null == table)
+[codeLine]                return null;
+[codeLine]            if (false == table.nameDictionary.ContainsKey(argKeyName))
+[codeLine]                return null;
+[codeLine]            return new(table.nameDictionary[argKeyName]);
+[codeLine]        }
+[codeLine]
+[codeLine]        public static List<_Sample_Data> GetList()
+[codeLine]        {
+[codeLine]            if (null == _instance)
+[codeLine]            {
+[codeLine]                Debug.LogError($"{tableType} is not instantiate!");
+[codeLine]                return null;
+[codeLine]            }
+[codeLine]
+[codeLine]            List<_Sample_Data> result = new();
+[codeLine]
+[codeLine]            // 값 복사를 통해서 Table 값과 분리하여 전달
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                result.Add(new (data));
+[codeLine]            }
+[codeLine]            return result;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void SetData(string argKeyName, _Sample_Data argData)
+[codeLine]        {
+[codeLine]            if (false == _instance.nameDictionary.ContainsKey(argKeyName))
+[codeLine]            {
+[codeLine]                Debug.LogError($"Don't have string key({argKeyName})");
+[codeLine]                return;
+[codeLine]            }
+[codeLine]
+[codeLine]            _instance.nameDictionary[argKeyName] = argData;
+[codeLine]            _instance.IndexDictionary[argData.id] = argData;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void Export()
+[codeLine]        {
+[codeLine]            string writeText = "[\n";
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                writeText += JsonConvert.SerializeObject(data) + ",\n";
+[codeLine]                Debug.Log($"[ExportTest]{data}\n{JsonConvert.SerializeObject(data)}");
+[codeLine]            }
+[codeLine]
+[codeLine]            writeText += "]";
+[codeLine]            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
+[codeLine]            Debug.Log(jsonPath);
+[codeLine]            // 파일 생성 및 저장
+[codeLine]            File.WriteAllText(jsonPath, writeText);
+[codeLine]        }
+[codeLine]    }
+[codeLine]}
+[lineCheck]Construct(19/22)
+_declareInfo(25/28)
+_toStringInfo(31/33)
+[jsonLine]key(id)type(Integer)typeStr(int)
+        public int id { get; set; }
+[jsonLine]key(name)type(String)typeStr(string)
+        public string name { get; set; }
+[jsonLine]key(idle)type(Array)typeStr(string[])
+        public string[] idle { get; set; }
+[jsonLine]key(walk)type(Array)typeStr(string[])
+        public string[] walk { get; set; }
+[jsonLine]key(run)type(Array)typeStr(string[])
+        public string[] run { get; set; }
+[jsonLine]key(runStop)type(Array)typeStr(string[])
+        public string[] runStop { get; set; }
+[jsonLine]key(jumpUp)type(Array)typeStr(string[])
+        public string[] jumpUp { get; set; }
+[jsonLine]key(jumpDown)type(Array)typeStr(string[])
+        public string[] jumpDown { get; set; }
+[jsonLine]key(landing)type(Array)typeStr(string[])
+        public string[] landing { get; set; }
+[jsonLine]key(normalDamaged)type(Array)typeStr(string[])
+        public string[] normalDamaged { get; set; }
+[jsonLine]key(airborneDamaged)type(Array)typeStr(string[])
+        public string[] airborneDamaged { get; set; }
+[jsonLine]key(airbornePowerDownDamaged)type(Array)typeStr(string[])
+        public string[] airbornePowerDownDamaged { get; set; }
+[jsonLine]key(knockBackDamaged)type(Array)typeStr(string[])
+        public string[] knockBackDamaged { get; set; }
+[jsonLine]key(flyAwayDamaged)type(Array)typeStr(string[])
+        public string[] flyAwayDamaged { get; set; }
+[jsonLine]key(damagedAirborneLoop)type(Array)typeStr(string[])
+        public string[] damagedAirborneLoop { get; set; }
+[jsonLine]key(damagedLanding)type(Array)typeStr(string[])
+        public string[] damagedLanding { get; set; }
+[jsonLine]key(wakeUp)type(Array)typeStr(string[])
+        public string[] wakeUp { get; set; }
+[jsonLine]key(dead)type(Array)typeStr(string[])
+        public string[] dead { get; set; }
+[jsonLine]key(getItem)type(Array)typeStr(string[])
+        public string[] getItem { get; set; }
+[jsonLine]key(weekAttack1)type(Array)typeStr(string[])
+        public string[] weekAttack1 { get; set; }
+[jsonLine]key(weekAttack2)type(Array)typeStr(string[])
+        public string[] weekAttack2 { get; set; }
+[jsonLine]key(weekAttack3)type(Array)typeStr(string[])
+        public string[] weekAttack3 { get; set; }
+[jsonLine]key(airWeekAttack1)type(Array)typeStr(string[])
+        public string[] airWeekAttack1 { get; set; }
+[jsonLine]key(airWeekAttack2)type(Array)typeStr(string[])
+        public string[] airWeekAttack2 { get; set; }
+[jsonLine]key(airWeekAttack3)type(Array)typeStr(string[])
+        public string[] airWeekAttack3 { get; set; }
+[jsonLine]key(strongAttack1)type(Array)typeStr(string[])
+        public string[] strongAttack1 { get; set; }
+[jsonLine]key(strongAttack2)type(Array)typeStr(string[])
+        public string[] strongAttack2 { get; set; }
+length(185)
+[executeFile]fileName(CharacterStat.json)tableName()
+[codeLine]using System;
+[codeLine]using System.Collections.Generic;
+[codeLine]using System.IO;
+[codeLine]using Newtonsoft.Json;
+[codeLine]using Newtonsoft.Json.Linq;
+[codeLine]using UnityEngine;
+[codeLine]using Utils;
+[codeLine]
+[codeLine]namespace DataClass
+[codeLine]{
+[codeLine]    [Serializable]
+[codeLine]    public class _Sample_Data
+[codeLine]    {
+[codeLine]        public _Sample_Data()
+[codeLine]        {
+[codeLine]            
+[codeLine]        }
+[codeLine]        public _Sample_Data(_Sample_Data argData)
+[codeLine]        {
+[codeLine]            // Construct Values[Start]
+[codeLine]            id = argData.id;
+[codeLine]            name = argData.name;
+[codeLine]            // Construct Values[End]
+[codeLine]        }
+[codeLine]
+[codeLine]        // Declaration Values[Start]
+[codeLine]        public int id { get; set; }
+[codeLine]        public string name { get; set; }
+[codeLine]        // Declaration Values[End]
+[codeLine]        public override string ToString()
+[codeLine]        {
+[codeLine]            // ToString Values[Start]
+[codeLine]            return $"id({id})name({name})";
+[codeLine]            // ToString Values[End]
+[codeLine]        }
+[codeLine]    }
+[codeLine]
+[codeLine]    public class _Sample_Table : DataTable
+[codeLine]    {
+[codeLine]        private static Type tableType = typeof(_Sample_Table);
+[codeLine]        private static string dataName = $"{typeof(_Sample_Data)}";
+[codeLine]        private static string jsonFileName = "_Sample_.json";
+[codeLine]        private static _Sample_Table _instance = null;
+[codeLine]        
+[codeLine]        // 런타임 사용 시 값 복사 꼭 고려할 것(id리스트, name리스트 모두)
+[codeLine]        public Dictionary<int, _Sample_Data> IndexDictionary = new();
+[codeLine]        public Dictionary<string, _Sample_Data> nameDictionary = new();
+[codeLine]        protected override void Init(JArray dataList)
+[codeLine]        {
+[codeLine]            base.Init(dataList);
+[codeLine]            _instance = this;
+[codeLine]            foreach (var jToken in dataList)
+[codeLine]            {
+[codeLine]                var jsonData = JsonConvert.DeserializeObject<_Sample_Data>(jToken.ToString());
+[codeLine]                if (enableLog)
+[codeLine]                    Debug.Log($"[testumJsonTable][{tableType}]override.SaveData save obj data({jsonData})");
+[codeLine]                // Id Dictionary Values[Start]
+[codeLine]                if (IndexDictionary.ContainsKey(jsonData.id))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                IndexDictionary.Add(jsonData.id, jsonData);
+[codeLine]                // Id Dictionary Values[End]
+[codeLine]                
+[codeLine]                // name Dictionary Values[Start]
+[codeLine]                if (nameDictionary.ContainsKey(jsonData.name))
+[codeLine]                {
+[codeLine]                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+[codeLine]                    continue;
+[codeLine]                }
+[codeLine]                nameDictionary.Add(jsonData.name, jsonData);
+[codeLine]                // name Dictionary Values[End]
+[codeLine]            }
+[codeLine]        }
+[codeLine]
+[codeLine]        public static _Sample_Data GetData(string argKeyName)
+[codeLine]        {
+[codeLine]            if (false == DataTable.Tables.ContainsKey(tableType))
+[codeLine]                return null;
+[codeLine]            _Sample_Table table = DataTable.Tables[tableType] as _Sample_Table;
+[codeLine]            if (null == table)
+[codeLine]                return null;
+[codeLine]            if (false == table.nameDictionary.ContainsKey(argKeyName))
+[codeLine]                return null;
+[codeLine]            return new(table.nameDictionary[argKeyName]);
+[codeLine]        }
+[codeLine]
+[codeLine]        public static List<_Sample_Data> GetList()
+[codeLine]        {
+[codeLine]            if (null == _instance)
+[codeLine]            {
+[codeLine]                Debug.LogError($"{tableType} is not instantiate!");
+[codeLine]                return null;
+[codeLine]            }
+[codeLine]
+[codeLine]            List<_Sample_Data> result = new();
+[codeLine]
+[codeLine]            // 값 복사를 통해서 Table 값과 분리하여 전달
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                result.Add(new (data));
+[codeLine]            }
+[codeLine]            return result;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void SetData(string argKeyName, _Sample_Data argData)
+[codeLine]        {
+[codeLine]            if (false == _instance.nameDictionary.ContainsKey(argKeyName))
+[codeLine]            {
+[codeLine]                Debug.LogError($"Don't have string key({argKeyName})");
+[codeLine]                return;
+[codeLine]            }
+[codeLine]
+[codeLine]            _instance.nameDictionary[argKeyName] = argData;
+[codeLine]            _instance.IndexDictionary[argData.id] = argData;
+[codeLine]        }
+[codeLine]
+[codeLine]        public static void Export()
+[codeLine]        {
+[codeLine]            string writeText = "[\n";
+[codeLine]            foreach (var data in _instance.IndexDictionary.Values)
+[codeLine]            {
+[codeLine]                writeText += JsonConvert.SerializeObject(data) + ",\n";
+[codeLine]                Debug.Log($"[ExportTest]{data}\n{JsonConvert.SerializeObject(data)}");
+[codeLine]            }
+[codeLine]
+[codeLine]            writeText += "]";
+[codeLine]            string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
+[codeLine]            Debug.Log(jsonPath);
+[codeLine]            // 파일 생성 및 저장
+[codeLine]            File.WriteAllText(jsonPath, writeText);
+[codeLine]        }
+[codeLine]    }
+[codeLine]}
+[lineCheck]Construct(19/22)
+_declareInfo(25/28)
+_toStringInfo(31/33)
+[jsonLine]key(id)type(Integer)typeStr(int)
+        public int id { get; set; }
+[jsonLine]key(name)type(String)typeStr(string)
+        public string name { get; set; }
+[jsonLine]key(health)type(Float)typeStr(float)
+        public float health { get; set; }
+[jsonLine]key(mana)type(Float)typeStr(float)
+        public float mana { get; set; }
+[jsonLine]key(strength)type(Float)typeStr(float)
+        public float strength { get; set; }
+[jsonLine]key(agility)type(Float)typeStr(float)
+        public float agility { get; set; }
+[jsonLine]key(intellect)type(Float)typeStr(float)
+        public float intellect { get; set; }
+[jsonLine]key(defense)type(Float)typeStr(float)
+        public float defense { get; set; }
+length(147)
+Assets\ExternalRecourses\Travis Game Assets\Hit Impact Effects\Demo Scene\Scripts\HitImpactEffectsPreview.cs(28,21): warning CS0108: 'HitImpactEffectsPreview.light' hides inherited member 'Component.light'. Use the new keyword if hiding was intended.
+Assets\Scripts\Utils\UIManagerTool.cs(63,36): warning CS0108: 'UIManagerTool.GetEventSystemRaycastResults()' hides inherited member 'UIManager.GetEventSystemRaycastResults()'. Use the new keyword if hiding was intended.
+Assets\Scripts\Utils\UIManagerTool.cs(72,21): warning CS0108: 'UIManagerTool.IsRaycastUI()' hides inherited member 'UIManager.IsRaycastUI()'. Use the new keyword if hiding was intended.
+Assets\Scripts\DrawDebugCharacter.cs(53,21): warning CS0219: The variable 'pivot' is assigned but its value is never used
+Assets\Scripts\Action\MoveSet.cs(146,26): warning CS0168: The variable 'e' is declared but never used
+Assets\Scripts\UI\UIHudManager.cs(35,30): warning CS0168: The variable 'e' is declared but never used
+Assets\Scripts\State\Damaged\KnockBackDamagedState.cs(8,18): warning CS0414: The field 'KnockBackDamagedState._knockBackTimeMilliSec' is assigned but its value is never used
+Assets\Scripts\Component\Character.cs(163,18): warning CS0414: The field 'Character._checkGround' is assigned but its value is never used
+Assets\Scripts\State\Npc\NpcJumpUpState.cs(7,19): warning CS0414: The field 'NpcJumpUpState._jumpTimer' is assigned but its value is never used
+Assets\Scripts\Component\Character.cs(172,26): warning CS0414: The field 'Character._rightWallObjs' is assigned but its value is never used
+Assets\Scripts\Component\AttackCollider.cs(19,41): warning CS0414: The field 'AttackCollider._colliderType' is assigned but its value is never used
+Assets\Scripts\Component\Character.cs(173,26): warning CS0414: The field 'Character._frontWallObjs' is assigned but its value is never used
+Assets\Scripts\UI\UIActionPlayerPage.cs(42,40): warning CS0414: The field 'UIActionPlayerPage._startRate' is assigned but its value is never used
+Assets\Scripts\Component\Character.cs(174,26): warning CS0414: The field 'Character._backWallObjs' is assigned but its value is never used
+Assets\Scripts\Component\Character.cs(171,26): warning CS0414: The field 'Character._leftWallObjs' is assigned but its value is never used
+Assets\Scripts\State\Npc\NpcJumpDownState.cs(6,19): warning CS0414: The field 'NpcJumpDownState._jumpTimer' is assigned but its value is never used
+Assets\Scripts\UI\UIActionPlayerPage.cs(43,40): warning CS0414: The field 'UIActionPlayerPage._endRate' is assigned but its value is never used
+Assets\Scripts\State\LandingState.cs(8,18): warning CS0414: The field 'LandingState._inputDelayMSec' is assigned but its value is never used
+Assets\Scripts\SceneMain\SceneMoveSet.cs(10,21): warning CS0414: The field 'SceneMoveSet.testFrame' is assigned but its value is never used
+Assets\Scripts\Projectile\Projectile.cs(14,19): warning CS0414: The field 'Projectile._moveTween' is assigned but its value is never used
+Assets\Scripts\Utils\Input\InputManager.cs(50,17): warning CS0414: The field 'InputManager._holdMaxSize' is assigned but its value is never used
+Assets\Scripts\UI\UIActionPlayerPage.cs(46,23): warning CS0414: The field 'UIActionPlayerPage._pinEnd' is assigned but its value is never used
+Assets\Scripts\Component\PartCollider.cs(5,43): warning CS0414: The field 'PartCollider._colliderType' is assigned but its value is never used
+Assets\Scripts\State\RunStopState.cs(6,19): warning CS0414: The field 'RunStopState._jumpTimer' is assigned but its value is never used
+Assets\Scripts\UI\UIActionPlayerPage.cs(45,23): warning CS0414: The field 'UIActionPlayerPage._pinStart' is assigned but its value is never used

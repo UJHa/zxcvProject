@@ -52,10 +52,7 @@ public class FlyAwayDamagedState : DamagedState
 
     public void FinishFlyAway()
     {
-        // _character.ActiveHitCollider(false, HitColliderType.STAND);
-        // _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
-        var groundObjs = _character.RefreshGroundCheckObjects();
-        if (_character.RefreshGroundCheckObjects())
+        if (_character.IsGround())
         {
             _character.ChangeRoleState(eRoleState.DAMAGED_LANDING);
         }

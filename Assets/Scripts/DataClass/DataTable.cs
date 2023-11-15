@@ -12,22 +12,19 @@ namespace DataClass
 {
     public class DataTable
     {
-        protected static bool enableLog = false;
+        protected static bool enableLog = true;
         public static Dictionary<Type, DataTable> Tables = new();
         public static void LoadJsonData()
         {
-            string jsonPath = UmUtil.GetResourceJsonPath();
-            if (enableLog)
-                Debug.Log($"[testumJson]Application.dataPath({Application.dataPath})");
-            var info = new DirectoryInfo(jsonPath);
-            var fileInfo = info.GetFiles();
-            foreach(var file in fileInfo)
+            var jsonFiles = Resources.LoadAll("Json/", typeof(TextAsset));
+            foreach (var obj in jsonFiles)
             {
-                if (file.Name.Contains(".meta"))
+                if (obj is not TextAsset textAsset)
                     continue;
+                var fileClassName = UmUtil.ConvertJsonToTableClassName(textAsset.name);
+                Debug.Log($"[loadjson]name({fileClassName})jsonContent({textAsset.text})");
                 if (enableLog)
-                    Debug.Log($"[testumJson]fileName({file.Name})");
-                string fileClassName = UmUtil.ConvertJsonToTableClassName(file.Name);
+                    Debug.Log($"[testumJson]fileName({fileClassName})");
                 fileClassName = $"DataClass.{fileClassName}";
                 Type type = Type.GetType(fileClassName);
                 if (type is null)
@@ -55,9 +52,7 @@ namespace DataClass
                 }
                 Tables.Add(type, dataTable);
                 
-                string path = Path.Combine(jsonPath, file.Name);
-                var result = File.ReadAllText(path);
-                var dataList = JArray.Parse(result);
+                var dataList = JArray.Parse(textAsset.text);
                 dataTable.Init(dataList);
             }
         }

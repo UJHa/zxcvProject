@@ -27,7 +27,7 @@ public class DamagedAirborneLoopState : DamagedState
 
     public override void FixedUpdateState()
     {
-        if (_character.RefreshGroundCheckObjects())
+        if (_character.IsGround())
         {
             _character.ChangeRoleState(eRoleState.DAMAGED_LANDING, eStateType.DAMAGE_LANDING);
             return;
