@@ -921,7 +921,7 @@ public class Character : MonoBehaviour
         var projectileCube = Resources.Load<Projectile>("Prefabs/Projectile/ProjectileSample");
         projectileCube = Instantiate(projectileCube, transform.TransformPoint(_projectilePos.transform.localPosition), transform.rotation);
 
-        projectileCube.Init(projectileCube.transform.forward.normalized, 11f, 3f, this);
+        projectileCube.Init(projectileCube.transform.forward.normalized, 11f, 5f, this);
         return projectileCube;
     }
 
