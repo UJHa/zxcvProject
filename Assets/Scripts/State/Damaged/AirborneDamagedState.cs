@@ -17,6 +17,7 @@ public class AirborneDamagedState : DamagedState
         base.StartState();
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
+        _character.ResetMoveSpeed();
         _moveSet.Play(_action);
         _maxUpHeight = _character.transform.position.y + _character.GetAttackedMaxHeight();
         Debug.Log($"[testum][{_character.name}]_maxUpHeight({_maxUpHeight})");

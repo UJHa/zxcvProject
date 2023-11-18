@@ -12,7 +12,7 @@ public class AttackState : State
     {
         base.StartState();
         _instanceIds.Clear();
-        _character.SetVelocity(Vector3.zero);
+        _character.ResetMoveSpeed();
     }
 
     public override void FixedUpdateState()
