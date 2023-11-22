@@ -22,9 +22,11 @@ namespace DataClass
                 if (obj is not TextAsset textAsset)
                     continue;
                 var fileClassName = UmUtil.ConvertJsonToTableClassName(textAsset.name);
-                Debug.Log($"[loadjson]name({fileClassName})jsonContent({textAsset.text})");
                 if (enableLog)
+                {
+                    Debug.Log($"[loadjson]name({fileClassName})jsonContent({textAsset.text})");
                     Debug.Log($"[testumJson]fileName({fileClassName})");
+                }
                 fileClassName = $"DataClass.{fileClassName}";
                 Type type = Type.GetType(fileClassName);
                 if (type is null)

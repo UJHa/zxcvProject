@@ -141,8 +141,6 @@ namespace DataClass
 
             writeText += "]";
             string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
-            Debug.Log(jsonPath);
-            // 파일 생성 및 저장
             File.WriteAllText(jsonPath, writeText);
         }
     }

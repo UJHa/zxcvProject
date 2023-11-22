@@ -127,7 +127,7 @@ public class ConvertCodeClass
             case JTokenType.Object:
                 break;
             case JTokenType.Array:
-                // 엄todo 다차원 배열 필요 시 개발하기(현재 1차원 배열만 처리)
+                // 다차원 배열 필요 시 개발하기(현재 1차원 배열만 처리)
                 if (jToken is JArray jArray)
                 {
                     result = GetValueTypeString(jArray[0]);
@@ -181,8 +181,7 @@ public class ConvertCodeClass
     
     public void ConvertVariable(out List<string> result)
     {
-        // 현재 라인 정보는 초기 SampleTable.cs 기준이라서 수정은 역순으로 진행중...
-        // 엄todo : 역방향 정방향에 대해 알 수 있는 순서로 정렬하기
+        // 현재 라인 정보는 초기 SampleTable.cs 기준이라서 수정은 역순으로 진행
         List<string> codeLineResult = ConvertLines(_toStringInfo, _templateCodeLines);
         codeLineResult = ConvertLines(_declareInfo, codeLineResult);
         codeLineResult = ConvertLines(_contructInfo, codeLineResult);

@@ -18,7 +18,6 @@ public class CustomToolbarManager : EditorWindow
     [MenuItem("Json/Execute JsonGenerator")]
     public static void ExecuteButton()
     {
-        AddLog($"[test]CustomToolbar");
         _instance = new();
         _instance.ExecuteJsonGenerator();
         _instance = null;
@@ -35,10 +34,6 @@ public class CustomToolbarManager : EditorWindow
     private void ExecuteJsonGenerator()
     {
         string jsonPath = UmUtil.GetResourceJsonPath();
-        string dataClassPath = UmUtil.GetDataClassPath();
-        AddLog($"[testumJson]Application.dataPath({Application.dataPath})");
-        // ReadFiles(jsonPath);
-        // ReadFiles(dataClassPath);
 
         _convertCodeClass = new();
         
@@ -83,27 +78,6 @@ public class CustomToolbarManager : EditorWindow
         for (int i = 0; i < codeLineResult.Count; i++)
         {
             codeLineResult[i] = codeLineResult[i].Replace("_Sample_", tableName).Replace(Environment.NewLine, "");
-        }
-    }
-
-    private void PrintLines(string checkCategory, List<string> lines)
-    {
-        foreach (var line in lines)
-        {
-            AddLog($"[{checkCategory}]{line.Replace("\\", "\\\\")}");
-
-        }
-    }
-
-    private void ReadFiles(string path)
-    {
-        var info = new DirectoryInfo(path);
-        var fileInfo = info.GetFiles();
-        foreach (var file in fileInfo)
-        {
-            if (file.Name.Contains(".meta"))
-                continue;
-            AddLog($"[testFile]fileName({file.Name})");
         }
     }
 

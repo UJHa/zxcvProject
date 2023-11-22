@@ -20,24 +20,18 @@ namespace SceneMain
             var canvasObj = GameObject.Find("Canvas");
             if (null != canvasObj)
             {
-                Debug.Log($"[testum]canvas obj name({canvasObj.name})");
                 if (canvasObj.TryGetComponent<Canvas>(out var canvas))
                 {
                     _canvas = canvas;
-                    Debug.Log($"[testum]canvas find success!");
                 }
             }
             
             _moveSetCharacter = CreateCharacter();
 
             _uiManager = LoadUIManager();
-            if (null != _uiManager)
+            if (null == _uiManager)
             {
-                Debug.Log($"[testum]uiManager({_uiManager}) success");
-            }
-            else
-            {
-                Debug.Log($"[testum]uiManager({_uiManager}) fail");
+                Debug.LogError($"[testum]uiManager({_uiManager}) fail");
             }
 
             // 필요 UI 명세별 생성
@@ -59,7 +53,6 @@ namespace SceneMain
                 return null;
             }
         
-            Debug.Log($"[testum]uiManager({loadPrefab}) success");
             var uiManagerObj = Instantiate(loadPrefab, _canvas.transform);
             if (null == uiManagerObj)
                 return null;
