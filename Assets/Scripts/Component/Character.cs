@@ -487,15 +487,16 @@ public class Character : MonoBehaviour
                 break;
             case AttackType.NORMAL:
                 // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
-                // 엄todo: isGround 및 피격 여부로 체크 변경하기
-                if (!IsGround())
-                    ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
-                else
+                if (IsGround())
                 {
                     if (IsDead())
                         ChangeRoleState(eRoleState.DEAD);
                     else
                         ChangeRoleState(eRoleState.NORMAL_DAMAGED);
+                }
+                else
+                {
+                    ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
                 }
                 break;
             case AttackType.AIRBORNE:
@@ -803,6 +804,7 @@ public class Character : MonoBehaviour
         var changePos = transform.position;
         changePos.y = _groundDetection.groundPoint.y;
         transform.position = changePos;
+        Debug.Log($"[testUpdate]position({changePos})");
     }
 
     private Vector3 GetGroundBoxHalfSize()

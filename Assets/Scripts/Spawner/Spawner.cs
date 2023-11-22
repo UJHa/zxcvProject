@@ -17,7 +17,6 @@ public class Spawner : MonoBehaviour
         if (false == _prefabName.Equals(""))
             loadPrefab.name = _prefabName;
     
-        Debug.Log($"[testum]SpawnObject({loadPrefab}) success");
         var resultObj = Instantiate(loadPrefab);
         resultObj.transform.position = transform.position;
         

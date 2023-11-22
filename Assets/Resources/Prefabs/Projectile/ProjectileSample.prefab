@@ -4912,8 +4912,8 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1213529451062198}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
+  m_IsTrigger: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
@@ -4993,15 +4993,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moveSpeed: 0
   _moveDirection: {x: 0, y: 0, z: 0}
-  _moveDistance: 0
+  _maxMoveDistance: 0
   _owner: {fileID: 0}
+  _curMoveDistance: 0
   _rigidbody: {fileID: 0}
   hit: {fileID: 0}
   flash: {fileID: 0}
+  Detached: []
+  _sphereCollider: {fileID: 0}
   hitOffset: 0
   UseFirePointRotation: 0
   rotationOffset: {x: 0, y: 0, z: 0}
-  Detached: []
 --- !u!1 &1267732140592724
 GameObject:
   m_ObjectHideFlags: 0

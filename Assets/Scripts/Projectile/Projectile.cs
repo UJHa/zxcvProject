@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DataClass;
 using UnityEngine;
@@ -15,13 +16,16 @@ public class Projectile : MonoBehaviour
     [SerializeField] private GameObject hit;
     [SerializeField] private GameObject flash;
     [SerializeField] private GameObject[] Detached;
+    [SerializeField] private SphereCollider _sphereCollider;
     
     [SerializeField] private float hitOffset = 0f;
     [SerializeField] private bool UseFirePointRotation;
     [SerializeField] private Vector3 rotationOffset = new Vector3(0, 0, 0);
+    private Vector3 _prevPos = Vector3.zero;
     
     private Vector3 _startPosition;
     private bool _callDestroy = false;
+    private bool _isHit = false;
     
     private float _curMoveTotal = 0f;
     private HitInfo _hitInfo = new();
@@ -34,11 +38,14 @@ public class Projectile : MonoBehaviour
         _moveDirection = argDirection;
         _maxMoveDistance = argMaxDistance;
         _owner = owner;
+        _isHit = false;
         _callDestroy = false;
-        _startPosition = transform.position;
-        
+        _startPosition = _prevPos = transform.position;
+
         if (null == _rigidbody)
             _rigidbody = GetComponent<Rigidbody>();
+        if (null == _sphereCollider)
+            _sphereCollider = GetComponent<SphereCollider>();
         _hitInstanceIds.Clear();
     }
 
@@ -48,6 +55,9 @@ public class Projectile : MonoBehaviour
         {
             _rigidbody.velocity = transform.forward * _moveSpeed;
         }
+
+        if (!_isHit)
+            _isHit = TargetCast();
     }
 
     private void LateUpdate()
@@ -61,18 +71,16 @@ public class Projectile : MonoBehaviour
             _callDestroy = true;
         }
     }
-
-    // 엄todo : 탄알 충돌 정밀 처리는 FixedUpdate에서 Physics를 통해서 하는 방식 고려하기
-    void OnCollisionEnter(Collision collision)
+    
+    void ProcessHit(RaycastHit argHit)
     {
-        ProcessHit(collision.gameObject);
+        SendHitInfo(argHit.collider.gameObject);
         //Lock all axes movement and rotation
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
         _moveSpeed = 0;
-
-        ContactPoint contact = collision.contacts[0];
-        Quaternion rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
-        Vector3 pos = contact.point + contact.normal * hitOffset;
+        
+        Quaternion rot = Quaternion.FromToRotation(Vector3.up, argHit.normal);
+        Vector3 pos = argHit.point + argHit.normal * hitOffset;
 
         //Spawn hit effect on collision
         if (hit != null)
@@ -80,7 +88,7 @@ public class Projectile : MonoBehaviour
             var hitInstance = Instantiate(hit, pos, rot);
             if (UseFirePointRotation) { hitInstance.transform.rotation = gameObject.transform.rotation * Quaternion.Euler(0, 180f, 0); }
             else if (rotationOffset != Vector3.zero) { hitInstance.transform.rotation = Quaternion.Euler(rotationOffset); }
-            else { hitInstance.transform.LookAt(contact.point + contact.normal); }
+            else { hitInstance.transform.LookAt(argHit.point + argHit.normal); }
 
             // 엄todo : Destory 호출은 즉시 호출로 변경하기
             // 엄todo : duration은 update에서 관리하도록 수정하기
@@ -112,7 +120,7 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void ProcessHit(GameObject gameObj)
+    private void SendHitInfo(GameObject gameObj)
     {
         if (_hitInstanceIds.Contains(gameObj.GetInstanceID()))
             return;
@@ -138,5 +146,28 @@ public class Projectile : MonoBehaviour
     public HitInfo GetHitInfo()
     {
         return _hitInfo;
+    }
+    
+    public bool TargetCast()
+    {
+        LayerMask layer = ~0; // everything
+        var moveDistance = (transform.position - _prevPos).magnitude;
+        if (Physics.SphereCast(_prevPos, _sphereCollider.radius, transform.forward, out RaycastHit hit, moveDistance, layer))
+        {
+            _hitInfo.RaycastHit = hit;
+            ProcessHit(hit);
+            return true;
+        }
+
+        _prevPos = transform.position;
+        return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.matrix = Matrix4x4.TRS(transform.position, Quaternion.identity, Vector3.one);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(Vector3.zero, _sphereCollider.radius);
+        Gizmos.matrix = Matrix4x4.identity;
     }
 }
