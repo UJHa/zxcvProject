@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e300b2de923e64242b135fd4ad92630e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 0}
-  player: {fileID: 0}
-  adjust_pos: {x: 0, y: 2, z: 6}
+  mainPlayer: {fileID: 0}
+  adjust_pos: {x: 0, y: 7, z: 7}
+  adjust_rot: {x: 40, y: 180, z: 0}
   canvas: {fileID: 0}
