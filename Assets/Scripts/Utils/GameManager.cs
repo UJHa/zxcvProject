@@ -31,10 +31,10 @@ public class GameManager : MonoBehaviour
     
     public GameObject mainPlayer;
     // 기존 정보
-    // public Vector3 adjust_pos = new Vector3(0.0f, 2f, 6f);
-    // public Vector3 adjust_rot = new Vector3(10f, 180f, 0f);
-    public Vector3 adjust_pos = new Vector3(0.0f, 7f, 7f);
-    public Vector3 adjust_rot = new Vector3(40f, 180f, 0f);
+    public Vector3 adjust_pos = new Vector3(0.0f, 2f, 6f);
+    public Vector3 adjust_rot = new Vector3(10f, 180f, 0f);
+    //public Vector3 adjust_pos = new Vector3(0.0f, 7f, 7f);
+    //public Vector3 adjust_rot = new Vector3(40f, 180f, 0f);
     [SerializeField] private Canvas canvas;
     
     private Dictionary<ActionKey, Action> _actionMap = new();

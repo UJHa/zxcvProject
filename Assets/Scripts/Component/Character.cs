@@ -53,6 +53,14 @@ public struct PartColliderData
     public PartCollider Collider;
 }
 
+public enum HitFxType
+{
+    NONE,
+    WHITE,
+    RED,
+    BLUE,
+}
+
 // 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
@@ -147,7 +155,7 @@ public class Character : MonoBehaviour
     private Coroutine _lateFixedUpdateCoroutine = null;
 
     // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
-    private GameObject hitFx;
+    private Dictionary<HitFxType, GameObject> _hitFxObjects = new();
     
     private void Awake()
     {
@@ -191,7 +199,10 @@ public class Character : MonoBehaviour
         }
 
         InitStats();
-        hitFx = Resources.Load<GameObject>("Prefabs/StatusFx/Hits/Hit_01");
+
+        _hitFxObjects.Add(HitFxType.WHITE, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_C White"));
+        _hitFxObjects.Add(HitFxType.RED, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_A Red"));
+        _hitFxObjects.Add(HitFxType.BLUE, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_B Blue"));
 
         InitStates();
         StartUI();
@@ -479,8 +490,6 @@ public class Character : MonoBehaviour
         var damage = attackInfo.damageRatio * attacker._strength;
         SetDamage(damage);
         var closePos = hitInfo.RaycastHit.point;
-        var hitFxObj = Instantiate(hitFx);
-        hitFxObj.transform.position = closePos;
         switch (attackType)
         {
             case AttackType.NONE:
@@ -493,36 +502,48 @@ public class Character : MonoBehaviour
                         ChangeRoleState(eRoleState.DEAD);
                     else
                         ChangeRoleState(eRoleState.NORMAL_DAMAGED);
+                    InstantiateHitFx(HitFxType.WHITE, closePos);
                 }
                 else
                 {
                     ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
+                    InstantiateHitFx(HitFxType.BLUE, closePos);
                 }
                 break;
             case AttackType.AIRBORNE:
                 // 방향을 때린 상대의 방향으로 회전시키기
                 RotateToPosition(attacker.transform.position);
                 ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
+                InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.AIR_POWER_DOWN:
                 Debug.Log($"[{name}][testPowerdown]{transform.position}rvel({_rigidbody.velocity})({_moveVelocity})");
                 ChangeRoleState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED);
+                InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.KNOCK_BACK:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
                 Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
                 ChangeRoleState(eRoleState.KNOCK_BACK_DAMAGED);
+                InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.FLY_AWAY:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
                 Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
                 ChangeRoleState(eRoleState.FLY_AWAY_DAMAGED);
+                InstantiateHitFx(HitFxType.RED, closePos);
                 break;
         }
     }
-    
+
+    private void InstantiateHitFx(HitFxType hitFxKey, Vector3 closePos)
+    {
+        var hitFxObj = Instantiate(_hitFxObjects[hitFxKey]);
+        hitFxObj.transform.position = closePos;
+    }
+
     private eRoleState SelectNextState()
     {
         int layer = (int)eStateType.NONE;

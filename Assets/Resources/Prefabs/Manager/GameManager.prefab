@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainPlayer: {fileID: 0}
-  adjust_pos: {x: 0, y: 7, z: 7}
-  adjust_rot: {x: 40, y: 180, z: 0}
+  adjust_pos: {x: 0, y: 2, z: 6}
+  adjust_rot: {x: 10, y: 180, z: 0}
   canvas: {fileID: 0}
