@@ -21,7 +21,7 @@ public class FlyAwayDamagedState : DamagedState
         _character.SetGrounding(false);
         var animSpeed = _moveSet.GetClipLength() / _flyAwayTimeSec;
         _moveSet.SetSpeed(animSpeed);
-        Debug.Log($"[testum][FlyAway]ClipLength({_moveSet.GetClipLength()})animSpeed({animSpeed})");
+        ReleaseLog.LogInfo($"[testum][FlyAway]ClipLength({_moveSet.GetClipLength()})animSpeed({animSpeed})");
     }
 
     public override void FixedUpdateState()

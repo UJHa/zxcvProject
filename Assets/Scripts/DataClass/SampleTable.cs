@@ -57,7 +57,7 @@ namespace DataClass
                 // Id Dictionary Values[Start]
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
-                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+                    ReleaseLog.LogError($"{dataName} have same id({jsonData.id})");
                     continue;
                 }
                 IndexDictionary.Add(jsonData.id, jsonData);
@@ -66,7 +66,7 @@ namespace DataClass
                 // name Dictionary Values[Start]
                 if (nameDictionary.ContainsKey(jsonData.name))
                 {
-                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+                    ReleaseLog.LogError($"{dataName} have same key({jsonData.name})");
                     continue;
                 }
                 nameDictionary.Add(jsonData.name, jsonData);
@@ -90,7 +90,7 @@ namespace DataClass
         {
             if (null == _instance)
             {
-                Debug.LogError($"{tableType} is not instantiate!");
+                ReleaseLog.LogError($"{tableType} is not instantiate!");
                 return null;
             }
 
@@ -108,7 +108,7 @@ namespace DataClass
         {
             if (false == _instance.nameDictionary.ContainsKey(argKeyName))
             {
-                Debug.LogError($"Don't have string key({argKeyName})");
+                ReleaseLog.LogError($"Don't have string key({argKeyName})");
                 return;
             }
 

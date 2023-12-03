@@ -123,7 +123,7 @@ public class MoveSet
         {
             if (curStateDict.ContainsKey(enableState))
             {
-                Debug.LogError($"Enable State Dictionary contains key! enableState({enableState}) determineState({determineState})");
+                ReleaseLog.LogError($"Enable State Dictionary contains key! enableState({enableState}) determineState({determineState})");
                 continue;
             }
             curStateDict.Add(enableState, determineState);
@@ -145,7 +145,7 @@ public class MoveSet
         }
         catch (Exception e)
         {
-            Debug.LogError($"Failed play animation! stateName({action.GetActionName()})clipName({action.GetClipPath()})clip({action.GetClip()})");
+            ReleaseLog.LogError($"Failed play animation! stateName({action.GetActionName()})clipName({action.GetClipPath()})clip({action.GetClip()})");
             return null;
         }
         return _curAnimancerState;

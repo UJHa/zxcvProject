@@ -80,7 +80,7 @@ namespace Utils
                 return result;
             else
             {
-                Debug.LogError($"StringToFloat Failed! num({num})");
+                ReleaseLog.LogError($"StringToFloat Failed! num({num})");
                 return 0f;
             }
         }

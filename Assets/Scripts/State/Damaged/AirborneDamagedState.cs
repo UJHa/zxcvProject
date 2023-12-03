@@ -20,7 +20,7 @@ public class AirborneDamagedState : DamagedState
         _character.ResetMoveSpeed();
         _moveSet.Play(_action);
         _maxUpHeight = _character.transform.position.y + _character.GetAttackedMaxHeight();
-        Debug.Log($"[testum][{_character.name}]_maxUpHeight({_maxUpHeight})");
+        ReleaseLog.LogInfo($"[testum][{_character.name}]_maxUpHeight({_maxUpHeight})");
         _upMoveTimer = 0f;
         _character.SetGrounding(false);
     }
@@ -29,7 +29,7 @@ public class AirborneDamagedState : DamagedState
     {
         if (_character.transform.position.y >= _maxUpHeight)
         {
-            Debug.Log($"[testlog] damage up update fin?");
+            ReleaseLog.LogInfo($"[testlog] damage up update fin?");
             _character.ChangeRoleState(eRoleState.DAMAGED_AIRBORNE_LOOP);
         }
         else

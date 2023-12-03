@@ -13,7 +13,7 @@ namespace UI
         protected override void Awake()
         {
             base.Awake();
-            Debug.Log($"[UIButton]Awake call! name({name})");
+            ReleaseLog.LogInfo($"[UIButton]Awake call! name({name})");
             if (transform.Find("Text (TMP)").TryGetComponent<TextMeshProUGUI>(out var textObj))
                 _textField = textObj;
         }

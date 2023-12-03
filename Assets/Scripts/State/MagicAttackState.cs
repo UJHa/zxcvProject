@@ -44,7 +44,7 @@ public class MagicAttackState : AttackState
             {
                 _isAttacked = true;
                 var projectile = _character.SpawnAttackCube(_actionKey);
-                Debug.Log($"[testMagic]Attack! {_moveSet.GetCurNormTime()}");
+                ReleaseLog.LogInfo($"[testMagic]Attack! {_moveSet.GetCurNormTime()}");
                 projectile.SetHitInfo(_attackInfoData);
             }
         }

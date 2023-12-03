@@ -33,11 +33,11 @@ namespace SceneMain
             _uiManager = LoadUIManager();
             if (null != _uiManager)
             {
-                Debug.Log($"[testum]uiManager({_uiManager}) success");
+                ReleaseLog.LogInfo($"[testum]uiManager({_uiManager}) success");
             }
             else
             {
-                Debug.Log($"[testum]uiManager({_uiManager}) fail");
+                ReleaseLog.LogInfo($"[testum]uiManager({_uiManager}) fail");
             }
             // 필요 UI 명세별 생성
             _uiManager.hudManager = _uiManager.CreateUI<UIHudManager>("Prefabs/UI/HudManager", UILayerType.LayerNormal);
@@ -57,7 +57,7 @@ namespace SceneMain
             var loadPrefab = Resources.Load<GameObject>("Prefabs/UIManagerInGame");
             if (null == loadPrefab)
             {
-                Debug.LogError($"[testum]uiManager({loadPrefab}) fail");
+                ReleaseLog.LogError($"[testum]uiManager({loadPrefab}) fail");
                 return null;
             }
             

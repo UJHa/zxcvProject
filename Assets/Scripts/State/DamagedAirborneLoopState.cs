@@ -13,7 +13,7 @@ public class DamagedAirborneLoopState : DamagedState
     public override void StartState()
     {
         base.StartState();
-        Debug.Log($"[testum]FinishFlyAway : (DamagedAirborneLoopState)");
+        ReleaseLog.LogInfo($"[testum]FinishFlyAway : (DamagedAirborneLoopState)");
         _character.ActiveHitCollider(false, HitColliderType.STAND);
         _character.ActiveHitCollider(true, HitColliderType.AIRBORNE);
         // 엄todo : 이전 State에 따라서 fadeTime이 동적으로 바뀌어야 할 필요가 있음

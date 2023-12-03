@@ -36,7 +36,7 @@ public class InputManager
     {
         if (null != Instance)
         {
-            Debug.LogError($"InputManager 존재합니다!");
+            ReleaseLog.LogError($"InputManager 존재합니다!");
         }
         Instance = new InputManager();
         IsExistInstance = true;

@@ -31,7 +31,7 @@ namespace SceneMain
             _uiManager = LoadUIManager();
             if (null == _uiManager)
             {
-                Debug.LogError($"[testum]uiManager({_uiManager}) fail");
+                ReleaseLog.LogError($"[testum]uiManager({_uiManager}) fail");
             }
 
             // 필요 UI 명세별 생성
@@ -49,7 +49,7 @@ namespace SceneMain
             var loadPrefab = Resources.Load<GameObject>("Prefabs/UIManagerTool");
             if (null == loadPrefab)
             {
-                Debug.LogError($"[testum]uiManager({loadPrefab}) fail");
+                ReleaseLog.LogError($"[testum]uiManager({loadPrefab}) fail");
                 return null;
             }
         

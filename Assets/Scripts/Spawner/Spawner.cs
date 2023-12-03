@@ -11,7 +11,7 @@ public class Spawner : MonoBehaviour
         var loadPrefab = Resources.Load<GameObject>(_resouarcePath);
         if (null == loadPrefab)
         {
-            Debug.LogError($"[testum]SpawnObject({loadPrefab}) fail");
+            ReleaseLog.LogError($"[testum]SpawnObject({loadPrefab}) fail");
             return null;
         }
         if (false == _prefabName.Equals(""))

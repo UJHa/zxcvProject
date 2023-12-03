@@ -157,7 +157,7 @@ namespace Utils
         {
             if (false == _layerParents.ContainsKey(layerType))
             {
-                Debug.LogError($"CreateUI failed! Not Contain UILayerType({layerType})");
+                ReleaseLog.LogError($"CreateUI failed! Not Contain UILayerType({layerType})");
                 return default;
             }
 
@@ -175,7 +175,7 @@ namespace Utils
             
             if (false == uiObj.TryGetComponent<T>(out T ui))
             {
-                Debug.LogError($"CreateUI failed! Not Contain UILayerType({layerType})");
+                ReleaseLog.LogError($"CreateUI failed! Not Contain UILayerType({layerType})");
                 return default;
             }
 

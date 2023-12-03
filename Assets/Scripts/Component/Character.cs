@@ -259,7 +259,7 @@ public class Character : MonoBehaviour
     {
         var data = CharacterRoleStateTable.GetData(roleStateDataName);
         var properties = typeof(CharacterRoleStateData).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-        Debug.Log($"[testRoleTable]length({properties.Length})");
+        ReleaseLog.LogInfo($"[testRoleTable]length({properties.Length})");
         foreach (var pInfo in properties)
         {
             var value = pInfo.GetValue(data);
@@ -283,7 +283,7 @@ public class Character : MonoBehaviour
                     stateClassType = stateClassType == default ? _defaultDataMap[pInfo.Name].stateClassType : stateClassType;
                 }
                 bool isSuccess = RegisterRoleState(roleState, actionKey, stateClassType);
-                Debug.Log($"[setRoleState]{roleState}:[{actionKey}][{stateClassType}][{isSuccess}]");
+                ReleaseLog.LogInfo($"[setRoleState]{roleState}:[{actionKey}][{stateClassType}][{isSuccess}]");
             }
         }
     }
@@ -308,7 +308,7 @@ public class Character : MonoBehaviour
             List<Vector3> verticals = new();
             for (int i = 0; i < helmetMesh.vertexCount; i++)
             {
-                Debug.Log($"[rappingHelmet]helmetMesh vertical[{i}]({helmetMesh.vertices[i]})");
+                ReleaseLog.LogInfo($"[rappingHelmet]helmetMesh vertical[{i}]({helmetMesh.vertices[i]})");
                 Vector3 vertice = helmetMesh.vertices[i];
                 vertice.y -= helmetMesh.bounds.center.y;
                 verticals.Add(vertice);
@@ -384,31 +384,6 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        while (_onHitQueue.Count > 0)
-        {
-            var hitInfo = _onHitQueue[0];
-            ProcessHit(hitInfo);
-            _onHitQueue.RemoveAt(0);
-        }
-
-        if (_changeStates.Count > 0)
-        {
-            string stateLog = $"[{name}][testState]Change prev({_curRoleState})";
-            // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
-            eRoleState state = eRoleState.NONE;
-            if (_changeStates.Count == 1)
-                state = _changeStates[0].state;
-            else
-                state = SelectNextState();
-            _roleStateMap[_curRoleState].EndState();
-            _roleStateMap[state].StartState();
-            _prevRoleState = _curRoleState;
-            _curRoleState = state;
-            _changeStates.Clear();
-            stateLog += $"cur({_curRoleState})count({_changeStates.Count})pos({transform.position})velocity({_rigidbody.velocity})isground({IsGround()}";
-            Debug.Log($"{stateLog}");
-        }
-        
         DetectGround();
         
         _roleStateMap[_curRoleState].FixedUpdateState();
@@ -477,6 +452,32 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        frameCount += 1;
+        while (_onHitQueue.Count > 0)
+        {
+            var hitInfo = _onHitQueue[0];
+            ProcessHit(hitInfo);
+            _onHitQueue.RemoveAt(0);
+        }
+
+        if (_changeStates.Count > 0)
+        {
+            string stateLog = $"[{name}][testState]Change prev({_curRoleState})";
+            // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
+            eRoleState state = eRoleState.NONE;
+            if (_changeStates.Count == 1)
+                state = _changeStates[0].state;
+            else
+                state = SelectNextState();
+            _roleStateMap[_curRoleState].EndState();
+            _roleStateMap[state].StartState();
+            _prevRoleState = _curRoleState;
+            _curRoleState = state;
+            _changeStates.Clear();
+            stateLog += $"cur({_curRoleState})count({_changeStates.Count})pos({transform.position})velocity({_rigidbody.velocity})isground({IsGround()}";
+            ReleaseLog.LogInfo($"{stateLog}");
+        }
+
         _roleStateMap[_curRoleState].UpdateState();
     }
     
@@ -517,21 +518,21 @@ public class Character : MonoBehaviour
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.AIR_POWER_DOWN:
-                Debug.Log($"[{name}][testPowerdown]{transform.position}rvel({_rigidbody.velocity})({_moveVelocity})");
+                ReleaseLog.LogInfo($"[{name}][testPowerdown]{transform.position}rvel({_rigidbody.velocity})({_moveVelocity})");
                 ChangeRoleState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED);
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.KNOCK_BACK:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
-                Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
+                ReleaseLog.LogInfo($"[attackerDirection]{attacker.GetDirectionVector()}");
                 ChangeRoleState(eRoleState.KNOCK_BACK_DAMAGED);
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.FLY_AWAY:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
-                Debug.Log($"[attackerDirection]{attacker.GetDirectionVector()}");
+                ReleaseLog.LogInfo($"[attackerDirection]{attacker.GetDirectionVector()}");
                 ChangeRoleState(eRoleState.FLY_AWAY_DAMAGED);
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
@@ -690,7 +691,7 @@ public class Character : MonoBehaviour
 
     public void ChangeState(eRoleState state, eStateType stateType = eStateType.NONE)
     {
-        Debug.Log($"[{name}][testState]Request Change prev({_curRoleState}) cur({state}) count({_changeStates.Count})pos({transform.position})");
+        ReleaseLog.LogInfo($"[{name}][testState]Request Change({frameCount}) prev({_curRoleState}) cur({state}) count({_changeStates.Count})pos({transform.position})");
         _changeStates.Add(new StateInfo()
         {
             state = state,
@@ -788,11 +789,14 @@ public class Character : MonoBehaviour
         return (Vector3.Distance(traceTarget.transform.position, transform.position) > findRange);
     }
 
+    int frameCount = 0;
+
     public void OnHit(HitInfo hitInfo)
     {
         if (eRoleState.DEAD == _curRoleState)
             return;
         _onHitQueue.Add(hitInfo);
+        ReleaseLog.LogInfo($"Onhit Checkt({frameCount})");
     }
 
     public void RotateToPosition(Vector3 argPosition)
@@ -814,7 +818,7 @@ public class Character : MonoBehaviour
 
     public void SetPositionY(float groundHeight)
     {
-        Debug.Log($"groundHeight({groundHeight})");
+        ReleaseLog.LogInfo($"groundHeight({groundHeight})");
         var transform1 = transform;
         Vector3 pos = transform1.position;
         transform1.position = new Vector3(pos.x, groundHeight, pos.z);
@@ -825,7 +829,7 @@ public class Character : MonoBehaviour
         var changePos = transform.position;
         changePos.y = _groundDetection.groundPoint.y;
         transform.position = changePos;
-        Debug.Log($"[testUpdate]position({changePos})");
+        ReleaseLog.LogInfo($"[testUpdate]position({changePos})");
     }
 
     private Vector3 GetGroundBoxHalfSize()
@@ -862,7 +866,7 @@ public class Character : MonoBehaviour
         var item = dropItem.GetItem();
         if (false == item is ItemWeapon)
         {
-            Debug.Log($"[testum]Equip fail! it's not ItemWeapon");
+            ReleaseLog.LogInfo($"[testum]Equip fail! it's not ItemWeapon");
         }
         else
         {
@@ -870,7 +874,7 @@ public class Character : MonoBehaviour
             var colliderType = itemWeapon.GetEquipColliderType(); // 
             if (false == _equipPartColliderMap.TryGetValue(colliderType, out var partCollider))
             {
-                Debug.LogError($"Character doesn't have colliderType({colliderType})");
+                ReleaseLog.LogError($"Character doesn't have colliderType({colliderType})");
                 return;
             }
             var equipItem = Instantiate(itemWeapon, partCollider.transform);
@@ -893,7 +897,7 @@ public class Character : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[testRoleState]prev({_roleStateMap[argRoleState].GetType()})cur({type})typeIsSame({_roleStateMap[argRoleState].GetType() == type})");
+            ReleaseLog.LogInfo($"[testRoleState]prev({_roleStateMap[argRoleState].GetType()})cur({type})typeIsSame({_roleStateMap[argRoleState].GetType() == type})");
             if (_roleStateMap[argRoleState].GetType() != type)
                 _roleStateMap[argRoleState] = Activator.CreateInstance(type, this, argState) as State;
             else

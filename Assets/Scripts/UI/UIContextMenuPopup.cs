@@ -47,7 +47,7 @@ namespace UI
         {
             if (TryGetComponent<RectTransform>(out var rfm))
             {
-                Debug.Log($"[testum]mouse({Input.mousePosition}) thisPosition({transform.position}) rfm({rfm.position}) rfm.anchoredPosition({rfm.anchoredPosition})");
+                ReleaseLog.LogInfo($"[testum]mouse({Input.mousePosition}) thisPosition({transform.position}) rfm({rfm.position}) rfm.anchoredPosition({rfm.anchoredPosition})");
                 rfm.anchoredPosition = Input.mousePosition;
             }
         }

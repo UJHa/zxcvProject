@@ -87,7 +87,7 @@ namespace UI
                 var editStartRate = _actionInfoTextDict[ActionParam.START_RATE].GetFieldData();
                 var editEndRate = _actionInfoTextDict[ActionParam.END_RATE].GetFieldData();
                 var editAnimSpeed = _actionInfoTextDict[ActionParam.ANIM_SPEED].GetFieldData();
-                Debug.Log($"[saveAction]editStartRate({editStartRate})editEndRate({editEndRate})editAnimSpeed({editAnimSpeed})");
+                ReleaseLog.LogInfo($"[saveAction]editStartRate({editStartRate})editEndRate({editEndRate})editAnimSpeed({editAnimSpeed})");
                 SaveJsonFile();
             });
             
@@ -139,11 +139,11 @@ namespace UI
                 if (actionData.name == ActionKey.NONE.ToString())
                     continue;
                 _actions.Add(actionData.name, actionData);
-                Debug.Log($"[testum]actionData({actionData})");
+                ReleaseLog.LogInfo($"[testum]actionData({actionData})");
                 _actionInfoBtnPrefab.name = actionData.name;
                 if (_actionInfoBtnDict.ContainsKey(actionData.name))
                 {
-                    Debug.LogError($"ScrollView have actionName's UIButton({actionData.name})");
+                    ReleaseLog.LogError($"ScrollView have actionName's UIButton({actionData.name})");
                     continue;
                 }
                 var btnObj = Instantiate(_actionInfoBtnPrefab, _scrollRect.content);
@@ -158,7 +158,7 @@ namespace UI
                 var btnObj = _actionInfoBtnDict[actionData.name];
                 btnObj.onClick.AddListener(() =>
                 {
-                    Debug.Log($"[testum]Click button name({btnObj.name})");
+                    ReleaseLog.LogInfo($"[testum]Click button name({btnObj.name})");
                     _selectActionName = actionData.name;
                     SelectButton();
                 });

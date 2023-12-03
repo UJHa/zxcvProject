@@ -26,7 +26,7 @@ namespace UI
             if (null != scroll)
             {
                 _scrollRect = scroll;
-                Debug.Log($"[testum]scroll rect find!");
+                ReleaseLog.LogInfo($"[testum]scroll rect find!");
             }
 
             // window 구성 세팅 작업
@@ -103,8 +103,8 @@ namespace UI
             }
             _uiManager.contextMenuPopup.Hide();
             var startRate = _uiManager.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
-            Debug.Log($"[startpin] position({pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
-            Debug.Log($"[startpin] startRate({startRate})");
+            ReleaseLog.LogInfo($"[startpin] position({pinStart.transform.position}) rectPos({rfm.position}) anPos({rfm.anchoredPosition})");
+            ReleaseLog.LogInfo($"[startpin] startRate({startRate})");
             _moveSetCharacter.SetActionStartRate(startRate);
         }
 
@@ -118,7 +118,7 @@ namespace UI
             }
             _uiManager.contextMenuPopup.Hide();
             var endRate = _uiManager.contextMenuPopup.GetPositionToSliderRate(_slider, rfm.anchoredPosition.x);
-            Debug.Log($"[endpin] endRate({endRate})");
+            ReleaseLog.LogInfo($"[endpin] endRate({endRate})");
             _moveSetCharacter.SetActionEndRate(endRate);
         }
     }

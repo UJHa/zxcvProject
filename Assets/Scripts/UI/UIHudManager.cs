@@ -18,7 +18,7 @@ namespace UI
         {
             if (_sliders.ContainsKey(hashCode))
             {
-                Debug.LogError("[UIHudManager]캐릭터 HashCode가 Slider 객체 참조중이라 생성 불가");
+                ReleaseLog.LogError("[UIHudManager]캐릭터 HashCode가 Slider 객체 참조중이라 생성 불가");
                 return;
             }
             try
@@ -34,7 +34,7 @@ namespace UI
             }
             catch (Exception e)
             {
-                Debug.LogError("[UIHudManager]Slider 생성 실패");
+                ReleaseLog.LogError("[UIHudManager]Slider 생성 실패");
             }
         }
 
@@ -42,7 +42,7 @@ namespace UI
         {
             if (false == _sliders.ContainsKey(hashCode))
             {
-                Debug.LogError("[UIHudManager]캐릭터의 Slider 객체가 존재하지 않음");
+                ReleaseLog.LogError("[UIHudManager]캐릭터의 Slider 객체가 존재하지 않음");
                 return;
             }
 

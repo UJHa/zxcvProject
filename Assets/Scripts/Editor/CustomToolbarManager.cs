@@ -91,14 +91,14 @@ public class CustomToolbarManager : EditorWindow
     {
         foreach (var log in _logLines)
         {
-            Debug.Log($"{log}");
+            ReleaseLog.LogInfo($"{log}");
         }
         _logLines.Clear();
     }
     
     private static void OnCompilationFinished(object sender)
     {
-        Debug.Log("스크립트 컴파일이 완료되었습니다.");
+        ReleaseLog.LogInfo("스크립트 컴파일이 완료되었습니다.");
         ExecuteLog();
     }
     

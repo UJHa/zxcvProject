@@ -18,7 +18,7 @@ public class GetItemState : State
         var colliders = _character.FindEnableAcquireItems();
         foreach (var collider in colliders)
         {
-            Debug.Log($"[{_character.name}][testLoot]colliderName({collider.name}) isDropItem({collider.TryGetComponent<DropItem>(out var teno)})");
+            ReleaseLog.LogInfo($"[{_character.name}][testLoot]colliderName({collider.name}) isDropItem({collider.TryGetComponent<DropItem>(out var teno)})");
             if (collider.TryGetComponent<DropItem>(out var dropItem))
             {
                 canPickUp = true;

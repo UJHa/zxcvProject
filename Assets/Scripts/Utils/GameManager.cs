@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     {
         if (null != Instance)
         {
-            Debug.LogError($"InputManager 존재합니다!");
+            ReleaseLog.LogError($"InputManager 존재합니다!");
         }
 
         var loadPrefab = Resources.Load<GameManager>("Prefabs/Manager/GameManager");
@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
             ActionKey state = UmUtil.StringToEnum<ActionKey>(stateName);
             if (_attackInfoMap.ContainsKey(state))
             {
-                Debug.LogError($"Error _attackInfoMap contains key({state})");
+                ReleaseLog.LogError($"Error _attackInfoMap contains key({state})");
                 continue;
             }
             _attackInfoMap.Add(state, AttackInfoTable.GetData(stateName));

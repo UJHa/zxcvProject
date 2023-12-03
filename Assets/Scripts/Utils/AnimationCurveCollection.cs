@@ -25,7 +25,7 @@ namespace Utils
         public AnimationCurve CreateAnimCurve(string key)
         {
             FieldInfo fieldInfo = this.GetType().GetField(key);
-            Debug.Log($"[testVar]CreateAnimCurve({fieldInfo.GetValue(this)})");
+            ReleaseLog.LogInfo($"[testVar]CreateAnimCurve({fieldInfo.GetValue(this)})");
             AnimationCurve result = fieldInfo.GetValue(this) as AnimationCurve;
             result = new AnimationCurve(result.keys);
             return result;
@@ -34,7 +34,7 @@ namespace Utils
         public AnimationCurve CreateAnimCurve(string key, float xMaxValue)
         {
             FieldInfo fieldInfo = this.GetType().GetField(key);
-            Debug.Log($"[testVar]GetAnimCurve({fieldInfo.GetValue(this)})");
+            ReleaseLog.LogInfo($"[testVar]GetAnimCurve({fieldInfo.GetValue(this)})");
             AnimationCurve result = fieldInfo.GetValue(this) as AnimationCurve;
             result = new AnimationCurve(result.keys);
             MakeFixedDeltaTimeCurve(result, xMaxValue);

@@ -74,7 +74,7 @@ public class MoveSetCharacter : MonoBehaviour
         if (IsAnimRateFinish())
             GoToFirstFrame();
         _curState = Play(_action);
-        Debug.Log($"[testTime]time({this._curState.Length})");
+        ReleaseLog.LogInfo($"[testTime]time({this._curState.Length})");
     }
 
     public void PlayPinAnim()
