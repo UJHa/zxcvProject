@@ -26,6 +26,7 @@ public enum eRoleState
     DAMAGED_AIRBORNE_LOOP,
     KNOCK_BACK_DAMAGED,
     FLY_AWAY_DAMAGED,
+    RUN_ATTACK,
     WAKE_UP,
     DEAD,
     GET_ITEM

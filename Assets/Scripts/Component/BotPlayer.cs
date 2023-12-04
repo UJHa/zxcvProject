@@ -6,11 +6,12 @@ public class BotPlayer : Character
 {
     void Start()
     {
+        SettingRoleState("BotPlayer");
         _directionVector = Vector3.back;
         
-        RegisterRoleState(eRoleState.IDLE, ActionKey.FIGHTER_IDLE, typeof(IdleState));
-        RegisterRoleState(eRoleState.WALK, ActionKey.FIGHTER_IDLE, typeof(IdleState));
-        RegisterRoleState(eRoleState.RUN, ActionKey.FIGHTER_IDLE, typeof(IdleState));
+        //RegisterRoleState(eRoleState.IDLE, ActionKey.FIGHTER_IDLE, typeof(IdleState));
+        //RegisterRoleState(eRoleState.WALK, ActionKey.FIGHTER_IDLE, typeof(IdleState));
+        //RegisterRoleState(eRoleState.RUN, ActionKey.FIGHTER_IDLE, typeof(IdleState));
         //RegisterRoleState(eRoleState.WEEK_ATTACK1, ActionKey.MAGIC_WEEK_ATTACK1, typeof(MagicAttackState));
         _moveSet.Init(gameObject);
         _curRoleState = eRoleState.IDLE;

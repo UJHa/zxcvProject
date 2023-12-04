@@ -30,12 +30,6 @@ public class ColliderCube
     public Vector3 Size;
     public Vector3 gizmoPos;
 }
-[Serializable]
-public struct AttackPartData
-{
-    public HitboxType attackPart;
-    public AttackCollider attackCollider;
-}
 
 public enum ColliderType
 {
@@ -61,7 +55,6 @@ public enum HitFxType
     BLUE,
 }
 
-// 엄todo : 서버가 붙으면 어떻게 위치에 대한 보간을 처리할지
 public class Character : MonoBehaviour
 {
     [Header("[ Test rigidbody velocity]")]
@@ -128,11 +121,9 @@ public class Character : MonoBehaviour
     [SerializeField] protected eRoleState _curRoleState;
     [SerializeField] protected eRole _curRole = eRole.FIGHTER;
     
-    // 엄todo : 캐릭터가 날려야할 투사체 정보를 어떻게 가질 지 고민 후 정리
     [SerializeField] protected GameObject _projectilePos;
 
     protected DrawDebugCharacter _drawDebug;
-    protected HumanBoneInfo _humanBoneInfo = new();
 
     public bool _isGround = false;
 
@@ -154,7 +145,6 @@ public class Character : MonoBehaviour
     private GroundDetection _groundDetection;
     private Coroutine _lateFixedUpdateCoroutine = null;
 
-    // 엄todo : 이 Fx를 미리 로드하기 위한 클래스나 시스템이 어디에 들어가야 할지 고민하기
     private Dictionary<HitFxType, GameObject> _hitFxObjects = new();
     
     private void Awake()
@@ -174,11 +164,6 @@ public class Character : MonoBehaviour
         if (TryGetComponent<GroundDetection>(out var groundDetection))
             _groundDetection = groundDetection;
 
-        _humanBoneInfo.Init(_animancer.Animator);
-        
-        // Equip Helmet 테스트 코드(엄todo : 작업 완료 후 지울것)
-        // TestHelmetEquip();
-
         SettingProjectilePos();
 
         foreach (var hitCollider in _hitColliders)
@@ -192,7 +177,6 @@ public class Character : MonoBehaviour
 
         foreach (var partColliderData in _equipPartColliderDatas)
         {
-            // 엄todo : 현재 미사용 로우폴리 캐릭터 파츠 장착 시 다시 개발 필요
             partColliderData.Collider.SetOwner(this);
             if (false == _equipPartColliderMap.ContainsKey(partColliderData.Type))
                 _equipPartColliderMap.Add(partColliderData.Type, partColliderData.Collider);
@@ -200,9 +184,7 @@ public class Character : MonoBehaviour
 
         InitStats();
 
-        _hitFxObjects.Add(HitFxType.WHITE, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_C White"));
-        _hitFxObjects.Add(HitFxType.RED, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_A Red"));
-        _hitFxObjects.Add(HitFxType.BLUE, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_B Blue"));
+        InitHitFxs();
 
         InitStates();
         StartUI();
@@ -219,8 +201,6 @@ public class Character : MonoBehaviour
     
     public void OnEnable()
     {
-        // Initialize LateFixedUpdate coroutine
-
         if (_lateFixedUpdateCoroutine != null)
             StopCoroutine(_lateFixedUpdateCoroutine);
 
@@ -288,43 +268,8 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void TestHelmetEquip()
-    {
-        // 헬멧 장착 코드
-        if (name.Contains("PlayerMain"))
-        {
-            // 엄todo 헬멧 장착할 소켓 transform은 character가 가지도록 구조 개선 필요
-            Transform headSlot = null;
-            List<Transform> tfmRootChilds = UmUtil.GetAllChildList(_rootTransform);
-            foreach (var prefabTfm in tfmRootChilds)
-            {
-                if (prefabTfm.name.Equals("HeadEnd_M"))
-                    headSlot = prefabTfm;
-            }
-            
-            var armorHelmet = Resources.Load<MeshFilter>("Prefabs/Armor/ArmorHelmet");
-            armorHelmet = Instantiate(armorHelmet, headSlot);
-            Mesh helmetMesh = armorHelmet.mesh;
-            List<Vector3> verticals = new();
-            for (int i = 0; i < helmetMesh.vertexCount; i++)
-            {
-                ReleaseLog.LogInfo($"[rappingHelmet]helmetMesh vertical[{i}]({helmetMesh.vertices[i]})");
-                Vector3 vertice = helmetMesh.vertices[i];
-                vertice.y -= helmetMesh.bounds.center.y;
-                verticals.Add(vertice);
-            }
-            helmetMesh.SetVertices(verticals);
-            Bounds bounds = new();
-            bounds = helmetMesh.bounds;
-            bounds.center = Vector3.zero;
-            bounds.extents = Vector3.zero;
-            helmetMesh.bounds = bounds;
-        }
-    }
-
     protected void InitStats()
     {
-        // 엄todo 스탯 정보는 _statKey 기반으로 가져오도록 변경하기(각 Player가 수정한 값 기준)
         var statData = GetStatData();
         _hp = statData.health;
         _mp = statData.mana;
@@ -340,7 +285,14 @@ public class Character : MonoBehaviour
         // stats 변경에 따른 데이터 연산용 함수
         _curHp = _fullHp;
     }
-    
+
+    private void InitHitFxs()
+    {
+        _hitFxObjects.Add(HitFxType.WHITE, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_C White"));
+        _hitFxObjects.Add(HitFxType.RED, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_A Red"));
+        _hitFxObjects.Add(HitFxType.BLUE, Resources.Load<GameObject>("Prefabs/StatusFx/Hits/CFXM_Hit_B Blue"));
+    }
+
     public float GetJumpUpVelocity(float curDeltatime, float xMaxValue, float yMaxValue)
     {
         return GameManager.Instance.GetCurveVelocity(GameManager.Instance.GetAnimCurve("jumpUp"), curDeltatime, xMaxValue, yMaxValue);
@@ -449,10 +401,8 @@ public class Character : MonoBehaviour
         _attackedAirborneUpTime = 0f;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        frameCount += 1;
         while (_onHitQueue.Count > 0)
         {
             var hitInfo = _onHitQueue[0];
@@ -462,8 +412,6 @@ public class Character : MonoBehaviour
 
         if (_changeStates.Count > 0)
         {
-            string stateLog = $"[{name}][testState]Change prev({_curRoleState})";
-            // 엄todo : 이 시점에 _curState를 queue에 저장하면 되겠지? queue data클래스는 {이전 프레임 시간, List<StateInfo>} 이렇게 구성하면 될듯?
             eRoleState state = eRoleState.NONE;
             if (_changeStates.Count == 1)
                 state = _changeStates[0].state;
@@ -474,8 +422,6 @@ public class Character : MonoBehaviour
             _prevRoleState = _curRoleState;
             _curRoleState = state;
             _changeStates.Clear();
-            stateLog += $"cur({_curRoleState})count({_changeStates.Count})pos({transform.position})velocity({_rigidbody.velocity})isground({IsGround()}";
-            ReleaseLog.LogInfo($"{stateLog}");
         }
 
         _roleStateMap[_curRoleState].UpdateState();
@@ -496,7 +442,6 @@ public class Character : MonoBehaviour
             case AttackType.NONE:
                 break;
             case AttackType.NORMAL:
-                // Debug.Log($"[{name}]Attacked attackername({attacker.name})({hitboxKey})({curHitboxKey}) State({attacker._curState})");
                 if (IsGround())
                 {
                     if (IsDead())
@@ -518,21 +463,18 @@ public class Character : MonoBehaviour
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.AIR_POWER_DOWN:
-                ReleaseLog.LogInfo($"[{name}][testPowerdown]{transform.position}rvel({_rigidbody.velocity})({_moveVelocity})");
                 ChangeRoleState(eRoleState.AIRBORNE_POWER_DOWN_DAMAGED);
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.KNOCK_BACK:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
-                ReleaseLog.LogInfo($"[attackerDirection]{attacker.GetDirectionVector()}");
                 ChangeRoleState(eRoleState.KNOCK_BACK_DAMAGED);
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
             case AttackType.FLY_AWAY:
                 RotateToPosition(attacker.transform.position);
                 SetDamagedDirectionVector(attacker.GetDirectionVector());
-                ReleaseLog.LogInfo($"[attackerDirection]{attacker.GetDirectionVector()}");
                 ChangeRoleState(eRoleState.FLY_AWAY_DAMAGED);
                 InstantiateHitFx(HitFxType.RED, closePos);
                 break;
@@ -688,20 +630,15 @@ public class Character : MonoBehaviour
         var rot = Quaternion.LookRotation(argVector);
         return rot.eulerAngles;
     }
-
-    public void ChangeState(eRoleState state, eStateType stateType = eStateType.NONE)
-    {
-        ReleaseLog.LogInfo($"[{name}][testState]Request Change({frameCount}) prev({_curRoleState}) cur({state}) count({_changeStates.Count})pos({transform.position})");
-        _changeStates.Add(new StateInfo()
-        {
-            state = state,
-            stateType = stateType
-        });
-    }
     
     public void ChangeRoleState(eRoleState roleState, eStateType stateType = eStateType.NONE)
     {
-        ChangeState(roleState, stateType);
+        ReleaseLog.LogInfo($"[{name}][testState]Request Change prev({_curRoleState}) cur({roleState}) count({_changeStates.Count})pos({transform.position})");
+        _changeStates.Add(new StateInfo()
+        {
+            state = roleState,
+            stateType = stateType
+        });
     }
 
     public void ResetMoveSpeed()
@@ -789,14 +726,11 @@ public class Character : MonoBehaviour
         return (Vector3.Distance(traceTarget.transform.position, transform.position) > findRange);
     }
 
-    int frameCount = 0;
-
     public void OnHit(HitInfo hitInfo)
     {
         if (eRoleState.DEAD == _curRoleState)
             return;
         _onHitQueue.Add(hitInfo);
-        ReleaseLog.LogInfo($"Onhit Checkt({frameCount})");
     }
 
     public void RotateToPosition(Vector3 argPosition)
@@ -830,18 +764,6 @@ public class Character : MonoBehaviour
         changePos.y = _groundDetection.groundPoint.y;
         transform.position = changePos;
         ReleaseLog.LogInfo($"[testUpdate]position({changePos})");
-    }
-
-    private Vector3 GetGroundBoxHalfSize()
-    {
-        return _groundCollider.Size / 2;
-    }
-    
-    private Vector3 GetGroundBoxCenter()
-    {
-        Vector3 boxCenter = transform.position;
-        boxCenter.y -= _groundCollider.Size.y / 2;
-        return boxCenter;
     }
     
     public void ActiveHitCollider(bool enable, HitColliderType colliderType)

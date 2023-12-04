@@ -17,12 +17,6 @@ public class DrawDebugCharacter
     public void DrawUpdate()
     {
         DrawGroundCheckBox();
-        DrawHitBox();
-    }
-
-    private void DrawHitBox()
-    {
-        
     }
 
     private void DrawGroundCheckBox()

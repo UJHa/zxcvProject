@@ -47,33 +47,18 @@ public class IdleState : State
 
     public override void UpdateState()
     {
-        UpdateInput();
-    }
-
-    private void UpdateInput()
-    {
         if (!InputManager.IsExistInstance)
             return;
-        
+
         UpdateMoveInput();
 
         if (_character.IsGround())
         {
-            KeyBindingType[] keyBindingTypes = new[]
-            {
-                KeyBindingType.JUMP, 
-                KeyBindingType.WEEK_ATTACK, 
-                KeyBindingType.STRONG_ATTACK,
-                KeyBindingType.INTERACTION
-            };
-            foreach (var bindingType in keyBindingTypes)
-            {
-                
-            }
             var nextState = _moveSet.DetermineNextState(_character.GetCurState());
             if (eRoleState.NONE != nextState)
             {
                 _character.ChangeRoleState(nextState, eStateType.INPUT);
+                return;
             }
         }
     }

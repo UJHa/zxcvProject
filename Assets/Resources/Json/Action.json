@@ -43,4 +43,5 @@
 {"id":42,"name":"MAGIC_WEEK_ATTACK1","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Magic/Magic_Attack1","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":43,"name":"MAGIC_WEEK_ATTACK2","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Magic/Magic_Attack2","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":44,"name":"MAGIC_WEEK_ATTACK3","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Magic/Magic_Attack3","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
+{"id":45,"name":"FIGHTER_RUN_ATTACK","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Fighter_Skill1_Float","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0}
 ]

@@ -20,7 +20,6 @@ namespace DataClass
             // Construct Values[Start]
             id = argData.id;
             name = argData.name;
-            hitboxType = argData.hitboxType;
             damageRatio = argData.damageRatio;
             startRatio = argData.startRatio;
             endRatio = argData.endRatio;
@@ -35,7 +34,6 @@ namespace DataClass
         // Declaration Values[Start]
         public int id { get; set; }
         public string name { get; set; }
-        public string hitboxType { get; set; }
         public float damageRatio { get; set; }
         public float startRatio { get; set; }
         public float endRatio { get; set; }
@@ -48,7 +46,7 @@ namespace DataClass
         public override string ToString()
         {
             // ToString Values[Start]
-            return $"id({id})name({name})hitboxType({hitboxType})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})offset({offset})size({size})airborneHeight({airborneHeight})airborneTime({airborneTime})";
+            return $"id({id})name({name})damageRatio({damageRatio})startRatio({startRatio})endRatio({endRatio})attackType({attackType})offset({offset})size({size})airborneHeight({airborneHeight})airborneTime({airborneTime})";
             // ToString Values[End]
         }
     }
@@ -75,7 +73,7 @@ namespace DataClass
                 // Id Dictionary Values[Start]
                 if (IndexDictionary.ContainsKey(jsonData.id))
                 {
-                    Debug.LogError($"{dataName} have same id({jsonData.id})");
+                    ReleaseLog.LogError($"{dataName} have same id({jsonData.id})");
                     continue;
                 }
                 IndexDictionary.Add(jsonData.id, jsonData);
@@ -84,7 +82,7 @@ namespace DataClass
                 // name Dictionary Values[Start]
                 if (nameDictionary.ContainsKey(jsonData.name))
                 {
-                    Debug.LogError($"{dataName} have same key({jsonData.name})");
+                    ReleaseLog.LogError($"{dataName} have same key({jsonData.name})");
                     continue;
                 }
                 nameDictionary.Add(jsonData.name, jsonData);
@@ -108,7 +106,7 @@ namespace DataClass
         {
             if (null == _instance)
             {
-                Debug.LogError($"{tableType} is not instantiate!");
+                ReleaseLog.LogError($"{tableType} is not instantiate!");
                 return null;
             }
 
@@ -126,7 +124,7 @@ namespace DataClass
         {
             if (false == _instance.nameDictionary.ContainsKey(argKeyName))
             {
-                Debug.LogError($"Don't have string key({argKeyName})");
+                ReleaseLog.LogError($"Don't have string key({argKeyName})");
                 return;
             }
 
@@ -145,7 +143,6 @@ namespace DataClass
 
             writeText += "]";
             string jsonPath = Path.Combine(UmUtil.GetResourceJsonPath(), jsonFileName);
-            Debug.Log(jsonPath);
             // 파일 생성 및 저장
             File.WriteAllText(jsonPath, writeText);
         }
