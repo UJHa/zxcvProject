@@ -36,7 +36,7 @@ public class WalkState : State
     
     void UpdateInput()
     {
-        var vector = InputManager.Instance.GetButtonAxisRaw();
+        var vector = _character.GetMoveInputVector();
         if (Vector3.zero == vector)
         {
             _character.ChangeRoleState(eRoleState.IDLE);

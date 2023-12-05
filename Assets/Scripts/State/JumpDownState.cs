@@ -48,7 +48,7 @@ public class JumpDownState : State
     
     void UpdateMoveXZ()
     {
-        var vector = InputManager.Instance.GetButtonAxisRaw();
+        var vector = _character.GetMoveInputVector();
 
         if (Vector3.zero != vector)
             _character.SetDirectionByVector3(vector);

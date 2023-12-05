@@ -29,7 +29,9 @@ public enum eRoleState
     RUN_ATTACK,
     WAKE_UP,
     DEAD,
-    GET_ITEM
+    GET_ITEM,
+    GUARD,
+    GUARD_DAMAGED,
 }
 
 public enum eRole

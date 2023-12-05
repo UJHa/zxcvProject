@@ -24,6 +24,8 @@ public enum ActionKey
     FIGHTER_WEEK_AIR_ATTACK2,
     FIGHTER_WEEK_AIR_ATTACK3,
     FIGHTER_RUN_ATTACK,
+    FIGHTER_GUARD,
+    FIGHTER_GUARD_DAMAGED,
     NORMAL_DAMAGED,
     AIRBORNE_DAMAGED,
     AIRBORNE_POWER_DOWN_DAMAGED,
@@ -74,7 +76,6 @@ public enum AttackType
 public class InputEnableInfo
 {
     public KeyBindingType Type;
-    public KeyCode KeyCode;
     public Dictionary<eRoleState, eRoleState> DetermineStateDict; // 각 가능 state가 어떤 결과로 보낼지 정하는 함수
 }
 
@@ -101,7 +102,7 @@ public class MoveSet
             if (false == _inputEnableMap.ContainsKey(bindingType))
                 continue;
             var enableInfo = _inputEnableMap[bindingType];
-            if (false == Input.GetKeyDown(enableInfo.KeyCode))
+            if (false == InputManager.Instance.GetButtonDown(enableInfo.Type))
                 continue;
             if (false == enableInfo.DetermineStateDict.ContainsKey(state))
                 continue;
@@ -116,7 +117,6 @@ public class MoveSet
             _inputEnableMap.Add(bindingType, new InputEnableInfo
             {
                 Type = bindingType,
-                KeyCode = InputManager.Instance.GetKeyCode(bindingType),
                 DetermineStateDict = new()
             });
         var curStateDict = _inputEnableMap[bindingType].DetermineStateDict;

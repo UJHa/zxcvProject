@@ -13,8 +13,8 @@
 {"id":12,"name":"FIGHTER_STRONG_ATTACK1","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Lucy_Kick13_Root","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.5,"damageRatio":1.0},
 {"id":13,"name":"FIGHTER_STRONG_ATTACK2","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Lucy_Kick12_Root","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.35,"damageRatio":1.0},
 {"id":14,"name":"NORMAL_DAMAGED","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/Damaged","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
-{"id":15,"name":"AIRBORNE_DAMAGED","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/DamageAir_Start","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.6,"damageRatio":1.0},
-{"id":16,"name":"DAMAGED_AIRBORNE_LOOP","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/DamageAir_Fall","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
+{"id":15,"name":"AIRBORNE_DAMAGED","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/DamageAir_Start","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.5,"damageRatio":1.0},
+{"id":16,"name":"DAMAGED_AIRBORNE_LOOP","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/DamageAir_Start","speed":1.0,"startTimeRatio":0.5,"endTimeRatio":0.6,"damageRatio":1.0},
 {"id":17,"name":"DAMAGED_LANDING","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/DamageAir_End_Light","speed":1.3,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":18,"name":"WAKE_UP","roleState":"NONE","actionType":"NONE","clipPath":"Animation/LyingBack_WakeUp","speed":0.7,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":19,"name":"DEAD","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Damage/DamageAir_End_Light","speed":1.0,"startTimeRatio":0.8,"endTimeRatio":1.0,"damageRatio":1.0},
@@ -43,5 +43,7 @@
 {"id":42,"name":"MAGIC_WEEK_ATTACK1","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Magic/Magic_Attack1","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":43,"name":"MAGIC_WEEK_ATTACK2","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Magic/Magic_Attack2","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
 {"id":44,"name":"MAGIC_WEEK_ATTACK3","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Magic/Magic_Attack3","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
-{"id":45,"name":"FIGHTER_RUN_ATTACK","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Fighter_Skill1_Float","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0}
+{"id":45,"name":"FIGHTER_RUN_ATTACK","roleState":"NONE","actionType":"ATTACK","clipPath":"Animation/Fighter/Fighter_Skill1_Float","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":1.0,"damageRatio":1.0},
+{"id":46,"name":"FIGHTER_GUARD","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Fighter/Fighter_Block","speed":1.0,"startTimeRatio":0.0,"endTimeRatio":0.1,"damageRatio":1.0},
+{"id":47,"name":"FIGHTER_GUARD_DAMAGED","roleState":"NONE","actionType":"NONE","clipPath":"Animation/Fighter/Fighter_Block","speed":1.0,"startTimeRatio":0.55,"endTimeRatio":0.6,"damageRatio":1.0},
 ]

@@ -5,9 +5,11 @@ using System.Linq;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
+// 키 입력 우선순위 기준으로 처리해야됨(다중 키가 enum 앞번호여야 함)
 public enum KeyBindingType
 {
     NONE,
+    GUARD,
     LEFT_ARROW,
     RIGHT_ARROW,
     UP_ARROW,
@@ -21,7 +23,7 @@ public enum KeyBindingType
 public class KeyInfo
 {
     public KeyBindingType keyType;
-    public KeyCode keyCode;
+    public KeyCode[] keyCodes;
     public bool isDown = false;
     public bool isHold = false;
     public bool isUp = false;
@@ -52,14 +54,15 @@ public class InputManager
 
     public void Init()
     {
-        _inputMap.Add(KeyBindingType.UP_ARROW, new KeyInfo { keyType = KeyBindingType.UP_ARROW, keyCode = KeyCode.UpArrow, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.DOWN_ARROW, new KeyInfo { keyType = KeyBindingType.DOWN_ARROW, keyCode = KeyCode.DownArrow, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.LEFT_ARROW, new KeyInfo { keyType = KeyBindingType.LEFT_ARROW, keyCode = KeyCode.LeftArrow, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.RIGHT_ARROW, new KeyInfo { keyType = KeyBindingType.RIGHT_ARROW, keyCode = KeyCode.RightArrow, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.JUMP, new KeyInfo { keyType = KeyBindingType.JUMP, keyCode = KeyCode.V, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.WEEK_ATTACK, new KeyInfo { keyType = KeyBindingType.WEEK_ATTACK, keyCode = KeyCode.C, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.STRONG_ATTACK, new KeyInfo { keyType = KeyBindingType.STRONG_ATTACK, keyCode = KeyCode.X, isDown = false, isHold = false, isUp = false, });
-        _inputMap.Add(KeyBindingType.INTERACTION, new KeyInfo { keyType = KeyBindingType.STRONG_ATTACK, keyCode = KeyCode.Z, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.UP_ARROW, new KeyInfo { keyType = KeyBindingType.UP_ARROW, keyCodes = new KeyCode[] { KeyCode.UpArrow }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.DOWN_ARROW, new KeyInfo { keyType = KeyBindingType.DOWN_ARROW, keyCodes = new KeyCode[] { KeyCode.DownArrow }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.LEFT_ARROW, new KeyInfo { keyType = KeyBindingType.LEFT_ARROW, keyCodes = new KeyCode[] { KeyCode.LeftArrow }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.RIGHT_ARROW, new KeyInfo { keyType = KeyBindingType.RIGHT_ARROW, keyCodes = new KeyCode[] { KeyCode.RightArrow }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.JUMP, new KeyInfo { keyType = KeyBindingType.JUMP, keyCodes = new KeyCode[] { KeyCode.V }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.WEEK_ATTACK, new KeyInfo { keyType = KeyBindingType.WEEK_ATTACK, keyCodes = new KeyCode[] { KeyCode.C }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.STRONG_ATTACK, new KeyInfo { keyType = KeyBindingType.STRONG_ATTACK, keyCodes = new KeyCode[] { KeyCode.X }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.INTERACTION, new KeyInfo { keyType = KeyBindingType.STRONG_ATTACK, keyCodes = new KeyCode[] { KeyCode.Z }, isDown = false, isHold = false, isUp = false, });
+        _inputMap.Add(KeyBindingType.GUARD, new KeyInfo { keyType = KeyBindingType.GUARD, keyCodes = new KeyCode[] { KeyCode.X, KeyCode.C }, isDown = false, isHold = false, isUp = false, });
     }
 
     public void Update()
@@ -67,9 +70,20 @@ public class InputManager
         foreach (var key in _inputMap.Keys)
         {
             var info = _inputMap[key];
-            _inputMap[key].isDown = Input.GetKeyDown(info.keyCode); 
-            _inputMap[key].isHold = Input.GetKey(info.keyCode); 
-            _inputMap[key].isUp = Input.GetKeyUp(info.keyCode);
+            info.isDown = true;
+            info.isHold = true;
+            info.isUp = true;
+        }
+        foreach (var key in _inputMap.Keys)
+        {
+            var info = _inputMap[key];
+            foreach(var keyCode in info.keyCodes)
+            {
+                info.isDown &= Input.GetKeyDown(keyCode);
+                info.isHold &= Input.GetKey(keyCode);
+                info.isUp &= Input.GetKeyUp(keyCode);
+            }
+            
             SaveQueue(_inputMap[key]);
         }
     }
@@ -212,12 +226,5 @@ public class InputManager
             return -Vector3.right;
             
         return Vector3.zero;
-    }
-
-    public KeyCode GetKeyCode(KeyBindingType type)
-    {
-        if (_inputMap.ContainsKey(type))
-            return _inputMap[type].keyCode;
-        return KeyCode.None;
     }
 }

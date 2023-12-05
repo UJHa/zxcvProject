@@ -86,7 +86,10 @@ public class Character : MonoBehaviour
     [SerializeField] private float _jumpDownMaxTimer = 0.6f;
     [SerializeField] private float _airboneUpMaxTimer = 0.8f;
     [SerializeField] private float _airboneDownMaxTimer = 0.6f;
-    
+    [Header("[ Max Airbone Height ]")]
+    [SerializeField] private bool _maxAirborneHeight = false;
+    [SerializeField] private bool _isGuard = false;
+
     [SerializeField] private float _gravityDownTime = 0.6f;
     [SerializeField] private float _gravityDownHeight = 2f;
     
@@ -418,9 +421,9 @@ public class Character : MonoBehaviour
             else
                 state = SelectNextState();
             _roleStateMap[_curRoleState].EndState();
-            _roleStateMap[state].StartState();
             _prevRoleState = _curRoleState;
             _curRoleState = state;
+            _roleStateMap[state].StartState();
             _changeStates.Clear();
         }
 
@@ -442,18 +445,25 @@ public class Character : MonoBehaviour
             case AttackType.NONE:
                 break;
             case AttackType.NORMAL:
-                if (IsGround())
+                if (false == IsGuard())
                 {
-                    if (IsDead())
-                        ChangeRoleState(eRoleState.DEAD);
+                    if (IsGround())
+                    {
+                        if (IsDead())
+                            ChangeRoleState(eRoleState.DEAD);
+                        else
+                            ChangeRoleState(eRoleState.NORMAL_DAMAGED);
+                        InstantiateHitFx(HitFxType.WHITE, closePos);
+                    }
                     else
-                        ChangeRoleState(eRoleState.NORMAL_DAMAGED);
-                    InstantiateHitFx(HitFxType.WHITE, closePos);
+                    {
+                        ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
+                        InstantiateHitFx(HitFxType.BLUE, closePos);
+                    }
                 }
                 else
                 {
-                    ChangeRoleState(eRoleState.AIRBORNE_DAMAGED);
-                    InstantiateHitFx(HitFxType.BLUE, closePos);
+                    ChangeRoleState(eRoleState.GUARD_DAMAGED);
                 }
                 break;
             case AttackType.AIRBORNE:
@@ -629,6 +639,11 @@ public class Character : MonoBehaviour
     {
         var rot = Quaternion.LookRotation(argVector);
         return rot.eulerAngles;
+    }
+
+    public virtual Vector3 GetMoveInputVector()
+    {
+        return Vector3.zero;
     }
     
     public void ChangeRoleState(eRoleState roleState, eStateType stateType = eStateType.NONE)
@@ -908,5 +923,24 @@ public class Character : MonoBehaviour
         {
             _curHp = _fullHp;
         }
+    }
+    public void SetMaxHeightAirborne(bool v)
+    {
+        _maxAirborneHeight = v;
+    }
+
+    public bool GetMaxHeightAirborne()
+    {
+        return _maxAirborneHeight;
+    }
+
+    public void SetGuard(bool isGuard)
+    {
+        _isGuard = isGuard;
+    }
+
+    public bool IsGuard()
+    {
+        return _isGuard;
     }
 }

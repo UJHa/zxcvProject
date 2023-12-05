@@ -65,7 +65,7 @@ public class IdleState : State
     
     private void UpdateMoveInput()
     {
-        var vector = InputManager.Instance.GetButtonAxisRaw();
+        var vector = _character.GetMoveInputVector();
         if (Vector3.zero != vector)
         {
             if (eRoleState.WALK == _character.GetPrevRoleState()

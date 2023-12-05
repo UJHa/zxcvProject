@@ -23,13 +23,15 @@ public class AirborneDamagedState : DamagedState
         ReleaseLog.LogInfo($"[testum][{_character.name}]_maxUpHeight({_maxUpHeight})");
         _upMoveTimer = 0f;
         _character.SetGrounding(false);
+        _character.SetMaxHeightAirborne(false);
     }
 
     public override void FixedUpdateState()
     {
         if (_character.transform.position.y >= _maxUpHeight)
         {
-            ReleaseLog.LogInfo($"[testlog] damage up update fin?");
+            ReleaseLog.LogInfo($"[testheight] damage up update fin?");
+            _character.SetMaxHeightAirborne(true);
             _character.ChangeRoleState(eRoleState.DAMAGED_AIRBORNE_LOOP);
         }
         else
@@ -47,5 +49,9 @@ public class AirborneDamagedState : DamagedState
 
     public override void UpdateState()
     {
+        if (_moveSet.IsAnimationFinish())
+        {
+            _moveSet.PauseAnimation();
+        }
     }
 }
