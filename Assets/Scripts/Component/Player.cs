@@ -6,9 +6,7 @@ public class Player : Character
 {
     void Start()
     {
-        RegisterRoleState(eRoleState.RUN_ATTACK, ActionKey.FIGHTER_RUN_ATTACK, typeof(MeleeAttackState));
-        RegisterRoleState(eRoleState.GUARD, ActionKey.FIGHTER_GUARD, typeof(GuardState));
-        RegisterRoleState(eRoleState.GUARD_DAMAGED, ActionKey.FIGHTER_GUARD_DAMAGED, typeof(GuardDamagedState));
+        //RegisterRoleState(eRoleState.RUN_ATTACK, ActionKey.FIGHTER_RUN_ATTACK, typeof(MeleeAttackState));
         _directionVector = Vector3.back;
 
         _moveSet.Init(gameObject);

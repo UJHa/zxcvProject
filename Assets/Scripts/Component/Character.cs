@@ -668,6 +668,11 @@ public class Character : MonoBehaviour
         _platformVelocity = _characterMovement.platformVelocity;
     }
 
+    public Vector3 GetVelocity()
+    {
+        return _moveVelocity;
+    }
+
     public void SetMoveSpeedToWalk()
     {
         _moveSpeed = _walkSpeedRatio * _agility;

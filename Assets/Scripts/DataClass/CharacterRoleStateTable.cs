@@ -26,6 +26,8 @@ namespace DataClass
             runStop = argData.runStop;
             jumpUp = argData.jumpUp;
             jumpDown = argData.jumpDown;
+            guard = argData.guard;
+            guardDamaged = argData.guardDamaged;
             landing = argData.landing;
             normalDamaged = argData.normalDamaged;
             airborneDamaged = argData.airborneDamaged;
@@ -43,6 +45,7 @@ namespace DataClass
             airWeekAttack1 = argData.airWeekAttack1;
             airWeekAttack2 = argData.airWeekAttack2;
             airWeekAttack3 = argData.airWeekAttack3;
+            runAttack = argData.runAttack;
             strongAttack1 = argData.strongAttack1;
             strongAttack2 = argData.strongAttack2;
             // Construct Values[End]
@@ -57,6 +60,8 @@ namespace DataClass
         public string[] runStop { get; set; }
         public string[] jumpUp { get; set; }
         public string[] jumpDown { get; set; }
+        public string[] guard { get; set; }
+        public string[] guardDamaged { get; set; }
         public string[] landing { get; set; }
         public string[] normalDamaged { get; set; }
         public string[] airborneDamaged { get; set; }
@@ -74,13 +79,14 @@ namespace DataClass
         public string[] airWeekAttack1 { get; set; }
         public string[] airWeekAttack2 { get; set; }
         public string[] airWeekAttack3 { get; set; }
+        public string[] runAttack { get; set; }
         public string[] strongAttack1 { get; set; }
         public string[] strongAttack2 { get; set; }
         // Declaration Values[End]
         public override string ToString()
         {
             // ToString Values[Start]
-            return $"id({id})name({name})idle({idle})walk({walk})run({run})runStop({runStop})jumpUp({jumpUp})jumpDown({jumpDown})landing({landing})normalDamaged({normalDamaged})airborneDamaged({airborneDamaged})airbornePowerDownDamaged({airbornePowerDownDamaged})knockBackDamaged({knockBackDamaged})flyAwayDamaged({flyAwayDamaged})damagedAirborneLoop({damagedAirborneLoop})damagedLanding({damagedLanding})wakeUp({wakeUp})dead({dead})getItem({getItem})weekAttack1({weekAttack1})weekAttack2({weekAttack2})weekAttack3({weekAttack3})airWeekAttack1({airWeekAttack1})airWeekAttack2({airWeekAttack2})airWeekAttack3({airWeekAttack3})strongAttack1({strongAttack1})strongAttack2({strongAttack2})";
+            return $"id({id})name({name})idle({idle})walk({walk})run({run})runStop({runStop})jumpUp({jumpUp})jumpDown({jumpDown})guard({guard})guardDamaged({guardDamaged})landing({landing})normalDamaged({normalDamaged})airborneDamaged({airborneDamaged})airbornePowerDownDamaged({airbornePowerDownDamaged})knockBackDamaged({knockBackDamaged})flyAwayDamaged({flyAwayDamaged})damagedAirborneLoop({damagedAirborneLoop})damagedLanding({damagedLanding})wakeUp({wakeUp})dead({dead})getItem({getItem})weekAttack1({weekAttack1})weekAttack2({weekAttack2})weekAttack3({weekAttack3})airWeekAttack1({airWeekAttack1})airWeekAttack2({airWeekAttack2})airWeekAttack3({airWeekAttack3})runAttack({runAttack})strongAttack1({strongAttack1})strongAttack2({strongAttack2})";
             // ToString Values[End]
         }
     }
